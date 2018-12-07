@@ -4,7 +4,7 @@ import org.wildstang.framework.core.Outputs;
 import org.wildstang.framework.io.Output;
 
 /**
- * Creates Input objects attached to a specified port, and of a specified type.
+ * Creates Output objects attached to a specified port, and of a specified type.
  * 
  * @author Steve
  *

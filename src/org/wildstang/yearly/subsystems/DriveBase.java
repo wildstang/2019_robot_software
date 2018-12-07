@@ -17,7 +17,7 @@ import org.wildstang.hardware.crio.outputs.WsDoubleSolenoid;
 import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 //import org.wildstang.framework.pid.inputs.DriveBaseSpeedPidInput;
 //import org.wildstang.framework.pid.outputs.DriveBaseSpeedPidOutput;
-import org.wildstang.yearly.robot.RobotTemplate;
+import org.wildstang.yearly.robot.Robot;
 import org.wildstang.yearly.robot.WSInputs;
 import org.wildstang.yearly.robot.WSOutputs;
 import org.wildstang.yearly.robot.WsDriveBaseSpeedPidInput;
@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DriveBase implements Subsystem
 {
 
-   private static Logger s_log = Logger.getLogger(RobotTemplate.class.getName());
+   private static Logger s_log = Logger.getLogger(Robot.class.getName());
 
    double throttleValue = 0.0;
    double headingValue = 0.0;

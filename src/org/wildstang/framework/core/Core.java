@@ -96,7 +96,9 @@ public class Core
          {
             s_log.fine("Creating output for " + output.getName());
          }
-
+         // FIXME variable names are confusing in this function, as are types. out is an Output. output, however, is an
+         // Outputs. an Outputs is a configuration constant, but an Output is a class that does work at runtime.
+         // Neither should be confused with an OutputConfig, which is a different beast altogether.
          // Check if it is digital or analog, to create the correct type
          out = s_outputFactory.createOutput(output);
 

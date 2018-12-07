@@ -61,7 +61,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
-public class RobotTemplate extends IterativeRobot
+public class Robot extends IterativeRobot
 {
 
    private static long lastCycleTime = 0;
@@ -69,7 +69,7 @@ public class RobotTemplate extends IterativeRobot
    //private static Image frame;
    private StateLogger m_stateLogger = null;
    private Core m_core = null;
-   private static Logger s_log = Logger.getLogger(RobotTemplate.class.getName());
+   private static Logger s_log = Logger.getLogger(Robot.class.getName());
    
    private boolean exceptionThrown = false;
    
@@ -318,9 +318,6 @@ public class RobotTemplate extends IterativeRobot
       }
    }
 
-   /**
-    * This function is called periodically during operator control
-    */
    public void teleopInit()
    {
       // Remove the AutoManager from the Core
@@ -334,7 +331,10 @@ public class RobotTemplate extends IterativeRobot
 
       periodTimer.startTimingSection();
    }
-
+   
+   /**
+    * This function is called periodically during operator control
+    */
    public void teleopPeriodic()
    {
       if (firstRun)
