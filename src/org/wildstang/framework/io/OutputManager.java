@@ -13,6 +13,9 @@ import org.wildstang.framework.CoreUtils;
  * @author Steve
  *
  */
+
+/* TODO: this is an interface with one inhabitant. Collapse interface and inhabitant. */
+
 public class OutputManager implements IOutputManager
 {
    private static Logger s_log = Logger.getLogger(OutputManager.class.getName());

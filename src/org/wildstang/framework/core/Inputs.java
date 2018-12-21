@@ -3,6 +3,7 @@ package org.wildstang.framework.core;
 import org.wildstang.framework.hardware.InputConfig;
 import org.wildstang.framework.io.inputs.InputType;
 
+/* FIXME rename all this */
 public interface Inputs
 {
 

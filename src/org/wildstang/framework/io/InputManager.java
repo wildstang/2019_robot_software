@@ -46,6 +46,7 @@ public class InputManager implements IInputManager
       // Iterate over all inputs and update each one
       for (Input in : m_inputs.values())
       {
+    	  /* FIXME: everything in this block should be factored into Input */
          if (in.isEnabled())
          {
             if (s_log.isLoggable(Level.FINEST))

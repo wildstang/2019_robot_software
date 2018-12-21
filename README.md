@@ -1,5 +1,5 @@
-# `2019_robot_software`
-Java code to run the 2019 robot. Based on `2018_fall_refactor` repo which is based on a merge of core framework and previous years' code. This repo DOES NOT DEPEND on the `core_framework` repo.
+# `2018_fall_refactor`
+Based on a merge of core framework and previous years' code. This repo DOES NOT DEPEND on the `core_framework` repo.
 
 
 ## Getting Started
@@ -35,7 +35,7 @@ In addition to making all configuration changes recommended in the instructions 
 
 -   Clone the repository in Eclipse:
 
-    -   Copy this URL to your clipboard: `git@github.com:wildstang/2019_robot_software.git`.
+    -   Copy this URL to your clipboard: `git@github.com:wildstang/2018_fall_refactor.git`.
 
     -   Open the git perspective in Eclipse (*Window -> Perspective -> Open Perspective -> Other...*)
 
@@ -44,7 +44,7 @@ In addition to making all configuration changes recommended in the instructions 
     -   *FIXME this step doesn't work without setting up the SSH key with github!* Eclipse will fill in repository details automatically. Click next. On the next dialog click next again. On the next dialog there should be a checkbox to have Eclipse import the project for you automatically; check that box.
 
 
--   Once the project is imported from your local git working tree, return to the Java perspective. Right click on the `2019_robot_software` project and select *Run as -> WPILib Java Deploy*. It should successfully build and then fail to deploy the code to the robot. If the project does not build for you, please post details in the software channel of the slack or otherwise get help from a software mentor so we can figure out why it doesn't work for some people.
+-   Once the project is imported from your local git working tree, return to the Java perspective. Right click on the `2018_fall_refactor` project and select *Run as -> WPILib Java Deploy*. It should successfully build and then fail to deploy the code to the robot. If the project does not build for you, please post details in the software channel of the slack or otherwise get help from a software mentor so we can figure out why it doesn't work for some people.
 
 
 -   If you want help understanding what's going on in the code, you can select "Generate JavaDoc" from the Project menu at the top of Eclipse's window. Most of that is not useful as of this writing but we'll work on it.

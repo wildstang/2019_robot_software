@@ -59,12 +59,13 @@ public class Core
       init();
    }
 
+   /* FIXME Static initialization tied to instance initialization. Lifecycle all confused. */
    private void init()
    {
       s_inputManager = new InputManager();
       s_inputManager.init();
 
-      s_outputManager = new OutputManager();
+      s_outputManager = new OutputManager();  /* FIXME no point in IOutputManager interface if the implementation class is baked in anyway */
       s_outputManager.init();
 
       s_subsystemManager = new SubsystemManager();
