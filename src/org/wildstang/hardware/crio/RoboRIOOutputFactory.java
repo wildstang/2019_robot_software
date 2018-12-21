@@ -29,6 +29,10 @@ import org.wildstang.hardware.crio.outputs.config.WsServoConfig;
 import org.wildstang.hardware.crio.outputs.config.WsTalonConfig;
 import org.wildstang.hardware.crio.outputs.config.WsVictorConfig;
 
+/*
+ * TODO: This factory seems unnecessary; it contains no configuration data.
+ * We can probably get rid of it. 
+ */
 public class RoboRIOOutputFactory implements OutputFactory
 {
 
