@@ -12,56 +12,59 @@ public class WsMotionProfileControl extends DigitalInput {
     private boolean resetKinematics = false;
 
     public WsMotionProfileControl(String p_name) {
-	super(p_name);
-	profileEnabled = false;
-	resetKinematics = false;
+        super(p_name);
+        profileEnabled = false;
+        resetKinematics = false;
     }
 
     @Override
     protected boolean readRawValue() {
-	/* Nothing to do here. */
-	return false;
+        /* Nothing to do here. */
+        return false;
     }
 
     @Override
     public void readDataFromInput() {
-	/* Nothing to read here. */
+        /* Nothing to read here. */
     }
 
-    
     public void setProfileEnabled(boolean p_newValue) {
-	if (s_log.isLoggable(Level.FINER))
-	    s_log.entering(s_className, "setProfileEnabled");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "setProfileEnabled");
+        }
 
-	profileEnabled = p_newValue;
+        profileEnabled = p_newValue;
 
-	logCurrentState();
+        logCurrentState();
 
-	notifyListeners();
+        notifyListeners();
 
-	if (s_log.isLoggable(Level.FINER))
-	    s_log.exiting(s_className, "setProfileEnabled");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "setProfileEnabled");
+        }
     }
 
     public void setResetKinematics(boolean p_newValue) {
-	if (s_log.isLoggable(Level.FINER))
-	    s_log.entering(s_className, "setResetKinematics");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "setResetKinematics");
+        }
 
-	resetKinematics = p_newValue;
+        resetKinematics = p_newValue;
 
-	logCurrentState();
+        logCurrentState();
 
-	notifyListeners();
+        notifyListeners();
 
-	if (s_log.isLoggable(Level.FINER))
-	    s_log.exiting(s_className, "setResetKinematics");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "setResetKinematics");
+        }
     }
 
     public boolean getProfileEnabled() {
-	return profileEnabled;
+        return profileEnabled;
     }
 
     public boolean getResetKinematics() {
-	return resetKinematics;
+        return resetKinematics;
     }
 }

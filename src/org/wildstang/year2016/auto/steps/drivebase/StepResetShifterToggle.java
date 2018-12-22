@@ -13,28 +13,23 @@ import org.wildstang.year2016.robot.WSInputs;
  *
  * @author Billy
  */
-public class StepResetShifterToggle extends AutoStep
-{
+public class StepResetShifterToggle extends AutoStep {
 
-   public StepResetShifterToggle()
-   {
-   }
+    public StepResetShifterToggle() {
+    }
 
-   @Override
-   public void initialize()
-   {
-   }
+    @Override
+    public void initialize() {
+    }
 
-   @Override
-   public void update()
-   {
-      ((DigitalInput)Core.getInputManager().getInput(WSInputs.DRV_BUTTON_7.getName())).setValue(false);
-   }
+    @Override
+    public void update() {
+        ((DigitalInput) Core.getInputManager().getInput(WSInputs.DRV_BUTTON_7.getName())).setValue(false);
+    }
 
-   @Override
-   public String toString()
-   {
-      return "Shifter toggle reset";
-   }
+    @Override
+    public String toString() {
+        return "Shifter toggle reset";
+    }
 
 }

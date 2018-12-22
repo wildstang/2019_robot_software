@@ -8,8 +8,6 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.framework.pid.output.IPidOutput;
 import org.wildstang.year2016.subsystems.DriveBase;
 
-
-
 /**
  *
  * @author Nathan
@@ -17,10 +15,12 @@ import org.wildstang.year2016.subsystems.DriveBase;
 public class WsDriveBaseSpeedPidOutput implements IPidOutput {
 
     public WsDriveBaseSpeedPidOutput() {
-        //Nothing to do here
+        // Nothing to do here
     }
 
+    @Override
     public void pidWrite(double output) {
-       ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setPidSpeedValue(output);
+        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                .setPidSpeedValue(output);
     }
 }

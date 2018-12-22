@@ -3,86 +3,87 @@ package org.wildstang.framework.io.inputs;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class I2CInput extends AbstractInput
-{
-   private static Logger s_log = Logger.getLogger(I2CInput.class.getName());
-   private static final String s_className = "I2CInput";
+public abstract class I2CInput extends AbstractInput {
+    private static Logger s_log = Logger.getLogger(I2CInput.class.getName());
+    private static final String s_className = "I2CInput";
 
-   private byte[] m_currentValue;
+    private byte[] m_currentValue;
 
-   public I2CInput(String p_name)
-   {
-      super(p_name);
-   }
+    public I2CInput(String p_name) {
+        super(p_name);
+    }
 
-   @Override
-   protected void readDataFromInput()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "readDataFromInput");
+    @Override
+    protected void readDataFromInput() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "readDataFromInput");
+        }
 
-      byte[] newValue = readRawValue();
+        byte[] newValue = readRawValue();
 
-      setNewValue(newValue);
+        setNewValue(newValue);
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "readDataFromInput");
-   }
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "readDataFromInput");
+        }
+    }
 
-   public void setValue(byte[] p_newValue)
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "setValue");
+    public void setValue(byte[] p_newValue) {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "setValue");
+        }
 
-      setNewValue(p_newValue);
-      
-      logCurrentState();
-      
-      notifyListeners();
+        setNewValue(p_newValue);
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "setValue");
-   }
+        logCurrentState();
 
-   private void setNewValue(byte[] p_newValue)
-   {
-      // Only update if the value has changed
-      // NOTE: For analog inputs, it is possible to change often due to noise
-      // or sensitive sensors. May want to implement a tolerance/sensitivity
-      // on value changes
-      if (s_log.isLoggable(Level.FINEST))
-      {
-         s_log.finest("Current value = " + m_currentValue + " : New value = " + p_newValue);
-      }
+        notifyListeners();
 
-      if (p_newValue != m_currentValue)
-      {
-         m_currentValue = p_newValue;
-         setValueChanged(true);
-      }
-      else
-      {
-         setValueChanged(false);
-      }
-   }
-   
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "setValue");
+        }
+    }
 
-   /**
-    * This method reads the raw value from the underlying hardware. This should
-    * be implemented by each individual input subclass.
-    * 
-    * @return
-    */
-   protected abstract byte[] readRawValue();
-   
-   public byte[] getValue()
-   {
-      return m_currentValue;
-   }
+    private void setNewValue(byte[] p_newValue) {
+        // Only update if the value has changed
+        // NOTE: For analog inputs, it is possible to change often due to noise
+        // or sensitive sensors. May want to implement a tolerance/sensitivity
+        // on value changes
+        if (s_log.isLoggable(Level.FINEST)) {
+            s_log.finest("Current value = " + m_currentValue + " : New value = " + p_newValue);
+        }
 
-   @Override
-   protected void logCurrentStateInternal()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "logCurrentState");
+        if (p_newValue != m_currentValue) {
+            m_currentValue = p_newValue;
+            setValueChanged(true);
+        } else {
+            setValueChanged(false);
+        }
+    }
 
-//      getStateTracker().addState(getName(), getParent() == null ? getName() : getParent().getName(), getValue());
-      
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "logCurrentState");
-   }
+    /**
+     * This method reads the raw value from the underlying hardware. This should be
+     * implemented by each individual input subclass.
+     *
+     * @return
+     */
+    protected abstract byte[] readRawValue();
+
+    public byte[] getValue() {
+        return m_currentValue;
+    }
+
+    @Override
+    protected void logCurrentStateInternal() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "logCurrentState");
+        }
+
+        // getStateTracker().addState(getName(), getParent() == null ? getName() :
+        // getParent().getName(), getValue());
+
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "logCurrentState");
+        }
+    }
 }

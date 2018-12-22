@@ -11,25 +11,21 @@ import edu.wpi.first.wpilibj.Servo;
 /**
  *
  */
-public class WsServo extends AnalogOutput
-{
+public class WsServo extends AnalogOutput {
 
-   Servo servo;
+    Servo servo;
 
-   public WsServo(String name, int channel, double p_default)
-   {
-      super(name, p_default);
+    public WsServo(String name, int channel, double p_default) {
+        super(name, p_default);
 
-      this.servo = new Servo(channel);
-   }
+        this.servo = new Servo(channel);
+    }
 
+    @Override
+    public void sendDataToOutput() {
+        servo.setAngle(getValue());
+    }
 
-   public void sendDataToOutput()
-   {
-      servo.setAngle(getValue());
-   }
-
-   public void notifyConfigChange()
-   {
-   }
+    public void notifyConfigChange() {
+    }
 }

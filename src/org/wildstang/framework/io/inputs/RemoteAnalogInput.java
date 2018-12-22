@@ -5,22 +5,20 @@ import edu.wpi.first.wpilibj.networktables.NetworkTable;
 /**
  *
  */
-public class RemoteAnalogInput extends AnalogInput
-{
+public class RemoteAnalogInput extends AnalogInput {
 
-   NetworkTable remoteIOTable;
+    NetworkTable remoteIOTable;
 
-   public RemoteAnalogInput(String p_name, String p_networkTbl)
-   {
-      super(p_name);
-      remoteIOTable = NetworkTable.getTable(p_networkTbl);
-   }
+    public RemoteAnalogInput(String p_name, String p_networkTbl) {
+        super(p_name);
+        remoteIOTable = NetworkTable.getTable(p_networkTbl);
+    }
 
-   public double readRawValue()
-   {
-      // System.out.println("Getting: " + getName() + " From "
-      // + remoteIOTable.toString());
-      return remoteIOTable.getNumber(getName(), 0);
-   }
+    @Override
+    public double readRawValue() {
+        // System.out.println("Getting: " + getName() + " From "
+        // + remoteIOTable.toString());
+        return remoteIOTable.getNumber(getName(), 0);
+    }
 
 }

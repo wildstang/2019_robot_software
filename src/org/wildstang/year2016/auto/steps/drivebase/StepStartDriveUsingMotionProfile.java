@@ -5,50 +5,43 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.year2016.robot.WSSubsystems;
 import org.wildstang.year2016.subsystems.DriveBase;
 
-public class StepStartDriveUsingMotionProfile extends AutoStep
-{
+public class StepStartDriveUsingMotionProfile extends AutoStep {
 
-   
+    private static final long MILLIS_TO_REVERSE = 200;
 
-   private static final long MILLIS_TO_REVERSE = 200;
+    private double distance;
+    private double speed;
+    private boolean hasReachedTarget = false;
+    private long timeWhenTargetReached;
+    private boolean shouldHardStop;
 
-   private double distance;
-   private double speed;
-   private boolean hasReachedTarget = false;
-   private long timeWhenTargetReached;
-   private boolean shouldHardStop;
+    private DriveBase driveBase;
 
-   private DriveBase driveBase;
+    public StepStartDriveUsingMotionProfile(double distanceInInches, double speed) {
+        this.distance = distanceInInches;
+        this.speed = Math.abs(speed);
 
-   public StepStartDriveUsingMotionProfile(double distanceInInches, double speed)
-   {
-      this.distance = distanceInInches;
-      this.speed = Math.abs(speed);
-      
-   }
+    }
 
-   @Override
-   public void initialize()
-   {
-      driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
-      driveBase.resetLeftEncoder();
-      driveBase.resetRightEncoder();
-      //((WsMotionProfileControl)Core.getInputManager().getInput(WSInputs.MOTION_PROFILE_CONTROL.getName())).setProfileEnabled(true);
+    @Override
+    public void initialize() {
+        driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
+        driveBase.resetLeftEncoder();
+        driveBase.resetRightEncoder();
+        // ((WsMotionProfileControl)Core.getInputManager().getInput(WSInputs.MOTION_PROFILE_CONTROL.getName())).setProfileEnabled(true);
 
-      driveBase.startStraightMoveWithMotionProfile(this.distance, this.speed);
-      setFinished(true);
-   }
+        driveBase.startStraightMoveWithMotionProfile(this.distance, this.speed);
+        setFinished(true);
+    }
 
-   @Override
-   public void update()
-   {
-     
-   }
+    @Override
+    public void update() {
 
-   @Override
-   public String toString()
-   {
-      return "Start Motion Profile Drive";
-   }
+    }
+
+    @Override
+    public String toString() {
+        return "Start Motion Profile Drive";
+    }
 
 }

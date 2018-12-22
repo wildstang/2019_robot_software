@@ -10,5 +10,5 @@ package org.wildstang.framework.pid.output;
  */
 public interface IPidOutput {
 
-	public void pidWrite(double output);
+    public void pidWrite(double output);
 }

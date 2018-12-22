@@ -5,35 +5,30 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.year2016.robot.WSSubsystems;
 import org.wildstang.year2016.subsystems.DriveBase;
 
-public class StepStopDriveUsingMotionProfile extends AutoStep
-{
+public class StepStopDriveUsingMotionProfile extends AutoStep {
 
-   private DriveBase driveBase;
+    private DriveBase driveBase;
 
-   public StepStopDriveUsingMotionProfile()
-   {
-      
-   }
+    public StepStopDriveUsingMotionProfile() {
 
-   @Override
-   public void initialize()
-   {
-      driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
-      
-      driveBase.stopStraightMoveWithMotionProfile();
-      setFinished(true);
-   }
+    }
 
-   @Override
-   public void update()
-   {
-     
-   }
+    @Override
+    public void initialize() {
+        driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
 
-   @Override
-   public String toString()
-   {
-      return "Stop Motion Profile Drive";
-   }
+        driveBase.stopStraightMoveWithMotionProfile();
+        setFinished(true);
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public String toString() {
+        return "Stop Motion Profile Drive";
+    }
 
 }

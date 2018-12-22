@@ -9,30 +9,27 @@ import org.wildstang.year2016.auto.steps.shooter.StepSetShooterPosition;
 import org.wildstang.year2016.auto.steps.shooter.StepShoot;
 import org.wildstang.year2016.subsystems.Shooter;
 
-public class CornerShot extends AutoProgram
-{
+public class CornerShot extends AutoProgram {
 
-   @Override
-   protected void defineSteps()
-   {
-      // TODO Auto-generated method stub
-      //wait for flywheel to get to speed, then shoot
-      // Medium flywheel speed.
-      addStep(new StepRunFlywheel(Shooter.FLYWHEEL_SPEED_LOW));
-      addStep(new StepSetShooterPosition(true));
-      addStep(new StepResetShooterPositionToggle());
-      addStep(new AutoStepDelay(2000));
-      addStep(new StepShoot());
-      addStep(new AutoStepDelay(1000));
-      addStep(new StepResetShotToggle());
-      addStep(new StepRunFlywheel(Shooter.FLYWHEEL_SPEED_ZERO));
-   }
+    @Override
+    protected void defineSteps() {
+        // TODO Auto-generated method stub
+        // wait for flywheel to get to speed, then shoot
+        // Medium flywheel speed.
+        addStep(new StepRunFlywheel(Shooter.FLYWHEEL_SPEED_LOW));
+        addStep(new StepSetShooterPosition(true));
+        addStep(new StepResetShooterPositionToggle());
+        addStep(new AutoStepDelay(2000));
+        addStep(new StepShoot());
+        addStep(new AutoStepDelay(1000));
+        addStep(new StepResetShotToggle());
+        addStep(new StepRunFlywheel(Shooter.FLYWHEEL_SPEED_ZERO));
+    }
 
-   @Override
-   public String toString()
-   {
-      // TODO Auto-generated method stub
-      return "Corner Shot";
-   }
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return "Corner Shot";
+    }
 
 }

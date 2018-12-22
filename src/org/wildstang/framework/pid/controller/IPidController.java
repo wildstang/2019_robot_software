@@ -5,66 +5,66 @@ package org.wildstang.framework.pid.controller;
  * @author Nathan
  */
 public interface IPidController {
-	// Accessor methods
+    // Accessor methods
 
-	public double getP();
+    public double getP();
 
-	public double getI();
+    public double getI();
 
-	public double getD();
+    public double getD();
 
-	public double getEpsilon();
+    public double getEpsilon();
 
-	public double getStaticEpsilon();
+    public double getStaticEpsilon();
 
-	public void setConstants(double p, double i, double d);
+    public void setConstants(double p, double i, double d);
 
-	public void setStaticEpsilon(double epsilon);
+    public void setStaticEpsilon(double epsilon);
 
-	public void setErrorEpsilon(double epsilon);
+    public void setErrorEpsilon(double epsilon);
 
-	public void setErrorIncrementPercentage(double inc);
+    public void setErrorIncrementPercentage(double inc);
 
-	public void setMinMaxOutput(double min, double max);
+    public void setMinMaxOutput(double min, double max);
 
-	public void setMinMaxInput(double min, double max);
+    public void setMinMaxInput(double min, double max);
 
-	public void setMaxIntegral(double max);
+    public void setMaxIntegral(double max);
 
-	public void setIntegralErrorThresh(double thresh);
+    public void setIntegralErrorThresh(double thresh);
 
-	public double getIntegralErrorThresh();
+    public double getIntegralErrorThresh();
 
-	public void setMinStabilizationTime(double time);
+    public void setMinStabilizationTime(double time);
 
-	public void setSetPoint(double set_point);
+    public void setSetPoint(double set_point);
 
-	public double getSetPoint();
+    public double getSetPoint();
 
-	public void setDifferentiatorBandLimit(double band_limit);
+    public void setDifferentiatorBandLimit(double band_limit);
 
-	public double getDifferentiatorBandLimit();
+    public double getDifferentiatorBandLimit();
 
-	public PidStateType getState();
+    public PidStateType getState();
 
-	// Behavioral methods
-	public void resetErrorSum();
+    // Behavioral methods
+    public void resetErrorSum();
 
-	public void calcPid();
+    public void calcPid();
 
-	public boolean isOnTarget();
+    public boolean isOnTarget();
 
-	public boolean isStabilized();
+    public boolean isStabilized();
 
-	public boolean isEnabled();
+    public boolean isEnabled();
 
-	// WPI PIDController-like functionality
-	public void enable();
+    // WPI PIDController-like functionality
+    public void enable();
 
-	public void disable();
+    public void disable();
 
-	public void reset();
+    public void reset();
 
-	// GetError
-	public double getError();
+    // GetError
+    public double getError();
 }

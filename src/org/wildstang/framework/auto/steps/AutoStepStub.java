@@ -10,10 +10,11 @@ package org.wildstang.framework.auto.steps;
  */
 public abstract class AutoStepStub extends AutoStep {
 
-	public AutoStepStub() {
-	}
+    public AutoStepStub() {
+    }
 
-	public final boolean isFinished() {
-		return true;
-	}
+    @Override
+    public final boolean isFinished() {
+        return true;
+    }
 }

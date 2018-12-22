@@ -1,6 +1,5 @@
 package org.wildstang.framework.hardware;
 
-public interface InputConfig
-{
+public interface InputConfig {
 
 }

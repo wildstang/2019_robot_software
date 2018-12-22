@@ -2,16 +2,14 @@ package org.wildstang.hardware.crio.inputs.config;
 
 import org.wildstang.framework.hardware.InputConfig;
 
-public class WsMotionProfileConfig implements InputConfig
-{
-   public WsMotionProfileConfig()
-   {
+public class WsMotionProfileConfig implements InputConfig {
+    public WsMotionProfileConfig() {
 
-   }
+    }
 
-   public String toString()
-   {
-      return "MotionProfileConfig";
-   }
+    @Override
+    public String toString() {
+        return "MotionProfileConfig";
+    }
 
 }

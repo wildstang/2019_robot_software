@@ -10,160 +10,150 @@ import org.wildstang.framework.core.Core;
 
 /**
  * This class in the manager for all outputs.
- * 
+ *
  * @author Steve
  *
  */
-public class SubsystemManager
-{
-   private static Logger s_log = Logger.getLogger(SubsystemManager.class.getName());
-   private static final String s_className = "SubsystemManager";
+public class SubsystemManager {
+    private static Logger s_log = Logger.getLogger(SubsystemManager.class.getName());
+    private static final String s_className = "SubsystemManager";
 
-   private ArrayList<Subsystem> m_subsystems = new ArrayList<Subsystem>();
-   private boolean s_initialised = false;
+    private ArrayList<Subsystem> m_subsystems = new ArrayList<Subsystem>();
+    private boolean s_initialised = false;
 
-   public SubsystemManager()
-   {
+    public SubsystemManager() {
 
-   }
+    }
 
-   public void init()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "init");
+    public void init() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "init");
+        }
 
-      if (!s_initialised)
-      {
-         s_initialised = true;
-      }
-      
-      for (Subsystem sub : m_subsystems)
-      {
-         if (s_log.isLoggable(Level.FINEST))
-         {
-            s_log.finest("Initializing Subsystem: " + sub.getName());
-         }
+        if (!s_initialised) {
+            s_initialised = true;
+        }
 
-         // Init all subsystems.
-         sub.init();
-      }
+        for (Subsystem sub : m_subsystems) {
+            if (s_log.isLoggable(Level.FINEST)) {
+                s_log.finest("Initializing Subsystem: " + sub.getName());
+            }
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "init");
-   }
+            // Init all subsystems.
+            sub.init();
+        }
 
-   /**
-    * Updates all outputs registered with the manager.
-    */
-   public void update()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "update");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "init");
+        }
+    }
 
-      // Iterate over all outputs and update each one
-      for (Subsystem sub : m_subsystems)
-      {
-         if (s_log.isLoggable(Level.FINEST))
-         {
-            s_log.finest("Updating Subsystem: " + sub.getName());
-         }
+    /**
+     * Updates all outputs registered with the manager.
+     */
+    public void update() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "update");
+        }
 
-         // Update the output - send value to output
-         sub.update();
-      }
+        // Iterate over all outputs and update each one
+        for (Subsystem sub : m_subsystems) {
+            if (s_log.isLoggable(Level.FINEST)) {
+                s_log.finest("Updating Subsystem: " + sub.getName());
+            }
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "update");
-   }
+            // Update the output - send value to output
+            sub.update();
+        }
 
-   
-   /**
-    * Updates all outputs registered with the manager.
-    */
-   public void resetState()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "resetState");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "update");
+        }
+    }
 
-      // Iterate over all outputs and update each one
-      for (Subsystem sub : m_subsystems)
-      {
-         if (s_log.isLoggable(Level.FINEST))
-         {
-            s_log.finest("Resetting Subsystem: " + sub.getName());
-         }
+    /**
+     * Updates all outputs registered with the manager.
+     */
+    public void resetState() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "resetState");
+        }
 
-         // Update the output - send value to output
-         sub.resetState();
-      }
+        // Iterate over all outputs and update each one
+        for (Subsystem sub : m_subsystems) {
+            if (s_log.isLoggable(Level.FINEST)) {
+                s_log.finest("Resetting Subsystem: " + sub.getName());
+            }
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "resetState");
-   }
-   
-   
-   public void addSubsystem(Subsystem p_subsystem)
-   {
-      CoreUtils.checkNotNull(p_subsystem, "p_subsystem is null");
+            // Update the output - send value to output
+            sub.resetState();
+        }
 
-      if (!m_subsystems.contains(p_subsystem))
-      {
-         m_subsystems.add(p_subsystem);
-      }
-   }
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "resetState");
+        }
+    }
 
-   public void removeSubsystem(Subsystem p_subsystem)
-   {
-      CoreUtils.checkNotNull(p_subsystem, "p_subsystem is null");
+    public void addSubsystem(Subsystem p_subsystem) {
+        CoreUtils.checkNotNull(p_subsystem, "p_subsystem is null");
 
-      if (s_log.isLoggable(Level.WARNING))
-      {
-         s_log.warning("Removing Subsystem " + p_subsystem.getName());
-      }
-      m_subsystems.remove(p_subsystem);
-   }
+        if (!m_subsystems.contains(p_subsystem)) {
+            m_subsystems.add(p_subsystem);
+        }
+    }
 
-   public Subsystem getSubsystem(String p_name)
-   {
-      CoreUtils.checkNotNull(p_name, "p_name is null");
+    public void removeSubsystem(Subsystem p_subsystem) {
+        CoreUtils.checkNotNull(p_subsystem, "p_subsystem is null");
 
-      Subsystem result = null;
+        if (s_log.isLoggable(Level.WARNING)) {
+            s_log.warning("Removing Subsystem " + p_subsystem.getName());
+        }
+        m_subsystems.remove(p_subsystem);
+    }
 
-      for (Subsystem sub : m_subsystems)
-      {
-         if (sub.getName().equals(p_name))
-         {
-            result = sub;
-         }
-      }
+    public Subsystem getSubsystem(String p_name) {
+        CoreUtils.checkNotNull(p_name, "p_name is null");
 
-      return result;
-   }
+        Subsystem result = null;
 
-   public List<Subsystem> getSubsystems()
-   {
-      return m_subsystems;
-   }
+        for (Subsystem sub : m_subsystems) {
+            if (sub.getName().equals(p_name)) {
+                result = sub;
+            }
+        }
 
-   public void selfTestAll()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "selfTestAll");
+        return result;
+    }
 
-      // Turn off state tracking
-      Core.getStateTracker().stopTrackingState();
+    public List<Subsystem> getSubsystems() {
+        return m_subsystems;
+    }
 
-      for (Subsystem s : m_subsystems)
-      {
-         s.selfTest();
-      }
+    public void selfTestAll() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "selfTestAll");
+        }
 
-      // Turn back on state tracking
-      Core.getStateTracker().startTrackingState();
+        // Turn off state tracking
+        Core.getStateTracker().stopTrackingState();
 
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "selfTestAll");
-   }
+        for (Subsystem s : m_subsystems) {
+            s.selfTest();
+        }
 
-   public void removeAll()
-   {
-      m_subsystems.clear();
-   }
+        // Turn back on state tracking
+        Core.getStateTracker().startTrackingState();
 
-   public int size()
-   {
-      return m_subsystems.size();
-   }
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "selfTestAll");
+        }
+    }
+
+    public void removeAll() {
+        m_subsystems.clear();
+    }
+
+    public int size() {
+        return m_subsystems.size();
+    }
 }

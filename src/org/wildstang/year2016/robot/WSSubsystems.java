@@ -7,43 +7,37 @@ import org.wildstang.year2016.subsystems.Intake;
 import org.wildstang.year2016.subsystems.Shooter;
 import org.wildstang.year2016.subsystems.Vision;
 
-public enum WSSubsystems implements Subsystems
-{
+public enum WSSubsystems implements Subsystems {
 
-   //DO NOT REMOVE THIS COMMENT.  DO NOT PLACE ANY ENUMERATION DEFINITIONS IN FRONT OF IT.
-   //This keeps the formatter from completely making the enumeration unreadable.
-   // @formatter::off
-//   MONITOR("Monitor", Monitor.class),
-   INTAKE("Intake", Intake.class),
-   SHOOTER("Shooter", Shooter.class),
-   CLIMBER("Climber", Climber.class),
-   DRIVE_BASE("Drive Base", DriveBase.class),
-   VISION("Vision", Vision.class);
-//   ENCODER_TEST("Encoder Test", EncoderTest.class);
-   
-   //DO NOT REMOVE THIS COMMENT.  DO NOT PLACE ANY ENUMERATION DEFINITIONS AFTER IT.
-   //This keeps the formatter from completely making the enumeration unreadable.
-   // @formatter::on
-   
-   private String m_name;
-   private Class m_class;
+    // MONITOR("Monitor", Monitor.class) {},
+    INTAKE("Intake", Intake.class) {
+    },
+    SHOOTER("Shooter", Shooter.class) {
+    },
+    CLIMBER("Climber", Climber.class) {
+    },
+    DRIVE_BASE("Drive Base", DriveBase.class) {
+    },
+    VISION("Vision", Vision.class) {
+    };
+    // ENCODER_TEST("Encoder Test", EncoderTest.class) {};
 
-   WSSubsystems(String p_name, Class p_class)
-   {
-      m_name = p_name;
-      m_class = p_class;
-   }
+    private String m_name;
+    private Class m_class;
 
-   @Override
-   public String getName()
-   {
-      return m_name;
-   }
+    WSSubsystems(String p_name, Class p_class) {
+        m_name = p_name;
+        m_class = p_class;
+    }
 
-   @Override
-   public Class getSubsystemClass()
-   {
-      return m_class;
-   }
+    @Override
+    public String getName() {
+        return m_name;
+    }
+
+    @Override
+    public Class getSubsystemClass() {
+        return m_class;
+    }
 
 }

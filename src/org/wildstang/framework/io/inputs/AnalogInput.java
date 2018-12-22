@@ -4,98 +4,97 @@ import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public abstract class AnalogInput extends AbstractInput
-{
+public abstract class AnalogInput extends AbstractInput {
 
-   private static Logger s_log = Logger.getLogger(AnalogInput.class.getName());
-   private static final String s_className = "AnalogInput";
+    private static Logger s_log = Logger.getLogger(AnalogInput.class.getName());
+    private static final String s_className = "AnalogInput";
 
-   private static final DecimalFormat s_format = new DecimalFormat("#.###");
-   
-   private double m_currentValue = 0.0d;
+    private static final DecimalFormat s_format = new DecimalFormat("#.###");
 
-   public AnalogInput(String p_name)
-   {
-      super(p_name);
-   }
+    private double m_currentValue = 0.0d;
 
-   public AnalogInput(String p_name, double p_default)
-   {
-      super(p_name);
-      m_currentValue = p_default;
-   }
+    public AnalogInput(String p_name) {
+        super(p_name);
+    }
 
-   @Override
-   protected void readDataFromInput()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "readDataFromInput");
+    public AnalogInput(String p_name, double p_default) {
+        super(p_name);
+        m_currentValue = p_default;
+    }
 
-      double newValue = readRawValue();
+    @Override
+    protected void readDataFromInput() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "readDataFromInput");
+        }
 
-      setNewValue(newValue);
+        double newValue = readRawValue();
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "readDataFromInput");
-   }
+        setNewValue(newValue);
 
-   public void setValue(double p_newValue)
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "setValue");
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "readDataFromInput");
+        }
+    }
 
-      setNewValue(p_newValue);
-      
-      logCurrentState();
-      
-      notifyListeners();
+    public void setValue(double p_newValue) {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "setValue");
+        }
 
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "setValue");
-   }
+        setNewValue(p_newValue);
 
-   private void setNewValue(double p_newValue)
-   {
-      // Only update if the value has changed
-      // NOTE: For analog inputs, it is possible to change often due to noise
-      // or sensitive sensors. May want to implement a tolerance/sensitivity
-      // on value changes
-      if (s_log.isLoggable(Level.FINEST))
-      {
-         s_log.finest("Current value = " + m_currentValue + " : New value = " + p_newValue);
-      }
+        logCurrentState();
 
-      if (p_newValue != m_currentValue)
-      {
-         m_currentValue = p_newValue;
-         setValueChanged(true);
-      }
-      else
-      {
-         setValueChanged(false);
-      }
-   }
-   
+        notifyListeners();
 
-   /**
-    * This method reads the raw value from the underlying hardware. This should
-    * be implemented by each individual input subclass.
-    * 
-    * @return
-    */
-   protected abstract double readRawValue();
-   
-   public double getValue()
-   {
-      return m_currentValue;
-   }
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "setValue");
+        }
+    }
 
-   @Override
-   protected void logCurrentStateInternal()
-   {
-      if (s_log.isLoggable(Level.FINER)) s_log.entering(s_className, "logCurrentState");
+    private void setNewValue(double p_newValue) {
+        // Only update if the value has changed
+        // NOTE: For analog inputs, it is possible to change often due to noise
+        // or sensitive sensors. May want to implement a tolerance/sensitivity
+        // on value changes
+        if (s_log.isLoggable(Level.FINEST)) {
+            s_log.finest("Current value = " + m_currentValue + " : New value = " + p_newValue);
+        }
 
-      getStateTracker().addState(getName(), getName(), s_format.format(getValue()));
-//      getStateTracker().addState(getName(), getParent() == null ? getName() : getParent().getName(), getValue());
-      
-      if (s_log.isLoggable(Level.FINER)) s_log.exiting(s_className, "logCurrentState");
-   }
- 
+        if (p_newValue != m_currentValue) {
+            m_currentValue = p_newValue;
+            setValueChanged(true);
+        } else {
+            setValueChanged(false);
+        }
+    }
+
+    /**
+     * This method reads the raw value from the underlying hardware. This should be
+     * implemented by each individual input subclass.
+     *
+     * @return
+     */
+    protected abstract double readRawValue();
+
+    public double getValue() {
+        return m_currentValue;
+    }
+
+    @Override
+    protected void logCurrentStateInternal() {
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.entering(s_className, "logCurrentState");
+        }
+
+        getStateTracker().addState(getName(), getName(), s_format.format(getValue()));
+        // getStateTracker().addState(getName(), getParent() == null ? getName() :
+        // getParent().getName(), getValue());
+
+        if (s_log.isLoggable(Level.FINER)) {
+            s_log.exiting(s_className, "logCurrentState");
+        }
+    }
 
 }

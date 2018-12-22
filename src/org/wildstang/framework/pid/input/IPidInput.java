@@ -7,8 +7,7 @@ package org.wildstang.framework.pid.input;
 /**
  *
  */
-public interface IPidInput
-{
+public interface IPidInput {
 
-   public double pidRead();
+    public double pidRead();
 }

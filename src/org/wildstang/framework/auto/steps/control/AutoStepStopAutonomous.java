@@ -12,22 +12,25 @@ import org.wildstang.framework.auto.steps.AutoStep;
  */
 public class AutoStepStopAutonomous extends AutoStep {
 
-	public AutoStepStopAutonomous() {
-		// Do nothing. This step does nothing, and never finishes, effectively
-		// halting autonomous operations.
-		// Note: If included in a parallel step group, it only halts operations
-		// after all other steps in the group finish.
-	}
+    public AutoStepStopAutonomous() {
+        // Do nothing. This step does nothing, and never finishes, effectively
+        // halting autonomous operations.
+        // Note: If included in a parallel step group, it only halts operations
+        // after all other steps in the group finish.
+    }
 
-	public void initialize() {
-		// Do nothing.
-	}
+    @Override
+    public void initialize() {
+        // Do nothing.
+    }
 
-	public void update() {
-		// Do nothing.
-	}
+    @Override
+    public void update() {
+        // Do nothing.
+    }
 
-	public String toString() {
-		return "Stop auto-op";
-	}
+    @Override
+    public String toString() {
+        return "Stop auto-op";
+    }
 }

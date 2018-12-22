@@ -5,13 +5,12 @@ import org.wildstang.framework.io.Output;
 
 /**
  * Creates Output objects attached to a specified port, and of a specified type.
- * 
+ *
  * @author Steve
  *
  */
-public interface OutputFactory
-{
-   public void init();
-   
-   public Output createOutput(Outputs p_output);
+public interface OutputFactory {
+    public void init();
+
+    public Output createOutput(Outputs p_output);
 }
