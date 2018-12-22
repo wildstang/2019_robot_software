@@ -18,7 +18,7 @@ public class SubsystemManager {
     private static Logger s_log = Logger.getLogger(SubsystemManager.class.getName());
     private static final String s_className = "SubsystemManager";
 
-    private ArrayList<Subsystem> m_subsystems = new ArrayList<Subsystem>();
+    private ArrayList<Subsystem> m_subsystems = new ArrayList<>();
     private boolean s_initialised = false;
 
     public SubsystemManager() {

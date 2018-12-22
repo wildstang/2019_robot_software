@@ -6,25 +6,22 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
 
 public class SocketWorker implements Runnable {
     private final String BOUNDARY = "~EOF~";
     private final int SEND_BUFF_SIZE = 8000;
-    int FPS = WsMJPEGstreamer.FPS;
-    OutputStream out;
-    InputStream in;
+    private int FPS = WsMJPEGstreamer.FPS;
+    private OutputStream out;
+    private InputStream in;
     private Socket socket;
     private WsMJPEGstreamer ims;
     private int counter;
-    private ExecutorService executorService;
-    BlockingQueue<byte[]> IMAGES = new ArrayBlockingQueue<>(100);
+    private BlockingQueue<byte[]> IMAGES = new ArrayBlockingQueue<>(100);
 
     public SocketWorker(int counter, Socket socket, WsMJPEGstreamer ims) {
         this.counter = counter;
         this.socket = socket;
         this.ims = ims;
-        this.executorService = executorService;
         try {
             out = socket.getOutputStream();
             socket.setSendBufferSize(SEND_BUFF_SIZE);
@@ -52,7 +49,7 @@ public class SocketWorker implements Runnable {
                 if (imageBytes != null) {
                     out.write(
                             ("Content-type: image/jpeg\r\n" + "Content-Length: " + imageBytes.length + "\r\n" + "\r\n")
-                                    .getBytes());
+                            .getBytes());
                     out.write(imageBytes);
                     out.write(("\r\n--" + BOUNDARY + "\r\n").getBytes());
                     out.flush();

@@ -27,7 +27,6 @@ public class Climber implements Subsystem {
     private boolean winchMoved = false;
 
     private int startDelay = 0;
-    private int stopDelay = 0;
     private double previousWinch;
     private boolean brakeDelay;
     private double brakeTimer;
@@ -51,9 +50,6 @@ public class Climber implements Subsystem {
     private static final double WINCH_SPEED_DEADBAND = 0.1;
 
     private double winchEndTime;
-    private boolean winchLimit;
-    private boolean canEngageBrakes;
-
     private WsSolenoid leftBrake;
     private WsSolenoid rightBrake;
     private WsSolenoid hooks;
@@ -67,7 +63,6 @@ public class Climber implements Subsystem {
             if (((DigitalInput) source).getValue()
                     && ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).isDeployed()) {
                 armsDeploying = true;
-                canEngageBrakes = false;
                 winchEndTime = Timer.getFPGATimestamp() + armHelpRunTime;
             }
         } else if (source.getName().equals(WSInputs.MAN_RIGHT_JOYSTICK_Y.getName())) {
@@ -94,7 +89,6 @@ public class Climber implements Subsystem {
         armsDeployed = false;
         armsDeploying = false;
         joystickWinchSpeed = 0;
-        canEngageBrakes = true;
         winchSpeed = 0;
         Core.getInputManager().getInput(WSInputs.MAN_RIGHT_JOYSTICK_Y.getName()).addInputListener(this);
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_1.getName()).addInputListener(this);

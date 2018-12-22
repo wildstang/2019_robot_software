@@ -46,10 +46,7 @@ public class Intake implements Subsystem {
     private boolean deployPneumatic;
     private boolean manRollerInOverride;
     private boolean manNoseControl = false;
-    private boolean drvNoseControl = false;
     private boolean manDeployPneumaticControl = false;
-    private boolean intakeLimboNew;
-    private boolean intakeLimboOld;
     // private boolean limboOn = false;
     private boolean shoot;
     private WsDoubleSolenoid intakeDeploy;
@@ -65,9 +62,6 @@ public class Intake implements Subsystem {
 
     private double intakeSpeedIn;
     private double intakeSpeedOut;
-    private double temp;
-    private static final String intakeSpeedKey = ".intakeSpeedVictor";
-    private static final double INTAKE_DEFAULT = 1;
     private static final String intakeSpeedInKey = ".intakeSpeedIn";
     private static final double INTAKE_IN_DEFAULT = -1;
     private static final String intakeSpeedOutKey = ".intakeSpeedOut";

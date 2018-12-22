@@ -23,7 +23,7 @@ public class LowBarOneBall extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        AutoParallelStepGroup findGoal = new AutoParallelStepGroup();
+        new AutoParallelStepGroup();
         // TODO Auto-generated method stub
         addStep(new StepSetShifter(false));
         addStep(new StepSetShooterPosition(false));

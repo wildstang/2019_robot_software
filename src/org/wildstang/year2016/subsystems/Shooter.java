@@ -144,23 +144,23 @@ public class Shooter implements Subsystem, ConfigListener {
         case 0:
             flySpeed = 0;
             expectedRate = 0;
-        break;
+            break;
         case 1:
             flySpeed = LOW_DEFAULT;
             expectedRate = LOW_RATE_DEFAULT;
-        break;
+            break;
         case 2:
             flySpeed = MEDIUM_DEFAULT;
             expectedRate = MEDIUM_RATE_DEFAULT;
-        break;
+            break;
         case 3:
             flySpeed = HIGH_DEFAULT;
             expectedRate = HIGH_RATE_DEFAULT;
-        break;
+            break;
         default:
             flySpeed = MEDIUM_DEFAULT;
             expectedRate = MEDIUM_RATE_DEFAULT;
-        break;
+            break;
         }
 
         if (true == flyWheelToggle) {

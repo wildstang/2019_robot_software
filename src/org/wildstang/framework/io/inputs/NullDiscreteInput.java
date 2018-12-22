@@ -1,11 +1,6 @@
 package org.wildstang.framework.io.inputs;
 
-import java.util.logging.Logger;
-
 public class NullDiscreteInput extends DiscreteInput {
-
-    private static Logger s_log = Logger.getLogger(NullDiscreteInput.class.getName());
-    private static final String s_className = "NullDiscreteInput";
 
     public NullDiscreteInput(String p_name) {
         super(p_name);

@@ -15,7 +15,7 @@ import org.wildstang.framework.CoreUtils;
  */
 
 /*
- * TODO: this is an interface with one inhabitant. Collapse interface and
+ * TODO: this is only inhabitant of IOutputManager. Collapse interface and
  * inhabitant.
  */
 
@@ -23,7 +23,7 @@ public class OutputManager implements IOutputManager {
     private static Logger s_log = Logger.getLogger(OutputManager.class.getName());
     private static final String s_className = "OutputManager";
 
-    private HashMap<String, Output> m_outputs = new HashMap<String, Output>();
+    private HashMap<String, Output> m_outputs = new HashMap<>();
     private boolean s_initialised = false;
 
     public OutputManager() {
@@ -117,6 +117,6 @@ public class OutputManager implements IOutputManager {
 
     @Override
     public HashMap<String, Output> getHashMap() {
-        return (HashMap<String, Output>) m_outputs.clone();
+        return new HashMap<>(m_outputs);
     }
 }

@@ -44,10 +44,10 @@ public class Core {
 
     private AutoManager m_autoManager = null;
 
-    private Class m_inputFactoryClass;
-    private Class m_outputFactoryClass;
+    private Class<?> m_inputFactoryClass;
+    private Class<?> m_outputFactoryClass;
 
-    public Core(Class p_inputFactoryClass, Class p_outputFactoryClass) {
+    public Core(Class<?> p_inputFactoryClass, Class<?> p_outputFactoryClass) {
         CoreUtils.checkNotNull(p_inputFactoryClass, "p_inputFactoryClass is null");
         CoreUtils.checkNotNull(p_outputFactoryClass, "p_outputFactoryClass is null");
 
@@ -58,8 +58,8 @@ public class Core {
     }
 
     /*
-     * FIXME Static initialization tied to instance initialization. Lifecycle all
-     * confused.
+     * FIXME Static initialization tied to instance initialization. This can't be
+     * the right lifecycle.
      */
     private void init() {
         s_inputManager = new InputManager();
@@ -245,7 +245,7 @@ public class Core {
         return s_stateTracker;
     }
 
-    protected Object createObject(Class p_class) {
+    protected Object createObject(Class<?> p_class) {
         CoreUtils.checkNotNull(p_class, "p_class is null");
 
         Object obj = null;

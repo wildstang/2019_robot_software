@@ -6,7 +6,6 @@ import org.wildstang.year2016.auto.steps.drivebase.StepStopDriveUsingMotionProfi
 import org.wildstang.year2016.auto.steps.drivebase.StepWaitForDriveMotionProfile;
 
 public class MotionProfileTest extends AutoProgram {
-    private double speed;
     private double distance;
     private double heading;
 

@@ -12,7 +12,7 @@ public class StateTracker {
     private boolean s_initialised = false;
 
     private StateGroup m_currentState = null;
-    private ArrayList<StateGroup> m_stateList = new ArrayList<StateGroup>();
+    private ArrayList<StateGroup> m_stateList = new ArrayList<>();
     private IOSet m_ioSet = new IOSet();
 
     private boolean m_trackingState = true;
@@ -161,7 +161,7 @@ public class StateTracker {
         // thread
         synchronized (m_stateListLock) {
             prevList = m_stateList;
-            m_stateList = new ArrayList<StateGroup>();
+            m_stateList = new ArrayList<>();
         }
 
         return prevList;

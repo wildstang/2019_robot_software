@@ -16,7 +16,6 @@ import org.wildstang.year2016.auto.steps.shooter.StepResetShooterPositionToggle;
 import org.wildstang.year2016.auto.steps.shooter.StepSetShooterPosition;
 
 public class OneBallMoatRampartRightLow extends AutoProgram {
-    private double speed;
     private int defensePosition;
     // protected final double dist2 = 91.78;
     protected final double dist3 = 104;

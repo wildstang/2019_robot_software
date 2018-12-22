@@ -28,7 +28,7 @@ public class New2Ball extends AutoProgram {
         addStep(new StepRunFlywheel(Shooter.FLYWHEEL_SPEED_ZERO));
         AutoParallelStepGroup cross = new AutoParallelStepGroup();
         AutoSerialStepGroup manageIntake = new AutoSerialStepGroup();
-        AutoSerialStepGroup crossLow = new AutoSerialStepGroup();
+        new AutoSerialStepGroup();
         manageIntake.addStep(new StepResetShotToggle());
         manageIntake.addStep(new StepIntake(1));
         manageIntake.addStep(new AutoStepDelay(1000));

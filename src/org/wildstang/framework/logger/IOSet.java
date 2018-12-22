@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IOSet {
-    private ArrayList<IOInfo> m_infoList = new ArrayList<IOInfo>();
+    private ArrayList<IOInfo> m_infoList = new ArrayList<>();
 
     public IOSet() {
     }
@@ -15,7 +15,7 @@ public class IOSet {
     }
 
     public List<IOInfo> getInfoList() {
-        return new ArrayList<IOInfo>(m_infoList);
+        return new ArrayList<>(m_infoList);
     }
 
 }

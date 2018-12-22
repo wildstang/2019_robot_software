@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class StateGroup {
 
     private Date m_timestamp;
-    private HashMap<String, StateInfo> m_stateList = new HashMap<String, StateInfo>();
+    private HashMap<String, StateInfo> m_stateList = new HashMap<>();
 
     public StateGroup(Date p_timestamp) {
         m_timestamp = p_timestamp;

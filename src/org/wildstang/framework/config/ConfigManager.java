@@ -24,10 +24,9 @@ public class ConfigManager {
     private static Logger s_log = Logger.getLogger(ConfigManager.class.getName());
     private static final String s_className = "ConfigManager";
 
-    private ArrayList<ConfigListener> m_listeners = new ArrayList<ConfigListener>(5);
+    private ArrayList<ConfigListener> m_listeners = new ArrayList<>(5);
     private boolean m_initialised = false;
 
-    private String m_filename;
     private Config m_config;
 
     public ConfigManager() {
@@ -114,7 +113,7 @@ public class ConfigManager {
         }
 
         // Make a copy of the list so that callers are not working on the internal list
-        ArrayList<ConfigListener> copy = new ArrayList<ConfigListener>(m_listeners);
+        ArrayList<ConfigListener> copy = new ArrayList<>(m_listeners);
 
         if (s_log.isLoggable(Level.FINER)) {
             s_log.exiting(s_className, "getConfigListeners");

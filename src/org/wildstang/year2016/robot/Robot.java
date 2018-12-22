@@ -8,16 +8,11 @@ package org.wildstang.year2016.robot;
 /*----------------------------------------------------------------------------*/
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,8 +58,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-    private static long lastCycleTime = 0;
-    private static int session;
     private static Logger s_log = Logger.getLogger(Robot.class.getName());
     static boolean teleopPerodicCalled = false;
 
@@ -77,61 +70,6 @@ public class Robot extends IterativeRobot {
     private boolean AutoFirstRun = true;
 
     CameraServer server;
-
-    private void startloggingState() {
-        Writer outputWriter = null;
-
-        outputWriter = getFileWriter();
-        // outputWriter = getNetworkWriter("10.1.11.12", 17654);
-
-        m_stateLogger.setWriter(outputWriter);
-        m_stateLogger.start();
-        Thread t = new Thread(m_stateLogger);
-        t.start();
-    }
-
-    private Writer getNetworkWriter(String ipAddress, int port) {
-        BufferedWriter output = null;
-
-        try {
-            Socket socket = new Socket(ipAddress, port);
-            output = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        } catch (UnknownHostException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return output;
-    }
-
-    private FileWriter getFileWriter() {
-        FileWriter output = null;
-
-        try {
-            File outputFile;
-            String osname = System.getProperty("os.name");
-            if (osname.startsWith("Windows")) {
-                outputFile = new File("./../../log.txt");
-            } else if (osname.startsWith("Mac")) {
-                outputFile = new File("./../../log.txt");
-            } else {
-                outputFile = new File("/home/lvuser/log.txt");
-            }
-            if (outputFile.exists()) {
-                outputFile.delete();
-            }
-            outputFile.createNewFile();
-            output = new FileWriter(outputFile);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return output;
-    }
 
     @Override
     public void testInit() {
@@ -325,9 +263,7 @@ public class Robot extends IterativeRobot {
         try {
             teleopPerodicCalled = true;
 
-            long cycleStartTime = System.currentTimeMillis();
-            // System.out.println("Cycle separation time: " + (cycleStartTime -
-            // lastCycleTime));
+            System.currentTimeMillis();
 
             // Update all inputs, outputs and subsystems
             m_core.executeUpdate();
@@ -337,11 +273,7 @@ public class Robot extends IterativeRobot {
              * CameraServer.getInstance().setImage(frame); } catch(Exception e){}
              */
 
-            long cycleEndTime = System.currentTimeMillis();
-            long cycleLength = cycleEndTime - cycleStartTime;
-            // System.out.println("Cycle time: " + cycleLength);
-            lastCycleTime = cycleEndTime;
-            // Watchdog.getInstance().feed();
+            System.currentTimeMillis();
         } catch (Throwable e) {
             SmartDashboard.putString("Exception thrown", e.toString());
             exceptionThrown = true;

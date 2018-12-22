@@ -18,7 +18,7 @@ public class Config {
     private static Logger s_log = Logger.getLogger(Config.class.getName());
     private static final String s_className = "Config";
 
-    private HashMap<String, Object> m_configMap = new HashMap<String, Object>();
+    private HashMap<String, Object> m_configMap = new HashMap<>();
 
     public Config() {
     }

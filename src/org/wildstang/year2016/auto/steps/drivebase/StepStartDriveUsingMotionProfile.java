@@ -7,14 +7,8 @@ import org.wildstang.year2016.subsystems.DriveBase;
 
 public class StepStartDriveUsingMotionProfile extends AutoStep {
 
-    private static final long MILLIS_TO_REVERSE = 200;
-
     private double distance;
     private double speed;
-    private boolean hasReachedTarget = false;
-    private long timeWhenTargetReached;
-    private boolean shouldHardStop;
-
     private DriveBase driveBase;
 
     public StepStartDriveUsingMotionProfile(double distanceInInches, double speed) {

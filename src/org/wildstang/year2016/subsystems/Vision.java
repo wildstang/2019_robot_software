@@ -10,9 +10,6 @@ import org.wildstang.year2016.robot.WSInputs;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision implements Subsystem {
-    private final double WIDTH = 640;
-    private final double HEIGHT = 480;
-
     private final int CENTERED_LEFT = 290;
     private final int CENTERED_RIGHT = 330;
     private final int BOTTOM_LOW_MIN = 45;

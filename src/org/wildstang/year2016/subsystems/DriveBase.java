@@ -65,11 +65,9 @@ public class DriveBase implements Subsystem {
     private static double HELLA_ANTITURBO_FACTOR = 0.22;
     private static double driveBaseThrottleValue = 0.0;
     private static double driveBaseHeadingValue = 0.0;
-    private static double driveBaseStrafeValue = 0.0;
     private static boolean antiTurboFlag = false;
     private static boolean superAntiTurboFlag = false;
     private static boolean hellaAntiTurboFlag = false;
-    private static boolean strafeReverseDirectionFlag = false;
     private static boolean turboFlag = false;
     private static boolean highGearFlag = false; // default to low gear
     private static boolean quickTurnFlag = false;
@@ -90,8 +88,6 @@ public class DriveBase implements Subsystem {
     private double currentProfileA = 0.0;
     private static double FEED_FORWARD_VELOCITY_CONSTANT = 1.00;
     private static double FEED_FORWARD_ACCELERATION_CONSTANT = 0.00018;
-    private double totalPosition = 0.0;
-    private double previousPositionSinceLastReset = 0.0;
     private double previousRightPositionSinceLastReset = 0.0;
     private double previousLeftPositionSinceLastReset = 0.0;
     private static double pidSpeedValue = 0.0;
@@ -108,16 +104,13 @@ public class DriveBase implements Subsystem {
     private double currentAcceleration = 0.0;
     private double DECELERATION_VELOCITY_THRESHOLD = 48; // Velocity in in/sec
     private double DECELERATION_MOTOR_SPEED = 0.3;
-    private static boolean driveDistancePidEnabled = false;
     private static double outputScaleFactor = 1.0;
     private boolean isPistolGrip = false;
     private double leftIndividual = 0;
     private double rightIndividual = 0;
 
-    private double overriddenThrottle, overriddenHeading, overriddenStrafe;
+    private double overriddenThrottle, overriddenHeading;
     private boolean driveOverrideEnabled = false;
-
-    private boolean firstRun = true;
 
     private boolean AutoDriveOverride = false;
 
@@ -182,7 +175,7 @@ public class DriveBase implements Subsystem {
         resetRightEncoder();
 
         // Clear overrides
-        overriddenHeading = overriddenThrottle = overriddenStrafe = 0.0;
+        overriddenHeading = overriddenThrottle = 0.0;
         driveOverrideEnabled = false;
     }
 
@@ -303,7 +296,7 @@ public class DriveBase implements Subsystem {
 
     public void disableDriveOverride() {
         driveOverrideEnabled = false;
-        overriddenHeading = overriddenThrottle = overriddenStrafe = 0.0;
+        overriddenHeading = overriddenThrottle = 0.0;
     }
 
     private void updateSpeedAndAccelerationCalculations() {
@@ -325,7 +318,6 @@ public class DriveBase implements Subsystem {
         SmartDashboard.putNumber("Velocity: ", this.currentVelocity / 12.0);
         SmartDashboard.putNumber("Accel: ", this.currentAcceleration / 144.0);
 
-        totalPosition += deltaPosition;
         if (Math.abs(deltaPosition) > 0.005) {
             // Logger.getLogger().debug(this.getClass().getName(), "Kinematics",
             // "tP: "+ totalPosition + " dP: " + deltaPosition + "dpp:" +
@@ -333,7 +325,6 @@ public class DriveBase implements Subsystem {
             // currentVelocity + " pv: " + previousVelocity + " ca: " +
             // currentAcceleration);
         }
-        previousPositionSinceLastReset += deltaPosition;
         previousRightPositionSinceLastReset += rightDelta;
         previousLeftPositionSinceLastReset += leftDelta;
         previousTime = newTime;
@@ -342,7 +333,6 @@ public class DriveBase implements Subsystem {
     }
 
     public void resetKinematics() {
-        previousPositionSinceLastReset = 0.0;
         previousVelocity = 0.0;
         currentVelocity = 0.0;
         currentAcceleration = 0.0;

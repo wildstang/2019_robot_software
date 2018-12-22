@@ -74,9 +74,5 @@ public class WsI2COutput extends I2COutput {
             sendSize = size;
             dataToSend = true;
         }
-
-        public void stop() {
-            running = false;
-        }
     }
 }

@@ -24,7 +24,7 @@ public abstract class AbstractInput implements Input {
     private static Logger s_log = Logger.getLogger(AbstractInput.class.getName());
     private static final String s_className = "AbstractInput";
 
-    private ArrayList<InputListener> m_listeners = new ArrayList<InputListener>(5);
+    private ArrayList<InputListener> m_listeners = new ArrayList<>(5);
     private String m_name = "Undefined";
     private boolean m_valueChanged = false;
     private boolean m_enabled = true;
@@ -81,7 +81,7 @@ public abstract class AbstractInput implements Input {
         }
 
         // Make a copy of the list so that callers are not working on the internal list
-        ArrayList<InputListener> copy = new ArrayList<InputListener>(m_listeners);
+        ArrayList<InputListener> copy = new ArrayList<>(m_listeners);
 
         if (s_log.isLoggable(Level.FINER)) {
             s_log.exiting(s_className, "getInputListeners");

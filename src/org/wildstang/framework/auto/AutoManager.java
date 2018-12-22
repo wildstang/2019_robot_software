@@ -15,20 +15,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @author Nathan
  */
 public class AutoManager {
+    private static AutoManager instance = null;
+    private static Logger s_log = Logger.getLogger(AutoManager.class.getName());
 
-    private List<AutoProgram> programs = new ArrayList<AutoProgram>();
+    private List<AutoProgram> programs = new ArrayList<>();
     private AutoProgram runningProgram;
     private boolean programFinished, programRunning;
-    private static AutoManager instance = null;
     private AutoStartPositionEnum currentPosition;
-    private SendableChooser chooser;
-    private SendableChooser lockinChooser;
-    private static Logger s_log = Logger.getLogger(AutoManager.class.getName());
+    private SendableChooser<AutoProgram> chooser;
+    private SendableChooser<Boolean> lockinChooser;
 
     private AutoManager() {
         currentPosition = AutoStartPositionEnum.UNKNOWN;
-        chooser = new SendableChooser();
-        lockinChooser = new SendableChooser();
+        chooser = new SendableChooser<>();
+        lockinChooser = new SendableChooser<>();
         lockinChooser.addDefault("Unlocked", false);
         lockinChooser.addObject("Locked", true);
 
@@ -53,8 +53,8 @@ public class AutoManager {
     }
 
     public void startCurrentProgram() {
-        if ((Boolean) lockinChooser.getSelected()) {
-            runningProgram = (AutoProgram) chooser.getSelected();
+        if (lockinChooser.getSelected()) {
+            runningProgram = chooser.getSelected();
         } else {
             runningProgram = programs.get(0);
         }

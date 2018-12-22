@@ -13,12 +13,9 @@ public class IMUTest implements Subsystem {
     private byte[] HeadingBytes = new byte[2];
     private double CompassHeading;
 
-    private String m_name;
-
     WsI2CInput m_IMUInput;
 
     public IMUTest() {
-        m_name = "IMUTest";
     }
 
     @Override

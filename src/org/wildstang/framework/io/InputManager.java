@@ -17,7 +17,7 @@ public class InputManager implements IInputManager {
     private static Logger s_log = Logger.getLogger(InputManager.class.getName());
     private static final String s_className = "InputManager";
 
-    private HashMap<String, Input> m_inputs = new HashMap<String, Input>();
+    private HashMap<String, Input> m_inputs = new HashMap<>();
     private boolean s_initialised = false;
 
     public InputManager() {
@@ -116,6 +116,6 @@ public class InputManager implements IInputManager {
 
     @Override
     public HashMap<String, Input> getHashMap() {
-        return (HashMap<String, Input>) m_inputs.clone();
+        return new HashMap<>(m_inputs);
     }
 }
