@@ -43,6 +43,14 @@ public class ContinuousAccelFilter {
     protected double currVel;
     protected double currAcc;
 
+    private double dt2, a, const_time, dtf, af;
+
+    public ContinuousAccelFilter(double currPos, double currVel, double currAcc) {
+        this.currPos = currPos;
+        this.currVel = currVel;
+        this.currAcc = currAcc;
+    }
+
     public double getCurrPos() {
         return currPos;
     }
@@ -55,19 +63,11 @@ public class ContinuousAccelFilter {
         return currAcc;
     }
 
-    public ContinuousAccelFilter(double currPos, double currVel, double currAcc) {
-        this.currPos = currPos;
-        this.currVel = currVel;
-        this.currAcc = currAcc;
-    }
-
     public void updateValues(double acc, double dt) {
         currPos += currVel * dt + acc * .5 * dt * dt;
         currVel += acc * dt;
         currAcc = acc;
     }
-
-    private double dt2, a, const_time, dtf, af;
 
     public void calculateSystem(double distance_to_target, double v, double goal_v, double max_a, double max_v,
             double dt) {
@@ -133,7 +133,7 @@ public class ContinuousAccelFilter {
 
         double top_v = Math.sqrt(
                 (distance_left + (curr_vel * curr_vel) / (2.0 * start_a) + (goal_vel * goal_vel) / (2.0 * final_a))
-                        / (-1.0 / (2.0 * final_a) + 1.0 / (2.0 * start_a)));
+                / (-1.0 / (2.0 * final_a) + 1.0 / (2.0 * start_a)));
 
         double accel_time = 0;
         if (top_v > max_v) {

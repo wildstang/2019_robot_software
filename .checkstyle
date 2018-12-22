@@ -5,5 +5,4 @@
   <fileset name="all" enabled="true" check-config-name="WildStang Java Style" local="true">
     <file-match-pattern match-pattern="." include-pattern="true"/>
   </fileset>
-  <filter name="UnOpenedFiles" enabled="true"/>
 </fileset-config>

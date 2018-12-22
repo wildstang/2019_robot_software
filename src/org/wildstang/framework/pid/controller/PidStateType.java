@@ -4,20 +4,20 @@ package org.wildstang.framework.pid.controller;
  *
  * @author Nathan
  */
-public class PidStateType {
+public enum PidStateType {
+
+    PID_DISABLED_STATE("PID_DISABLED_STATE"),
+    PID_INITIALIZE_STATE("PID_INITIALIZE_STATE"),
+    PID_BELOW_TARGET_STATE("PID_BELOW_TARGET_STATE"),
+    PID_ON_TARGET_STATE("PID_ON_TARGET_STATE"),
+    PID_STABILIZED_STATE("PID_STABILIZED_STATE"),
+    PID_ABOVE_TARGET_STATE("PID_ABOVE_TARGET_STATE");
 
     private String title;
 
-    public PidStateType(String name) {
+    private PidStateType(String name) {
         this.title = name;
     }
-
-    public static PidStateType PID_DISABLED_STATE = new PidStateType("PID_DISABLED_STATE");
-    public static PidStateType PID_INITIALIZE_STATE = new PidStateType("PID_INITIALIZE_STATE");
-    public static PidStateType PID_BELOW_TARGET_STATE = new PidStateType("PID_BELOW_TARGET_STATE");
-    public static PidStateType PID_ON_TARGET_STATE = new PidStateType("PID_ON_TARGET_STATE");
-    public static PidStateType PID_STABILIZED_STATE = new PidStateType("PID_STABILIZED_STATE");
-    public static PidStateType PID_ABOVE_TARGET_STATE = new PidStateType("PID_ABOVE_TARGET_STATE");
 
     @Override
     public String toString() {

@@ -117,9 +117,6 @@ public class AutoManager {
      */
 
     public void setPosition(int index) {
-        if (index >= AutoStartPositionEnum.POSITION_COUNT) {
-            index = 0;
-        }
         currentPosition = AutoStartPositionEnum.getEnumFromValue(index);
     }
 

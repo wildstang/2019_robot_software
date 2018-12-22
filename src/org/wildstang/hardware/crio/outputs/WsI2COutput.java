@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 
 public class WsI2COutput extends I2COutput {
     private I2C i2c;
-    MessageHandler messageSender;
+    private MessageHandler messageSender;
 
     public WsI2COutput(String name, Port port, int p_address) {
         super(name);
@@ -15,7 +15,8 @@ public class WsI2COutput extends I2COutput {
         i2c = new I2C(port, p_address);
 
         // Fire up the message sender thread.
-        Thread t = new Thread(messageSender = new MessageHandler(i2c));
+        messageSender = new MessageHandler(i2c);
+        Thread t = new Thread(messageSender);
         // This is safe because there is only one instance of the subsystem in
         // the subsystem container.
         t.start();

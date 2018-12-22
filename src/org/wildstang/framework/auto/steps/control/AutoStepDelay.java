@@ -15,14 +15,14 @@ import org.wildstang.framework.timer.WsTimer;
  * @author coder65535
  */
 public class AutoStepDelay extends AutoStep /*
-                                             * This step delays testing for the specified number of cycles. Note: If
-                                             * used in a parallel step group, it insures that the group waits for at
-                                             * least the specified number of cycles, instead.
-                                             */ {
+ * This step delays testing for the specified number of cycles. Note: If
+ * used in a parallel step group, it insures that the group waits for at
+ * least the specified number of cycles, instead.
+ */ {
+    private static Logger s_log = Logger.getLogger(AutoStepDelay.class.getName());
 
     protected final double delay;
     protected WsTimer timer;
-    private static Logger s_log = Logger.getLogger(AutoStepDelay.class.getName());
 
     public AutoStepDelay(int msDelay) {
         this.delay = msDelay / 1000.0;

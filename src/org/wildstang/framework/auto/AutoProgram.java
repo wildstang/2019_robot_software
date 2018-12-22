@@ -17,10 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public abstract class AutoProgram {
 
+    private static Logger s_log = Logger.getLogger(AutoProgram.class.getName());
+
     protected final List<AutoStep> programSteps = new ArrayList<>();
     protected int currentStep;
     protected boolean finishedPreviousStep, finished;
-    private static Logger s_log = Logger.getLogger(AutoProgram.class.getName());
 
     protected abstract void defineSteps(); // Use this method to set the steps
     // for this program. Programs

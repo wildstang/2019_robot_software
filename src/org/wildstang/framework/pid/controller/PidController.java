@@ -21,8 +21,8 @@ public class PidController implements IPidController {
     private double errorIncrement; // Max increment to error sum each call
     private double errorEpsilon; // Allowable error in determining when done
     private double staticEpsilon; // Allowable error in steady state. Used to
-                                  // account for small acceptable motor
-                                  // backdrive
+    // account for small acceptable motor
+    // backdrive
     private double maxIntegral;
     private double integralErrorThresh;
     private double differentiatorBandLimit;
@@ -32,7 +32,7 @@ public class PidController implements IPidController {
     private double minInput;
     private PidStateType currentState; // State of the pid for calculating I
     private double minOnTargetTime; // Minimum number of cycles in epsilon range
-                                    // to be done
+    // to be done
     private boolean allowStaticEpsilon;
     private WsTimer stabilizationTimer;
     private IPidInput pidSource;
@@ -41,20 +41,19 @@ public class PidController implements IPidController {
     private double output;
     // Prevents the output value from being written directly to the output
     private boolean outputEnabled;
-    double p_config;
-    double i_config;
-    double d_config;
-    double errorIncrement_config;
-    double errorEpsilon_config;
-    double staticEpsilon_config;
-    double maxIntegral_config;
-    double integralErrorThresh_config;
-    double differentiatorBandLimit_config;
-    double maxOutput_config;
-    double minOutput_config;
-    double maxInput_config;
-    double minInput_config;
-    double minOnTargetTime_config;
+    private double p_config;
+    private double i_config;
+    private double d_config;
+    private double errorIncrement_config;
+    private double errorEpsilon_config;
+    private double staticEpsilon_config;
+    private double maxIntegral_config;
+    private double integralErrorThresh_config;
+    private double differentiatorBandLimit_config;
+    private double maxOutput_config;
+    private double minOutput_config;
+    private double maxInput_config;
+    private double minInput_config;
 
     public PidController(IPidInput source, IPidOutput output, String pidControllerName) {
         p = 1.0;
@@ -108,8 +107,6 @@ public class PidController implements IPidController {
                 .getDouble(this.getClass().getName() + "." + pidControllerName + ".maxInput", 0.0);
         minInput_config = Core.getConfigManager().getConfig()
                 .getDouble(this.getClass().getName() + "." + pidControllerName + ".minInput", 0.0);
-        minOnTargetTime_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".minOnTargetTime", 0.0);
 
         this.setErrorIncrementPercentage(errorIncrement);
     }

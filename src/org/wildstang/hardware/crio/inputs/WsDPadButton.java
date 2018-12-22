@@ -36,9 +36,10 @@ public class WsDPadButton extends DigitalInput {
         break;
         case JoystickConstants.DPAD_Y_DOWN:
             value = m_joystick.getPOV();
-            ;
             boolValue = (value == 180);
         break;
+        default:
+            // Don't care about any other buttons.
         }
 
         return boolValue;

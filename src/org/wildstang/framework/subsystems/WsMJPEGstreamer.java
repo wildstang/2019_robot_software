@@ -16,21 +16,20 @@ import org.wildstang.framework.timer.StopWatch;
 
 public class WsMJPEGstreamer implements Subsystem, Runnable {
 
-    public static int FPS = 1000 / 10;
-    public final int PORT = 8887;
-
-    private String m_name = "";
+    public static final int FPS = 1000 / 10;
+    public static final int PORT = 8887;
 
     public BlockingQueue<SocketWorker> workers = new LinkedBlockingQueue<>();
+    public StopWatch sw = null;
+
+    private String m_name = "";
     private ServerSocket serverSocket;
     private boolean running = false;
     private Thread t = null;
-    public StopWatch sw = null;
 
     @Override
     public void inputUpdate(Input source) {
-        // TODO Auto-generated method stub
-
+        // Nothing to do
     }
 
     @Override
@@ -47,20 +46,17 @@ public class WsMJPEGstreamer implements Subsystem, Runnable {
 
     @Override
     public void resetState() {
-        // TODO Auto-generated method stub
-
+        // Nothing to do
     }
 
     @Override
     public void selfTest() {
-        // TODO Auto-generated method stub
-
+        // Nothing to do
     }
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
-
+        // Nothing to do
     }
 
     public void send(Mat img) {
@@ -77,12 +73,11 @@ public class WsMJPEGstreamer implements Subsystem, Runnable {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return m_name;
     }
 
     public String getPort() {
-        return Integer.toString(this.PORT);
+        return Integer.toString(PORT);
     }
 
     @Override
