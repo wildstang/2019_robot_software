@@ -26,7 +26,8 @@ In addition to making all configuration changes recommended in the instructions 
 
 
 -   Under General -> Perspectives, check "Open perspectives in new window". This makes it easier to flip back and forth between git and Java perspectives.
--   *TODO: fill out this list*
+-   Under the Project menu, check "Build automatically". This allows the Checkstyle plugin to work correctly.
+-   *TODO: fill out this list.*
 
 
 ### Checking out and building the code
