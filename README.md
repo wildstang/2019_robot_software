@@ -24,9 +24,9 @@ FYI Many of the files you'll need for these instructions are (also) available in
 ### Recommended configurations
 In addition to making all configuration changes recommended in the instructions above for installing Eclipse, here are some other Eclipse settings you may wish to change:
 
-
 -   Under General -> Perspectives, check "Open perspectives in new window". This makes it easier to flip back and forth between git and Java perspectives.
 -   Under the Project menu, check "Build automatically". This allows the Checkstyle plugin to work correctly.
+-   In Eclipse's Problems view, open filter settings (icon w/ three arrows in upper right). Uncheck "Show all problems" and check "Warnings on Selection" and "All Errors on Workspace". This will prevent you from being bothered by warnings related to code you're not working on, but will still show you all the errors.
 -   *TODO: fill out this list.*
 
 
