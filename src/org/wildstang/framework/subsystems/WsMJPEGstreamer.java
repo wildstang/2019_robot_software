@@ -19,6 +19,9 @@ public class WsMJPEGstreamer implements Subsystem, Runnable {
     public static final int FPS = 1000 / 10;
     public static final int PORT = 8887;
 
+    public static final int nThreads = 20;
+    public static final int maxConnectionBacklog = 10;
+
     public BlockingQueue<SocketWorker> workers = new LinkedBlockingQueue<>();
     public StopWatch sw = null;
 
@@ -82,10 +85,10 @@ public class WsMJPEGstreamer implements Subsystem, Runnable {
 
     @Override
     public void run() {
-        ExecutorService exeSvc = Executors.newFixedThreadPool(20);
+        ExecutorService exeSvc = Executors.newFixedThreadPool(nThreads);
         try {
 
-            serverSocket = new ServerSocket(PORT, 10);
+            serverSocket = new ServerSocket(PORT, maxConnectionBacklog);
             int counter = 0;
             while (true) {
                 // wait for client connection

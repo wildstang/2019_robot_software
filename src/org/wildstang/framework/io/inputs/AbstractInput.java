@@ -168,18 +168,6 @@ public abstract class AbstractInput implements Input {
     protected abstract void readDataFromInput();
 
     @Override
-    public int hashCode() {
-        // TODO
-        return getName().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object p_obj) {
-        // TODO
-        return super.equals(p_obj);
-    }
-
-    @Override
     public void removeAllListeners() {
         m_listeners.clear();
     }

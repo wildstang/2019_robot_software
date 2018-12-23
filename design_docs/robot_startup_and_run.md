@@ -28,3 +28,5 @@ During operation, as discussed in the [IterativeRobotBase documentation](first.w
 * testPeriodic(): called periodically while the robot is in test mode.
 
 At all times one of these functions needs to be calling the Core method update(), which is responsible for ensuring that inputs, outputs and subsystems get *their* update() methods called regularly and appropriately. At this time of writing I assume it's most appropriate to put that call in robotPeriodic() but I don't know if there are ordering issues with the other fooPeriodic() calls.
+
+TODO: We should determine and document whether we need some kind of soft-realtime guarantee from update() methods. I am not clear on the threading strategy --- if one thread hits all the update() methods then the update() methods absolutely can't do shenanigans like time delays, while if each one gets a thread that's a little more acceptable.

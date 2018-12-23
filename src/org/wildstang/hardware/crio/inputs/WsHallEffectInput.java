@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.I2C.Port;
 
 public class WsHallEffectInput extends DiscreteInput {
+    private static final int defaultUpdateInterval = 20;
 
     I2C i2c;
 
@@ -26,7 +27,7 @@ public class WsHallEffectInput extends DiscreteInput {
         updater = new java.util.Timer();
 
         // Update at 50Hz
-        start(20);
+        start(defaultUpdateInterval);
     }
 
     @Override
@@ -54,9 +55,10 @@ public class WsHallEffectInput extends DiscreteInput {
     }
 
     // Start 10Hz polling
-    public void start() {
-        updater.scheduleAtFixedRate(new HallEffectUpdater(), 0, 100);
-    }
+    /*
+     * public void start() { updater.scheduleAtFixedRate(new HallEffectUpdater(), 0,
+     * 100); }
+     */
 
     // Start polling for period in milliseconds
     public void start(int period) {

@@ -1,7 +1,7 @@
 package org.wildstang.hardware.crio.inputs;
 
 public class WsAbsoluteEncoder extends WsAnalogInput {
-    int m_maxVoltage = 5;
+    private int m_maxVoltage;
 
     public WsAbsoluteEncoder(String p_name, int channel, int p_maxVoltage) {
         super(p_name, channel);

@@ -8,13 +8,15 @@ import java.util.List;
 import org.wildstang.framework.CoreUtils;
 
 public class StateLogger implements Runnable {
+    private static final long s_defaultWriteInterval = 200;
+
     private Writer m_output;
     private boolean m_infoWritten = false;
     private boolean m_firstState = true;
     private boolean m_stateWritten = false;
     private boolean m_running = false;
     private StateTracker m_tracker;
-    private long m_writeInterval = 200;
+    private long m_writeInterval = s_defaultWriteInterval;
 
     public StateLogger(StateTracker p_tracker) {
         m_tracker = p_tracker;
