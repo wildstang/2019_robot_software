@@ -14,10 +14,11 @@ import org.wildstang.year2017.subsystems.shooter.Blender;
 import org.wildstang.year2017.subsystems.shooter.Feed;
 import org.wildstang.year2017.subsystems.shooter.Flywheel;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.StatusFrameRate;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.TalonControlMode;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -226,24 +227,26 @@ public class Shooter implements Subsystem {
 
     private void configureFlywheelTalon(TalonSRX p_talon, double p_fGain, double p_pGain,
             double p_iGain, double p_dGain) {
-        p_talon.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
-        p_talon.setStatusFrameRateMs(StatusFrameRate.Feedback, 10);
-        p_talon.enableBrakeMode(false);
+        p_talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        p_talon.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 10);
+        p_talon.setNeutralMode(NeutralMode.Coast);
 
-        p_talon.reverseSensor(true);
-        p_talon.setEncPosition(0);
-        p_talon.changeControlMode(TalonControlMode.Speed);
+        p_talon.setSensorPhase(true);
+        p_talon.getSensorCollection().setQuadraturePosition(0, 0);
+        p_talon.set(ControlMode.Velocity, 0);
 
-        p_talon.configNominalOutputVoltage(+0.0f, -0.0f);
-        p_talon.configPeakOutputVoltage(+12.0f, 0.0f);
+        p_talon.configNominalOutputForward(0);
+        p_talon.configNominalOutputReverse(0);
+        p_talon.configPeakOutputForward(1);
+        p_talon.configPeakOutputReverse(-1);
         // p_talon.setVoltageRampRate(24.0); // Max spinup of 24V/s - start here
 
         // Set up closed loop PID control gains in slot 0
-        p_talon.setProfile(0);
-        p_talon.setF(p_fGain);
-        p_talon.setP(p_pGain);
-        p_talon.setI(p_iGain);
-        p_talon.setD(p_dGain);
+        p_talon.selectProfileSlot(0, 0);
+        p_talon.config_kF(0, p_fGain);
+        p_talon.config_kP(0, p_pGain);
+        p_talon.config_kI(0, p_iGain);
+        p_talon.config_kD(0, p_dGain);
     }
 
     @Override
@@ -290,13 +293,13 @@ public class Shooter implements Subsystem {
 
         if (RobotTemplate.LOG_STATE) {
             Core.getStateTracker().addState("Left shooter (RPM)", "Shooter",
-                    m_CANFlywheelLeft.getSpeed());
+                    m_CANFlywheelLeft.getSelectedSensorVelocity());
             Core.getStateTracker().addState("Right shooter (RPM)", "Shooter",
-                    m_CANFlywheelRight.getSpeed());
+                    m_CANFlywheelRight.getSelectedSensorVelocity());
             Core.getStateTracker().addState("Left shooter voltage", "Shooter",
-                    m_CANFlywheelLeft.getOutputVoltage());
+                    m_CANFlywheelLeft.getMotorOutputVoltage());
             Core.getStateTracker().addState("Right shooter voltage", "Shooter",
-                    m_CANFlywheelRight.getOutputVoltage());
+                    m_CANFlywheelRight.getMotorOutputVoltage());
             Core.getStateTracker().addState("Left shooter current", "Shooter",
                     m_CANFlywheelLeft.getOutputCurrent());
             Core.getStateTracker().addState("Right shooter current", "Shooter",
@@ -345,7 +348,7 @@ public class Shooter implements Subsystem {
     }
 
     public boolean isReadyToShoot(TalonSRX p_talon) {
-        double speed = p_talon.getSpeed();
+        double speed = p_talon.getSelectedSensorVelocity();
 
         return (speed >= m_lowLimitSpeed && speed <= m_highLimitSpeed);
     }

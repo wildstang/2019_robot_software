@@ -1,8 +1,8 @@
 package org.wildstang.year2017.subsystems.shooter;
 
-import org.wildstang.framework.core.Core;
 import org.wildstang.year2017.subsystems.Shooter;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Flywheel extends Shooter {
@@ -27,7 +27,7 @@ public class Flywheel extends Shooter {
     // It also toggles the m_running variable to true for the isRunning function
 
     public void turnOn() {
-        m_talon.set(m_speed);
+        m_talon.set(ControlMode.Velocity, m_speed);
         m_running = true;
     }
 
@@ -35,7 +35,7 @@ public class Flywheel extends Shooter {
     // m_running variable to false for the isRunning function.
 
     public void turnOff() {
-        m_talon.set(0);
+        m_talon.set(ControlMode.Velocity, 0);
         m_running = false;
     }
 
@@ -51,7 +51,7 @@ public class Flywheel extends Shooter {
     // This returns the current speed of the flywheel object
 
     public double getSpeed() {
-        return m_talon.getSpeed();
+        return m_talon.getSelectedSensorVelocity();
     }
 
 }

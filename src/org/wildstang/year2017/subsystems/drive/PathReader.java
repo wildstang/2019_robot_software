@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 
 public class PathReader {
 
@@ -39,8 +39,8 @@ public class PathReader {
         }
 
         double[][] dataPoints = new double[rawData.size()][];
-        TalonSRX.TrajectoryPoint mpPoint = null;
-        ArrayList<TalonSRX.TrajectoryPoint> trajPoints = new ArrayList<TalonSRX.TrajectoryPoint>();
+        TrajectoryPoint mpPoint = null;
+        ArrayList<TrajectoryPoint> trajPoints = new ArrayList<TrajectoryPoint>();
 
         // Parse into numbers
         for (int i = 0; i < rawData.size(); i++) {
@@ -57,13 +57,15 @@ public class PathReader {
             dataPoints[i][2] = interval;
 
             // Create a TrajectoryPoint for the Talon - do this while reading the file
-            mpPoint = new TalonSRX.TrajectoryPoint();
+            mpPoint = new TrajectoryPoint();
             mpPoint.position = rotations;
             mpPoint.velocity = velocity;
-            mpPoint.timeDurMs = (int) interval;
-            mpPoint.profileSlotSelect = 0; // which set of gains would you like to use?
-            mpPoint.velocityOnly = false; // set true to not do any position servo, just velocity
-                                          // feedforward
+            // FIXME The durations are quantized now! We can't put in an arbitrary duration.
+            // mpPoint.timeDur = (int) interval;
+            mpPoint.profileSlotSelect0 = 0; // which set of gains would you like to use?
+            // FIXME no analog for velocityOnly now?
+            // mpPoint.velocityOnly = false; // set true to not do any position servo, just velocity
+            //                               // feedforward
             mpPoint.zeroPos = false;
 
             if (i == 0) {

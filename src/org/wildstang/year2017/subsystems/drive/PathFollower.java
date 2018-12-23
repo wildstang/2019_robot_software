@@ -2,8 +2,11 @@ package org.wildstang.year2017.subsystems.drive;
 
 import java.util.ArrayList;
 
+import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.SetValueMotionProfile;
+import com.ctre.phoenix.motion.TrajectoryPoint;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX.MotionProfileStatus;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -16,9 +19,11 @@ public class PathFollower {
     private TalonSRX m_left;
     private TalonSRX m_right;
 
-    private TalonSRX.SetValueMotionProfile m_mpEnable = TalonSRX.SetValueMotionProfile.Disable;
+    private SetValueMotionProfile m_mpEnable = SetValueMotionProfile.Disable;
     private MotionProfileStatus m_leftStatus = new MotionProfileStatus();
     private MotionProfileStatus m_rightStatus = new MotionProfileStatus();
+
+    private Notifier m_notifer = new Notifier(new PeriodicRunnable());
 
     public PathFollower(Path p_path, TalonSRX p_left, TalonSRX p_right) {
         m_path = p_path;
@@ -39,9 +44,9 @@ public class PathFollower {
 
         m_notifer.startPeriodic(0.005);
 
-        m_mpEnable = TalonSRX.SetValueMotionProfile.Enable;
-        m_left.set(m_mpEnable.value);
-        m_right.set(m_mpEnable.value);
+        m_mpEnable = SetValueMotionProfile.Enable;
+        m_left.set(ControlMode.MotionProfile, m_mpEnable.value);
+        m_right.set(ControlMode.MotionProfile, m_mpEnable.value);
 
     }
 
@@ -57,10 +62,10 @@ public class PathFollower {
         m_right.clearMotionProfileTrajectories();
 
         /* When we do re-enter motionProfile control mode, stay disabled. */
-        m_mpEnable = TalonSRX.SetValueMotionProfile.Disable;
+        m_mpEnable = SetValueMotionProfile.Disable;
 
-        m_left.set(m_mpEnable.value);
-        m_right.set(m_mpEnable.value);
+        m_left.set(ControlMode.MotionProfile, m_mpEnable.value);
+        m_right.set(ControlMode.MotionProfile, m_mpEnable.value);
 
         m_notifer.stop();
     }
@@ -82,7 +87,9 @@ public class PathFollower {
             System.out.println("Right Talon has buffer underrun");
         }
 
-        if (m_leftStatus.activePointValid && m_leftStatus.activePoint.isLastPoint) {
+        // FIXME: this needs a comment as to why this condition. If we miss an update() during
+        // the final trajectory point, do we never set m_running to false?
+        if (m_leftStatus.activePointValid && m_leftStatus.isLast) {
             m_running = false;
         }
 
@@ -95,6 +102,7 @@ public class PathFollower {
     }
 
     class PeriodicRunnable implements java.lang.Runnable {
+        @Override
         public void run() {
             m_left.processMotionProfileBuffer();
             // System.out.println("Top buffer size: " +
@@ -103,15 +111,13 @@ public class PathFollower {
         }
     }
 
-    Notifier m_notifer = new Notifier(new PeriodicRunnable());
-
     private void fillPathBuffers() {
         fillPathBuffers(m_path.getLeft().getTalonPoints(), m_path.getRight().getTalonPoints(),
                 m_path.getLeft().getTrajectoryPoints().length);
     }
 
-    private void fillPathBuffers(ArrayList<TalonSRX.TrajectoryPoint> leftPoints,
-            ArrayList<TalonSRX.TrajectoryPoint> rightPoints, int totalCnt) {
+    private void fillPathBuffers(ArrayList<TrajectoryPoint> leftPoints,
+            ArrayList<TrajectoryPoint> rightPoints, int totalCnt) {
 
         /* create an empty point */
         // System.out.println("PathFollower.fillPathBuffers() called");
