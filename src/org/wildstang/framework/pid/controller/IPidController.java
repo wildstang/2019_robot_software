@@ -1,7 +1,8 @@
 package org.wildstang.framework.pid.controller;
 
 /**
- *
+ * TODO: This interface has only one inhabitant. Collapse into implementation?
+ * 
  * @author Nathan
  */
 public interface IPidController {

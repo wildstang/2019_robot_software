@@ -3,6 +3,7 @@ package org.wildstang.framework.timer;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
+ * TODO This should be a subclass of Timer, not contain a Timer
  *
  * @author Nathan
  */

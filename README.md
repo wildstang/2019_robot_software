@@ -1,9 +1,11 @@
 # `2018_fall_refactor`
 Based on a merge of core framework and previous years' code. This repo DOES NOT DEPEND on the `core_framework` repo.
 
+More documentation is available in the `[design_docs](./design_docs)` directory. You are encouraged to continue there after reading this document.
+
 
 ## Getting Started
-FYI Many of the files you'll need for these instructions are (also) available in [this big archive file](https://drive.google.com/file/d/1uvs3eQmzUT0qR6m5IIYKfawEX-y0o_qg/view?usp=sharing).
+FYI many of the files you'll need for these instructions are (also) available in [this big archive file](https://drive.google.com/file/d/1uvs3eQmzUT0qR6m5IIYKfawEX-y0o_qg/view?usp=sharing).
 
 ### Setting up required software
 -   Have Windows on your computer. If you do not have Windows you cannot run the driver station program, but you may be able to build and deploy code to the robot. *TODO: verify whether this is actually the case.* In any event, using a non-Windows operating system is not a recommended configuration.
@@ -18,7 +20,7 @@ FYI Many of the files you'll need for these instructions are (also) available in
 -   Install the FRC Driver Station software. The installer is available in the [big archive file](https://drive.google.com/file/d/1uvs3eQmzUT0qR6m5IIYKfawEX-y0o_qg/view?usp=sharing) mentioned in the first step. If you can't find a copy of the driver station to install, you can skip it. Without the driver station you can still develop for and load code onto the robot. You just can't drive it.
 
 
--   Install the CTRE toolsuite by following the links at the bottom of [this page](http://www.ctr-electronics.com/control-system/hro.html#product_tabs_technical_resources). Instructions and the installer are available on that page. Use the "No Installer" package if you're not on Windows. BTW, we're not using the Hero board that this software is for, but our CANBus motor controllers require the CTRE software.
+-   Install the CTRE toolsuite by following the links at the bottom of [this page](http://www.ctr-electronics.com/control-system/hro.html#product_tabs_technical_resources). Instructions and the installer are available on that page. Use the "No Installer" package if you're not on Windows. We're not using the Hero board that this software is for, but our CANBus motor controllers require the CTRE software.
 
 
 ### Recommended configurations
@@ -49,3 +51,19 @@ In addition to making all configuration changes recommended in the instructions 
 
 
 -   If you want help understanding what's going on in the code, you can select "Generate JavaDoc" from the Project menu at the top of Eclipse's window. Most of that is not useful as of this writing but we'll work on it.
+
+## Robots
+This combined codebase has logic for multiple robots in it. 
+
+Each robot has a package under `org.wildstang` e.g. `org.wildstang.year2016`, `org.wildstang.year2017`. Each robot also has a build file at project root e.g. `build_year2016.xml`, `build_year2017.xml`.To deploy to or build for a different robot from the default, right-click on that build XML file and select *Run as -> Ant Build...*. You should see a window options to clean, build, deploy, simulate, etc.
+
+### year2016
+2016 robot.
+
+### year2017
+2017 robot. WildStang used C++ in 2018, so as of late 2018 this is the most recent Java robot.
+
+This robot uses CANbus motor controllers. The code was ported in late 2018 to a more recent CTRE and it is very alpha at this writing, so no bets on whether it works.
+
+### devbase1
+A practice drivebase.
