@@ -6,42 +6,39 @@ import org.wildstang.framework.config.Config;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2017.auto.steps.*;
 
-public class LeftGear extends AutoProgram
-{
+public class LeftGear extends AutoProgram {
 
-   @Override
-   protected void defineSteps()
-   {
-      Config config = Core.getConfigManager().getConfig();
-      
-      int waitTime = config.getInt(this.getClass().getName() + ".deliverWaitTime", 500);
+    @Override
+    protected void defineSteps() {
+        Config config = Core.getConfigManager().getConfig();
 
-      // Use high gear
-      addStep(new SetHighGearStep(true));
+        int waitTime = config.getInt(this.getClass().getName() + ".deliverWaitTime", 500);
 
-      // For this step, turn off brake mode so we can transition smoothly to vision
-      addStep(new SetBrakeModeStep(false));
-      addStep(new GearBackStep());
-      addStep(new CloseGearHolderStep());
+        // Use high gear
+        addStep(new SetHighGearStep(true));
 
-      addStep(new PathFollowerStep(PathNameConstants.WALL_TO_LEFT_GEAR));
-      addStep(new AutoStepDelay(500));
+        // For this step, turn off brake mode so we can transition smoothly to vision
+        addStep(new SetBrakeModeStep(false));
+        addStep(new GearBackStep());
+        addStep(new CloseGearHolderStep());
 
-      addStep(new TrackVisionToGearStep());
-      
-      addStep(new DeliverGearStep());
-      // Wait to let it settle
-      addStep(new AutoStepDelay(waitTime));
+        addStep(new PathFollowerStep(PathNameConstants.WALL_TO_LEFT_GEAR));
+        addStep(new AutoStepDelay(500));
 
-      // Go backwards 2ft
-      addStep(new MotionMagicStraightLine(-24));
+        addStep(new TrackVisionToGearStep());
 
-   }
+        addStep(new DeliverGearStep());
+        // Wait to let it settle
+        addStep(new AutoStepDelay(waitTime));
 
-   @Override
-   public String toString()
-   {
-      return "Left Gear";
-   }
+        // Go backwards 2ft
+        addStep(new MotionMagicStraightLine(-24));
+
+    }
+
+    @Override
+    public String toString() {
+        return "Left Gear";
+    }
 
 }

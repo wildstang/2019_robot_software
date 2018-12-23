@@ -55,7 +55,8 @@ public abstract class AutoProgram {
                 finished = true;
                 return;
             } else {
-                s_log.logp(Level.FINE, "Auton", "Step Start", programSteps.get(currentStep).toString());
+                s_log.logp(Level.FINE, "Auton", "Step Start",
+                        programSteps.get(currentStep).toString());
                 programSteps.get(currentStep).initialize();
             }
         }
@@ -81,16 +82,18 @@ public abstract class AutoProgram {
     }
 
     protected void loadStopPosition() {
-        int forceStopAtStep = Core.getConfigManager().getConfig().getInt(this.getClass().getName() + ".ForceStopAtStep",
-                0);
+        int forceStopAtStep = Core.getConfigManager().getConfig()
+                .getInt(this.getClass().getName() + ".ForceStopAtStep", 0);
         if (forceStopAtStep != 0) {
             int forceStop = forceStopAtStep;
             if ((forceStop <= programSteps.size()) && (forceStop > 0)) {
                 programSteps.set(forceStop, new AutoStepStopAutonomous());
-                s_log.logp(Level.ALL, "Auton", "Force Stop", "Program is forced to stop at Step " + forceStop);
+                s_log.logp(Level.ALL, "Auton", "Force Stop",
+                        "Program is forced to stop at Step " + forceStop);
             } else {
                 s_log.logp(Level.SEVERE, "Auton", "Force Stop",
-                        "Force stop value is outside of bounds. (0 to " + (programSteps.size() - 1));
+                        "Force stop value is outside of bounds. (0 to "
+                                + (programSteps.size() - 1));
             }
         }
     }

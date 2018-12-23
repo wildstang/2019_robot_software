@@ -133,7 +133,8 @@ public class DriveBase implements Subsystem {
         continuousAccelerationFilter = new ContinuousAccelFilter(0, 0, 0);
         driveSpeedPidInput = new WsDriveBaseSpeedPidInput();
         driveSpeedPidOutput = new WsDriveBaseSpeedPidOutput();
-        driveSpeedPid = new SpeedPidController(driveSpeedPidInput, driveSpeedPidOutput, "DriveBaseSpeedPid");
+        driveSpeedPid = new SpeedPidController(driveSpeedPidInput, driveSpeedPidOutput,
+                "DriveBaseSpeedPid");
     }
 
     @Override
@@ -168,7 +169,8 @@ public class DriveBase implements Subsystem {
 
         // Check to see if pistol grip controller is being used
         Core.getInputManager().getInput(WSInputs.DRV_BUTTON_12_PG.getName()).update();
-        isPistolGrip = ((DigitalInput) Core.getInputManager().getInput(WSInputs.DRV_BUTTON_12_PG.getName())).getValue();
+        isPistolGrip = ((DigitalInput) Core.getInputManager()
+                .getInput(WSInputs.DRV_BUTTON_12_PG.getName())).getValue();
 
         // Clear encoders
         resetLeftEncoder();
@@ -206,11 +208,13 @@ public class DriveBase implements Subsystem {
             distance_remaining = this.distance_to_move - distance_moved;
             if (s_log.isLoggable(Level.FINER)) {
                 s_log.finer("AccelFilter: distance_left: " + distance_remaining + " p: "
-                        + continuousAccelerationFilter.getCurrPos() + " v: " + continuousAccelerationFilter.getCurrVel()
-                        + " a: " + continuousAccelerationFilter.getCurrAcc());
+                        + continuousAccelerationFilter.getCurrPos() + " v: "
+                        + continuousAccelerationFilter.getCurrVel() + " a: "
+                        + continuousAccelerationFilter.getCurrAcc());
             }
-            continuousAccelerationFilter.calculateSystem(distance_remaining, currentProfileV, goal_velocity,
-                    MAX_ACCELERATION_DRIVE_PROFILE, MAX_SPEED_INCHES_LOWGEAR, deltaTime);
+            continuousAccelerationFilter.calculateSystem(distance_remaining, currentProfileV,
+                    goal_velocity, MAX_ACCELERATION_DRIVE_PROFILE, MAX_SPEED_INCHES_LOWGEAR,
+                    deltaTime);
             deltaProfilePosition = continuousAccelerationFilter.getCurrPos() - currentProfileX;
             currentProfileX = continuousAccelerationFilter.getCurrPos();
             currentProfileV = continuousAccelerationFilter.getCurrVel();
@@ -223,12 +227,13 @@ public class DriveBase implements Subsystem {
             throttleValue = DriveBase.pidSpeedValue
                     + FEED_FORWARD_VELOCITY_CONSTANT
                             * (continuousAccelerationFilter.getCurrVel() / MAX_SPEED_INCHES_LOWGEAR)
-                    + FEED_FORWARD_ACCELERATION_CONSTANT * continuousAccelerationFilter.getCurrAcc();
+                    + FEED_FORWARD_ACCELERATION_CONSTANT
+                            * continuousAccelerationFilter.getCurrAcc();
 
-            if (((distance_remaining < getStoppingDistanceFromDistanceToMove(distance_to_move)) && (currentProfileV > 0)
-                    && (currentProfileA < 0))
-                    || ((distance_remaining > -getStoppingDistanceFromDistanceToMove(distance_to_move))
-                            && (currentProfileV < 0) && (currentProfileA > 0))) {
+            if (((distance_remaining < getStoppingDistanceFromDistanceToMove(distance_to_move))
+                    && (currentProfileV > 0) && (currentProfileA < 0))
+                    || ((distance_remaining > -getStoppingDistanceFromDistanceToMove(
+                            distance_to_move)) && (currentProfileV < 0) && (currentProfileA > 0))) {
                 throttleValue = 0.0;
             }
 
@@ -273,8 +278,9 @@ public class DriveBase implements Subsystem {
 
             // Set gear shift output
             ((WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.SHIFTER.getName()))
-                    .setValue(new Integer(highGearFlag == true ? WsDoubleSolenoidState.FORWARD.ordinal()
-                            : WsDoubleSolenoidState.REVERSE.ordinal()));
+                    .setValue(new Integer(
+                            highGearFlag == true ? WsDoubleSolenoidState.FORWARD.ordinal()
+                                    : WsDoubleSolenoidState.REVERSE.ordinal()));
         }
 
         SmartDashboard.putNumber("Left encoder count: ", this.getLeftEncoderValue());
@@ -528,7 +534,8 @@ public class DriveBase implements Subsystem {
         // If our throttle is within the zero deadband and our velocity is above
         // the threshold, use deceleration to slow us down
         if ((Math.abs(driveBaseThrottleValue) < DEADBAND)
-                && (Math.abs(currentVelocity) > DECELERATION_VELOCITY_THRESHOLD) && !quickTurnFlag) {
+                && (Math.abs(currentVelocity) > DECELERATION_VELOCITY_THRESHOLD)
+                && !quickTurnFlag) {
             // We are above the velocity threshold, apply a small inverse motor
             // speed to decelerate
             if (currentVelocity > 0) {
@@ -541,7 +548,8 @@ public class DriveBase implements Subsystem {
                 leftMotorSpeed = DECELERATION_MOTOR_SPEED;
             }
         } else if ((Math.abs(driveBaseThrottleValue) < DEADBAND)
-                && (Math.abs(currentVelocity) <= DECELERATION_VELOCITY_THRESHOLD) && !quickTurnFlag) {
+                && (Math.abs(currentVelocity) <= DECELERATION_VELOCITY_THRESHOLD)
+                && !quickTurnFlag) {
             // We are below the velocity threshold, zero the motor values to
             // brake
             rightMotorSpeed = 0.0;
@@ -564,8 +572,10 @@ public class DriveBase implements Subsystem {
         SmartDashboard.putNumber("RightDriveSpeed", rightMotorSpeed);
 
         Config config = Core.getConfigManager().getConfig();
-        double right_drive_bias = config.getDouble(this.getClass().getName() + ".right_drive_bias", 1.0);
-        double left_drive_bias = config.getDouble(this.getClass().getName() + ".left_drive_bias", 1.0);
+        double right_drive_bias = config.getDouble(this.getClass().getName() + ".right_drive_bias",
+                1.0);
+        double left_drive_bias = config.getDouble(this.getClass().getName() + ".left_drive_bias",
+                1.0);
 
         // Update Outputs
         if (rightIndividual == 0 && leftIndividual == 0) {
@@ -578,10 +588,14 @@ public class DriveBase implements Subsystem {
             ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.RIGHT_2.getName()))
                     .setValue(rightMotorSpeed * right_drive_bias);
         } else {
-            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.RIGHT_1.getName())).setValue(rightIndividual);
-            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.RIGHT_2.getName())).setValue(rightIndividual);
-            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.LEFT_2.getName())).setValue(leftIndividual);
-            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.LEFT_1.getName())).setValue(leftIndividual);
+            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.RIGHT_1.getName()))
+                    .setValue(rightIndividual);
+            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.RIGHT_2.getName()))
+                    .setValue(rightIndividual);
+            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.LEFT_2.getName()))
+                    .setValue(leftIndividual);
+            ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.LEFT_1.getName()))
+                    .setValue(leftIndividual);
         }
 
     }
@@ -621,15 +635,15 @@ public class DriveBase implements Subsystem {
 
     public double getLeftDistance() {
         double distance = 0.0;
-        distance = (leftDriveEncoder.get() / (TICKS_PER_ROTATION * ENCODER_GEAR_RATIO)) * 2.0 * Math.PI
-                * (WHEEL_DIAMETER / 2.0);
+        distance = (leftDriveEncoder.get() / (TICKS_PER_ROTATION * ENCODER_GEAR_RATIO)) * 2.0
+                * Math.PI * (WHEEL_DIAMETER / 2.0);
         return distance;
     }
 
     public double getRightDistance() {
         double distance = 0.0;
-        distance = (rightDriveEncoder.get() / (TICKS_PER_ROTATION * ENCODER_GEAR_RATIO)) * 2.0 * Math.PI
-                * (WHEEL_DIAMETER / 2.0);
+        distance = (rightDriveEncoder.get() / (TICKS_PER_ROTATION * ENCODER_GEAR_RATIO)) * 2.0
+                * Math.PI * (WHEEL_DIAMETER / 2.0);
         return distance;
     }
 
@@ -678,7 +692,8 @@ public class DriveBase implements Subsystem {
         startMoveWithHeadingAndMotionProfile(distance, goal_velocity, 0.0);
     }
 
-    public void startMoveWithHeadingAndMotionProfile(double distance, double goal_velocity, double heading) {
+    public void startMoveWithHeadingAndMotionProfile(double distance, double goal_velocity,
+            double heading) {
         this.distance_to_move = distance;
         this.distance_moved = 0.0;
         this.distance_remaining = distance;
@@ -702,7 +717,8 @@ public class DriveBase implements Subsystem {
     public void disableSpeedPidControl() {
         driveSpeedPid.disable();
         resetSpeedPid();
-        s_log.logp(Level.FINE, this.getClass().getName(), "disableSpeedPidControl", "Speed PID is disabled");
+        s_log.logp(Level.FINE, this.getClass().getName(), "disableSpeedPidControl",
+                "Speed PID is disabled");
     }
 
     public void resetSpeedPid() {
@@ -720,38 +736,48 @@ public class DriveBase implements Subsystem {
                 .getBoolean(this.getClass().getName() + ".acceleration_enabled", false);
 
         WHEEL_DIAMETER = config.getDouble(this.getClass().getName() + ".wheel_diameter", 6);
-        TICKS_PER_ROTATION = config.getDouble(this.getClass().getName() + ".ticks_per_rotation", 360.0);
-        THROTTLE_LOW_GEAR_ACCEL_FACTOR = config.getDouble(this.getClass().getName() + ".throttle_low_gear_accel_factor",
-                0.250);
-        HEADING_LOW_GEAR_ACCEL_FACTOR = config.getDouble(this.getClass().getName() + ".heading_low_gear_accel_factor",
-                0.500);
+        TICKS_PER_ROTATION = config.getDouble(this.getClass().getName() + ".ticks_per_rotation",
+                360.0);
+        THROTTLE_LOW_GEAR_ACCEL_FACTOR = config
+                .getDouble(this.getClass().getName() + ".throttle_low_gear_accel_factor", 0.250);
+        HEADING_LOW_GEAR_ACCEL_FACTOR = config
+                .getDouble(this.getClass().getName() + ".heading_low_gear_accel_factor", 0.500);
         THROTTLE_HIGH_GEAR_ACCEL_FACTOR = config
                 .getDouble(this.getClass().getName() + ".throttle_high_gear_accel_factor", 0.125);
-        HEADING_HIGH_GEAR_ACCEL_FACTOR = config.getDouble(this.getClass().getName() + ".heading_high_gear_accel_factor",
-                0.250);
-        MAX_HIGH_GEAR_PERCENT = config.getDouble(this.getClass().getName() + ".max_high_gear_percent", 0.80);
-        ENCODER_GEAR_RATIO = config.getDouble(this.getClass().getName() + ".encoder_gear_ratio", 7.5);
-        SLOW_TURN_FORWARD_SPEED = config.getDouble(this.getClass().getName() + ".slow_turn_forward_speed", 0.16);
-        SLOW_TURN_BACKWARD_SPEED = config.getDouble(this.getClass().getName() + ".slow_turn_backward_speed", -0.19);
-        FEED_FORWARD_VELOCITY_CONSTANT = config.getDouble(this.getClass().getName() + ".feed_forward_velocity_constant",
-                1.00);
-        FEED_FORWARD_ACCELERATION_CONSTANT = config
-                .getDouble(this.getClass().getName() + ".feed_forward_acceleration_constant", 0.00018);
-        MAX_ACCELERATION_DRIVE_PROFILE = config.getDouble(this.getClass().getName() + ".max_acceleration_drive_profile",
-                600.0);
-        MAX_SPEED_INCHES_LOWGEAR = config.getDouble(this.getClass().getName() + ".max_speed_inches_lowgear", 90.0);
+        HEADING_HIGH_GEAR_ACCEL_FACTOR = config
+                .getDouble(this.getClass().getName() + ".heading_high_gear_accel_factor", 0.250);
+        MAX_HIGH_GEAR_PERCENT = config
+                .getDouble(this.getClass().getName() + ".max_high_gear_percent", 0.80);
+        ENCODER_GEAR_RATIO = config.getDouble(this.getClass().getName() + ".encoder_gear_ratio",
+                7.5);
+        SLOW_TURN_FORWARD_SPEED = config
+                .getDouble(this.getClass().getName() + ".slow_turn_forward_speed", 0.16);
+        SLOW_TURN_BACKWARD_SPEED = config
+                .getDouble(this.getClass().getName() + ".slow_turn_backward_speed", -0.19);
+        FEED_FORWARD_VELOCITY_CONSTANT = config
+                .getDouble(this.getClass().getName() + ".feed_forward_velocity_constant", 1.00);
+        FEED_FORWARD_ACCELERATION_CONSTANT = config.getDouble(
+                this.getClass().getName() + ".feed_forward_acceleration_constant", 0.00018);
+        MAX_ACCELERATION_DRIVE_PROFILE = config
+                .getDouble(this.getClass().getName() + ".max_acceleration_drive_profile", 600.0);
+        MAX_SPEED_INCHES_LOWGEAR = config
+                .getDouble(this.getClass().getName() + ".max_speed_inches_lowgear", 90.0);
         DEADBAND = config.getDouble(this.getClass().getName() + ".deadband", 0.1);
         DECELERATION_VELOCITY_THRESHOLD = config
                 .getDouble(this.getClass().getName() + ".deceleration_velocity_threshold", 48.0);
-        DECELERATION_MOTOR_SPEED = config.getDouble(this.getClass().getName() + ".deceleration_motor_speed", 0.3);
-        STOPPING_DISTANCE_AT_MAX_SPEED_LOWGEAR = config
-                .getDouble(this.getClass().getName() + ".stopping_distance_at_max_speed_lowgear", 10.0);
+        DECELERATION_MOTOR_SPEED = config
+                .getDouble(this.getClass().getName() + ".deceleration_motor_speed", 0.3);
+        STOPPING_DISTANCE_AT_MAX_SPEED_LOWGEAR = config.getDouble(
+                this.getClass().getName() + ".stopping_distance_at_max_speed_lowgear", 10.0);
         QUICK_TURN_CAP = config.getDouble(this.getClass().getName() + ".quick_turn_cap", 10.0);
-        QUICK_TURN_ANTITURBO = config.getDouble(this.getClass().getName() + ".quick_turn_antiturbo", 10.0);
-        SUPER_ANTITURBO_FACTOR = config.getDouble(this.getClass().getName() + ".super_antiturbo_factor", 0.25);
+        QUICK_TURN_ANTITURBO = config.getDouble(this.getClass().getName() + ".quick_turn_antiturbo",
+                10.0);
+        SUPER_ANTITURBO_FACTOR = config
+                .getDouble(this.getClass().getName() + ".super_antiturbo_factor", 0.25);
         ACCELERATION_ENABLED = Core.getConfigManager().getConfig()
                 .getBoolean(this.getClass().getName() + ".acceleration_enabled", false);
-        outputScaleFactor = config.getDouble(this.getClass().getName() + ".output_scale_factor", 1.0);
+        outputScaleFactor = config.getDouble(this.getClass().getName() + ".output_scale_factor",
+                1.0);
         driveSpeedPid.notifyConfigChange();
     }
 
@@ -780,10 +806,12 @@ public class DriveBase implements Subsystem {
                 resetKinematics();
             }
         } else if (source.getName().equals(WSInputs.DRV_THROTTLE.getName())) {
-            throttleValue = ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).getValue();
+            throttleValue = ((AnalogInput) Core.getInputManager()
+                    .getInput(WSInputs.DRV_THROTTLE.getName())).getValue();
             SmartDashboard.putNumber("throttleValue", throttleValue);
         } else if (source.getName().equals(WSInputs.DRV_HEADING.getName())) {
-            headingValue = ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName())).getValue();
+            headingValue = ((AnalogInput) Core.getInputManager()
+                    .getInput(WSInputs.DRV_HEADING.getName())).getValue();
             headingValue *= -1;
             SmartDashboard.putNumber("heading value", headingValue);
         }
@@ -811,7 +839,8 @@ public class DriveBase implements Subsystem {
         if (Math.abs(distance) > 40.0) {
             return STOPPING_DISTANCE_AT_MAX_SPEED_LOWGEAR;
         } else {
-            return (STOPPING_DISTANCE_AT_MAX_SPEED_LOWGEAR - ((3.0f / 15.0f) * (40 - Math.abs(distance))));
+            return (STOPPING_DISTANCE_AT_MAX_SPEED_LOWGEAR
+                    - ((3.0f / 15.0f) * (40 - Math.abs(distance))));
         }
     }
 

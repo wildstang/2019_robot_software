@@ -25,7 +25,8 @@ public class StepSetNoseState extends AutoStep {
         // TODO Auto-generated method stub
         if (((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
                 .isNoseDeployed() != deployed) {
-            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_5.getName())).setValue(true);
+            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_5.getName()))
+                    .setValue(true);
         }
         setFinished(true);
     }

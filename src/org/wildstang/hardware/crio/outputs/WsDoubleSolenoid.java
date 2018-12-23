@@ -12,7 +12,8 @@ public class WsDoubleSolenoid extends DiscreteOutput {
 
     DoubleSolenoid solenoid;
 
-    public WsDoubleSolenoid(String name, int module, int channel1, int channel2, WsDoubleSolenoidState p_default) {
+    public WsDoubleSolenoid(String name, int module, int channel1, int channel2,
+            WsDoubleSolenoidState p_default) {
         super(name, p_default.ordinal());
 
         solenoid = new DoubleSolenoid(module, channel1, channel2);

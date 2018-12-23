@@ -1,6 +1,5 @@
 package org.wildstang.year2017.subsystems.drive;
 
-
 /**
  * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that
  * the "turning" stick controls the curvature of the robot's path rather than
@@ -28,7 +27,8 @@ public class CheesyDriveHelper {
         if (isQuickTurn) {
             if (Math.abs(throttle) < 0.2) {
                 double alpha = 0.1;
-                mQuickStopAccumulator = (1 - alpha) * mQuickStopAccumulator + alpha * Util.limit(wheel, 1.0) * 2;
+                mQuickStopAccumulator = (1 - alpha) * mQuickStopAccumulator
+                        + alpha * Util.limit(wheel, 1.0) * 2;
             }
             overPower = 1.0;
             angularPower = wheel;

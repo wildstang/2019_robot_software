@@ -9,7 +9,8 @@ public class WsDoubleSolenoidConfig implements OutputConfig {
     private int m_channel2;
     private WsDoubleSolenoidState m_default;
 
-    public WsDoubleSolenoidConfig(int module, int channel1, int channel2, WsDoubleSolenoidState p_default) {
+    public WsDoubleSolenoidConfig(int module, int channel1, int channel2,
+            WsDoubleSolenoidState p_default) {
         m_module = module;
         m_channel1 = channel1;
         m_channel2 = channel2;

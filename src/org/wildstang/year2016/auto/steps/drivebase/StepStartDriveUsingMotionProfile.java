@@ -19,7 +19,8 @@ public class StepStartDriveUsingMotionProfile extends AutoStep {
 
     @Override
     public void initialize() {
-        driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
+        driveBase = ((DriveBase) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
         driveBase.resetLeftEncoder();
         driveBase.resetRightEncoder();
         // ((WsMotionProfileControl)Core.getInputManager().getInput(WSInputs.MOTION_PROFILE_CONTROL.getName())).setProfileEnabled(true);

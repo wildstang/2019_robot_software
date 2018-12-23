@@ -87,18 +87,19 @@ public class PidController implements IPidController {
                 .getDouble(this.getClass().getName() + "." + pidControllerName + ".i", 0.0);
         d_config = Core.getConfigManager().getConfig()
                 .getDouble(this.getClass().getName() + "." + pidControllerName + ".d", 0.0);
-        errorIncrement_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".errorIncrement", 0.0);
-        errorEpsilon_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".errorEpsilon", 0.0);
-        staticEpsilon_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".staticEpsilon", 0.0);
-        maxIntegral_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".maxIntegral", 0.0);
-        integralErrorThresh_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".integralErrorThresh", 0.0);
-        differentiatorBandLimit_config = Core.getConfigManager().getConfig()
-                .getDouble(this.getClass().getName() + "." + pidControllerName + ".differentiatorBandLimit", 0.0);
+        errorIncrement_config = Core.getConfigManager().getConfig().getDouble(
+                this.getClass().getName() + "." + pidControllerName + ".errorIncrement", 0.0);
+        errorEpsilon_config = Core.getConfigManager().getConfig().getDouble(
+                this.getClass().getName() + "." + pidControllerName + ".errorEpsilon", 0.0);
+        staticEpsilon_config = Core.getConfigManager().getConfig().getDouble(
+                this.getClass().getName() + "." + pidControllerName + ".staticEpsilon", 0.0);
+        maxIntegral_config = Core.getConfigManager().getConfig().getDouble(
+                this.getClass().getName() + "." + pidControllerName + ".maxIntegral", 0.0);
+        integralErrorThresh_config = Core.getConfigManager().getConfig().getDouble(
+                this.getClass().getName() + "." + pidControllerName + ".integralErrorThresh", 0.0);
+        differentiatorBandLimit_config = Core.getConfigManager().getConfig().getDouble(
+                this.getClass().getName() + "." + pidControllerName + ".differentiatorBandLimit",
+                0.0);
         maxOutput_config = Core.getConfigManager().getConfig()
                 .getDouble(this.getClass().getName() + "." + pidControllerName + ".maxOutput", 0.0);
         minOutput_config = Core.getConfigManager().getConfig()
@@ -407,7 +408,8 @@ public class PidController implements IPidController {
         currentState = new_state;
 
         // Finally, calculate the PID output
-        double output = this.calcProportionalTerm() + this.calcIntegralTerm() + this.calcDerivativeTerm();
+        double output = this.calcProportionalTerm() + this.calcIntegralTerm()
+                + this.calcDerivativeTerm();
         // System.out.println(this.controllerName + " p-term,: " +
         // this.calcProportionalTerm());
         // System.out.println(this.controllerName + " i-term: " +

@@ -13,14 +13,16 @@ import org.wildstang.hardware.crio.outputs.config.WsTalonConfig;
 import org.wildstang.hardware.crio.outputs.config.WsVictorConfig;
 
 public enum TestOutputs implements Outputs {
-    VICTOR("Victor", WSOutputType.VICTOR, new WsVictorConfig(0, 0.0), true), TALON("Talon", WSOutputType.TALON,
-            new WsTalonConfig(1, 0.0), true), VICTOR_SP("Victor SP", WSOutputType.VICTOR, new WsVictorConfig(2, 0.0),
-                    true), SPIKE("Spike", WSOutputType.RELAY, new WsRelayConfig(3, WsRelayState.RELAY_OFF), true),
+    VICTOR("Victor", WSOutputType.VICTOR, new WsVictorConfig(0, 0.0), true),
+    TALON("Talon", WSOutputType.TALON, new WsTalonConfig(1, 0.0), true),
+    VICTOR_SP("Victor SP", WSOutputType.VICTOR, new WsVictorConfig(2, 0.0), true),
+    SPIKE("Spike", WSOutputType.RELAY, new WsRelayConfig(3, WsRelayState.RELAY_OFF), true),
 
     // Solenoids
     DOUBLE("Double solenoid", WSOutputType.SOLENOID_DOUBLE,
-            new WsDoubleSolenoidConfig(1, 0, 1, WsDoubleSolenoidState.FORWARD),
-            true), SINGLE("Single solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(1, 2, false), true);
+            new WsDoubleSolenoidConfig(1, 0, 1, WsDoubleSolenoidState.FORWARD), true),
+    SINGLE("Single solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(1, 2, false),
+            true);
 
     private String m_name;
     private OutputType m_type;

@@ -21,7 +21,8 @@ public class LowGoalTest extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        AutoParallelStepGroup shootTwo = new AutoParallelStepGroup("Return to shooting position and shoot");
+        AutoParallelStepGroup shootTwo = new AutoParallelStepGroup(
+                "Return to shooting position and shoot");
         AutoSerialStepGroup gotoGoalTwo = new AutoSerialStepGroup("Go to goal again");
         // Start shooter to get to speed
         shootTwo.addStep(new StepRunFlywheel(speed));

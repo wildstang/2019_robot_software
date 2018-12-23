@@ -23,19 +23,22 @@ public class StepRunFlywheel extends AutoStep {
     @Override
     public void update() {
         // TODO Auto-generated method stub
-        if (speed == 0
-                && ((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName())).isOn() == true) {
-            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_3.getName())).setValue(true);
+        if (speed == 0 && ((Shooter) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.SHOOTER.getName())).isOn() == true) {
+            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_3.getName()))
+                    .setValue(true);
             // ((DigitalInput)Core.getInputManager().getInput(WSInputs.MAN_BUTTON_3.getName())).setValue(false);
         }
 
-        else if (((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName())).isOn() == false
-                && (speed != 0)) {
-            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_3.getName())).setValue(true);
+        else if (((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName()))
+                .isOn() == false && (speed != 0)) {
+            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_3.getName()))
+                    .setValue(true);
             // ((DigitalInput)Core.getInputManager().getInput(WSInputs.MAN_BUTTON_3.getName())).setValue(false);
         }
 
-        ((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName())).setFlySpeed(speed);
+        ((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName()))
+                .setFlySpeed(speed);
 
         setFinished(true);
     }

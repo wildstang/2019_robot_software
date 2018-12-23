@@ -216,7 +216,8 @@ public class Robot extends IterativeRobot {
         m_core.executeUpdate();
 
         if (AutoFirstRun) {
-            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).resetLeftEncoder();
+            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                    .resetLeftEncoder();
             ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
                     .resetRightEncoder();
             ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
@@ -232,7 +233,8 @@ public class Robot extends IterativeRobot {
 
         Core.getSubsystemManager().init();
 
-        DriveBase driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
+        DriveBase driveBase = ((DriveBase) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
 
         driveBase.stopStraightMoveWithMotionProfile();
 
@@ -245,18 +247,22 @@ public class Robot extends IterativeRobot {
     @Override
     public void teleopPeriodic() {
         if (firstRun) {
-            ((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName())).shooterOverride(false);
+            ((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName()))
+                    .shooterOverride(false);
             ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
                     .setIntakeOverrideOn(false);
-            ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).setShotOverride(false);
-            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).resetLeftEncoder();
+            ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                    .setShotOverride(false);
+            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                    .resetLeftEncoder();
             ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
                     .resetRightEncoder();
             ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
                     .setSuperDriveOverride(false);
             ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
                     .stopStraightMoveWithMotionProfile();
-            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setLeftDrive(0);
+            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                    .setLeftDrive(0);
             firstRun = false;
         }
 

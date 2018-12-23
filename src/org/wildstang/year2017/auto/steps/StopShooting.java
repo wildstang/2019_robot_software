@@ -5,29 +5,26 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.year2017.robot.WSSubsystems;
 import org.wildstang.year2017.subsystems.Shooter;
 
-public class StopShooting extends AutoStep
-{
-   private Shooter m_shooter;
+public class StopShooting extends AutoStep {
+    private Shooter m_shooter;
 
-   @Override
-   public void initialize()
-   {
-      m_shooter = (Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName());
-   }
+    @Override
+    public void initialize() {
+        m_shooter = (Shooter) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.SHOOTER.getName());
+    }
 
-   @Override
-   public void update()
-   {
-      m_shooter.turnFeedOff();
-      m_shooter.turnFlywheelOff();
-      
-      setFinished(true);
-   }
+    @Override
+    public void update() {
+        m_shooter.turnFeedOff();
+        m_shooter.turnFlywheelOff();
 
-   @Override
-   public String toString()
-   {
-      return "Shooter off";
-   }
+        setFinished(true);
+    }
+
+    @Override
+    public String toString() {
+        return "Shooter off";
+    }
 
 }

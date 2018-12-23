@@ -29,7 +29,8 @@ public class StepTurnForTime extends AutoStep {
     @Override
     public void initialize() {
         startTime = System.currentTimeMillis();
-        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setThrottleValue(0);
+        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                .setThrottleValue(0);
         // ((DriveBase)
         // Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setLeftDrive(value
         // < 0 ? 0.6
@@ -40,7 +41,8 @@ public class StepTurnForTime extends AutoStep {
         // ((AnalogInput)Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(0.0);
         // ((AnalogInput)Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName())).setValue(value
         // < 0 ? 0.6 : -0.6);
-        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(0.0);
+        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName()))
+                .setValue(0.0);
         ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName()))
                 .setValue(speed < 0 ? 0.4 : -0.4);
 
@@ -50,14 +52,17 @@ public class StepTurnForTime extends AutoStep {
     public void update() {
         if (shouldFinish) {
             setFinished(true);
-            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setLeftDrive(0.0);
+            ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                    .setLeftDrive(0.0);
             return;
         }
 
-        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(0.0);
+        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName()))
+                .setValue(0.0);
         // ((AnalogInput)Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName())).setValue(value
         // < 0 ? 0.6 : -0.6);
-        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setLeftDrive(speed);
+        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                .setLeftDrive(speed);
         if (System.currentTimeMillis() > (startTime + time)) {
             shouldFinish = true;
         }

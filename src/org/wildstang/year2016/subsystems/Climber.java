@@ -60,8 +60,8 @@ public class Climber implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
         if (source.getName().equals(WSInputs.MAN_BUTTON_1.getName())) {
-            if (((DigitalInput) source).getValue()
-                    && ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).isDeployed()) {
+            if (((DigitalInput) source).getValue() && ((Intake) Core.getSubsystemManager()
+                    .getSubsystem(WSSubsystems.INTAKE.getName())).isDeployed()) {
                 armsDeploying = true;
                 winchEndTime = Timer.getFPGATimestamp() + armHelpRunTime;
             }
@@ -90,25 +90,28 @@ public class Climber implements Subsystem {
         armsDeploying = false;
         joystickWinchSpeed = 0;
         winchSpeed = 0;
-        Core.getInputManager().getInput(WSInputs.MAN_RIGHT_JOYSTICK_Y.getName()).addInputListener(this);
+        Core.getInputManager().getInput(WSInputs.MAN_RIGHT_JOYSTICK_Y.getName())
+                .addInputListener(this);
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_1.getName()).addInputListener(this);
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_2.getName()).addInputListener(this);
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_10.getName()).addInputListener(this);
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_9.getName()).addInputListener(this);
         // Core.getInputManager().getInput(WSInputs.RIGHT_ARM_TOUCHING.getName()).addInputListener(this);
         // Core.getInputManager().getInput(WSInputs.LEFT_ARM_TOUCHING.getName()).addInputListener(this);
-        leftBrake = ((WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.LEFT_BRAKE.getName()));
-        rightBrake = ((WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.RIGHT_BRAKE.getName()));
+        leftBrake = ((WsSolenoid) Core.getOutputManager()
+                .getOutput(WSOutputs.LEFT_BRAKE.getName()));
+        rightBrake = ((WsSolenoid) Core.getOutputManager()
+                .getOutput(WSOutputs.RIGHT_BRAKE.getName()));
         hooks = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOOK_EXTENSION.getName());
         armSolenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.ARMS.getName());
         leftWinch = (WsVictor) Core.getOutputManager().getOutput(WSOutputs.WINCH_LEFT.getName());
         rightWinch = (WsVictor) Core.getOutputManager().getOutput(WSOutputs.WINCH_RIGHT.getName());
 
-        armHelpSpeed = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + armsUpOutSpeed,
-                ARMOUTSPEED_DEFAULT);
+        armHelpSpeed = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + armsUpOutSpeed, ARMOUTSPEED_DEFAULT);
 
-        armHelpRunTime = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + armsUpRunTime,
-                ARMOUTTIME_DEFAULT);
+        armHelpRunTime = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + armsUpRunTime, ARMOUTTIME_DEFAULT);
     }
 
     @Override
@@ -291,22 +294,25 @@ public class Climber implements Subsystem {
     }
 
     public void notifyConfigChange(Config p_newConfig) {
-        armHelpSpeed = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + armsUpOutSpeed,
-                ARMOUTSPEED_DEFAULT);
+        armHelpSpeed = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + armsUpOutSpeed, ARMOUTSPEED_DEFAULT);
 
-        armHelpRunTime = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + armsUpRunTime,
-                ARMOUTTIME_DEFAULT);
+        armHelpRunTime = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + armsUpRunTime, ARMOUTTIME_DEFAULT);
 
     }
 
     public void protectIntake() {
-        if (((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).isDeployed() != true) {
-            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName())).setValue(true);
+        if (((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                .isDeployed() != true) {
+            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName()))
+                    .setValue(true);
         }
     }
 
     public void resetIntakeToggle() {
-        ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName())).setValue(false);
+        ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName()))
+                .setValue(false);
     }
 
     @Override

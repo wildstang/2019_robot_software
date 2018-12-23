@@ -1,107 +1,90 @@
 package org.wildstang.year2017.subsystems.drive;
 
-public class DriveState
-{
+public class DriveState {
 
-   private double deltaLeftEncoderTicks;
-   private double deltaRightEncoderTicks;
-   private double deltaTimeMS;
-   private double headingAngle;
-   private double turnRadiusInches;
-   private double deltaTheta;
-   private double straightLineInches;
+    private double deltaLeftEncoderTicks;
+    private double deltaRightEncoderTicks;
+    private double deltaTimeMS;
+    private double headingAngle;
+    private double turnRadiusInches;
+    private double deltaTheta;
+    private double straightLineInches;
 
-   public DriveState()
-   {
-	   
-   }
+    public DriveState() {
 
-   public DriveState(double deltaTime, double deltaRightTicks,
-         double deltaLeftTicks, double heading, double straightLineInches, double turningRadius,
-         double deltaTheta)
-   {
-      deltaTimeMS = deltaTime;
-      deltaRightEncoderTicks = deltaRightTicks;
-      deltaLeftEncoderTicks = deltaLeftTicks;
-      headingAngle = heading;
-      this.straightLineInches = straightLineInches;
-      turnRadiusInches = turningRadius;
-      this.deltaTheta = deltaTheta;
-   }
+    }
 
-   public void setDeltaTime(double time)
-   {
-      deltaTimeMS = time;
-   }
+    public DriveState(double deltaTime, double deltaRightTicks, double deltaLeftTicks,
+            double heading, double straightLineInches, double turningRadius, double deltaTheta) {
+        deltaTimeMS = deltaTime;
+        deltaRightEncoderTicks = deltaRightTicks;
+        deltaLeftEncoderTicks = deltaLeftTicks;
+        headingAngle = heading;
+        this.straightLineInches = straightLineInches;
+        turnRadiusInches = turningRadius;
+        this.deltaTheta = deltaTheta;
+    }
 
-   public double getDeltaTime()
-   {
-      return deltaTimeMS;
-   }
+    public void setDeltaTime(double time) {
+        deltaTimeMS = time;
+    }
 
-   public void setDeltaRightEncoderTicks(double ticks)
-   {
-      deltaRightEncoderTicks = ticks;
-   }
+    public double getDeltaTime() {
+        return deltaTimeMS;
+    }
 
-   public double getDeltaRightEncoderTicks()
-   {
-      return deltaRightEncoderTicks;
-   }
+    public void setDeltaRightEncoderTicks(double ticks) {
+        deltaRightEncoderTicks = ticks;
+    }
 
-   public void setDeltaLeftEncoderTicks(double ticks)
-   {
-      deltaLeftEncoderTicks = ticks;
-   }
+    public double getDeltaRightEncoderTicks() {
+        return deltaRightEncoderTicks;
+    }
 
-   public double getDeltaLeftEncoderTicks()
-   {
-      return deltaLeftEncoderTicks;
-   }
+    public void setDeltaLeftEncoderTicks(double ticks) {
+        deltaLeftEncoderTicks = ticks;
+    }
 
-   public void setHeading(double heading)
-   {
-      headingAngle = heading;
-   }
+    public double getDeltaLeftEncoderTicks() {
+        return deltaLeftEncoderTicks;
+    }
 
-   public double getHeadingAngle()
-   {
-      return headingAngle;
-   }
+    public void setHeading(double heading) {
+        headingAngle = heading;
+    }
 
-   public void setDeltaTheta(double dTheta)
-   {
-      deltaTheta = dTheta;
-   }
+    public double getHeadingAngle() {
+        return headingAngle;
+    }
 
-   public double getDeltaTheta()
-   {
-      return deltaTheta;
-   }
+    public void setDeltaTheta(double dTheta) {
+        deltaTheta = dTheta;
+    }
 
-   public void setTurnRadius(double turnRadius)
-   {
-      turnRadiusInches = turnRadius;
-   }
+    public double getDeltaTheta() {
+        return deltaTheta;
+    }
 
-   public double getTurnRadius()
-   {
-      return turnRadiusInches;
-   }
+    public void setTurnRadius(double turnRadius) {
+        turnRadiusInches = turnRadius;
+    }
 
-   public void setStraightLineEncoderTicks(double val) {
-	   straightLineInches = val;
-   }
-   
-   public double getStraightLineEncoderTicks() {
-	   return straightLineInches;
-   }
-   
-   public String toString()
-   {
-      return deltaTimeMS + ", " + deltaRightEncoderTicks + ", "
-            + deltaLeftEncoderTicks + ", " + headingAngle + ", " + 
-            straightLineInches + ", " + turnRadiusInches + ", " + deltaTheta + "\n";
-   }
+    public double getTurnRadius() {
+        return turnRadiusInches;
+    }
+
+    public void setStraightLineEncoderTicks(double val) {
+        straightLineInches = val;
+    }
+
+    public double getStraightLineEncoderTicks() {
+        return straightLineInches;
+    }
+
+    public String toString() {
+        return deltaTimeMS + ", " + deltaRightEncoderTicks + ", " + deltaLeftEncoderTicks + ", "
+                + headingAngle + ", " + straightLineInches + ", " + turnRadiusInches + ", "
+                + deltaTheta + "\n";
+    }
 
 }

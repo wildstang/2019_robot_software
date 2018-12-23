@@ -78,15 +78,19 @@ public class Vision implements Subsystem {
         m_centered_right = (int) SmartDashboard.getNumber("Right Centered Mark", CENTERED_RIGHT);
         m_bottom_low_min = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_LOW_MIN);
         m_bottom_low_max = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_LOW_MAX);
-        m_bottom_high_min = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_HIGH_MIN);
-        m_bottom_high_max = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_HIGH_MAX);
+        m_bottom_high_min = (int) SmartDashboard.getNumber("Target Bottom Low Min",
+                BOTTOM_HIGH_MIN);
+        m_bottom_high_max = (int) SmartDashboard.getNumber("Target Bottom Low Min",
+                BOTTOM_HIGH_MAX);
 
         m_centered_left = (int) SmartDashboard.getNumber("Left Centered Mark", CENTERED_LEFT);
         m_centered_right = (int) SmartDashboard.getNumber("Right Centered Mark", CENTERED_RIGHT);
         m_bottom_low_min = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_LOW_MIN);
         m_bottom_low_max = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_LOW_MAX);
-        m_bottom_high_min = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_HIGH_MIN);
-        m_bottom_high_max = (int) SmartDashboard.getNumber("Target Bottom Low Min", BOTTOM_HIGH_MAX);
+        m_bottom_high_min = (int) SmartDashboard.getNumber("Target Bottom Low Min",
+                BOTTOM_HIGH_MIN);
+        m_bottom_high_max = (int) SmartDashboard.getNumber("Target Bottom Low Min",
+                BOTTOM_HIGH_MAX);
 
         if (targetBottom > m_bottom_low_min && targetBottom < m_bottom_low_max) {
             goodLongHeight = true;

@@ -20,7 +20,8 @@ public class StepResetShotToggle extends AutoStep {
     public void update() {
         // TODO Auto-generated method stub
         // ((DigitalInput)Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName())).setValue(false);
-        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).shotOverride(false);
+        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                .shotOverride(false);
         setFinished(true);
     }
 

@@ -293,8 +293,8 @@ public class Config {
 
         Object value = getValue(p_key, p_default);
         if (!(value instanceof Double)) {
-            throw new NumberFormatException(
-                    "Value found for " + p_key + " but value was not a Double: " + value.getClass().getName());
+            throw new NumberFormatException("Value found for " + p_key
+                    + " but value was not a Double: " + value.getClass().getName());
         }
 
         return (Double) value;
@@ -307,8 +307,8 @@ public class Config {
 
         Object value = getValue(p_key, p_default);
         if (!(value instanceof Integer)) {
-            throw new NumberFormatException(
-                    "Value found for " + p_key + " but value was not a Integer: " + value.getClass().getName());
+            throw new NumberFormatException("Value found for " + p_key
+                    + " but value was not a Integer: " + value.getClass().getName());
         }
 
         return (Integer) value;
@@ -321,8 +321,8 @@ public class Config {
 
         Object value = getValue(p_key, p_default);
         if (!(value instanceof Boolean)) {
-            throw new NumberFormatException(
-                    "Value found for " + p_key + " but value was not a Boolean: " + value.getClass().getName());
+            throw new NumberFormatException("Value found for " + p_key
+                    + " but value was not a Boolean: " + value.getClass().getName());
         }
 
         return (Boolean) value;
@@ -335,8 +335,8 @@ public class Config {
 
         Object value = getValue(p_key, p_default);
         if (!(value instanceof String)) {
-            throw new NumberFormatException(
-                    "Value found for " + p_key + " but value was not a String: " + value.getClass().getName());
+            throw new NumberFormatException("Value found for " + p_key
+                    + " but value was not a String: " + value.getClass().getName());
         }
         return (String) value;
     }

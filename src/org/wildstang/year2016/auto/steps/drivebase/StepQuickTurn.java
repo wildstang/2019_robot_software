@@ -27,9 +27,10 @@ public class StepQuickTurn extends AutoStep {
     @Override
     public void initialize() {
 
-        angle = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).getGyroAngle()
-                + value;
-        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).setThrottleValue(0);
+        angle = ((DriveBase) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVE_BASE.getName())).getGyroAngle() + value;
+        ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
+                .setThrottleValue(0);
         // ((DriveBase)
         // Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName())).overrideHeadingValue(value
         // < 0 ? 0.6
@@ -40,7 +41,8 @@ public class StepQuickTurn extends AutoStep {
         // ((AnalogInput)Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(0.0);
         // ((AnalogInput)Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName())).setValue(value
         // < 0 ? 0.6 : -0.6);
-        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(0.0);
+        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName()))
+                .setValue(0.0);
         ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName()))
                 .setValue(value < 0 ? 0.4 : -0.4);
 
@@ -54,12 +56,13 @@ public class StepQuickTurn extends AutoStep {
                     .overrideHeadingValue(0.0);
             return;
         }
-        double gyroAngle = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
-                .getGyroAngle();
+        double gyroAngle = ((DriveBase) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVE_BASE.getName())).getGyroAngle();
         if (value < 0) {
             if (angle > gyroAngle) {
                 // TODO
-                ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(0.0);
+                ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName()))
+                        .setValue(0.0);
                 // ((AnalogInput)Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName())).setValue(value
                 // < 0 ? 0.6 : -0.6);
                 ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName()))
@@ -68,8 +71,8 @@ public class StepQuickTurn extends AutoStep {
             }
         } else {
             if (angle < gyroAngle) {
-                ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()))
-                        .overrideHeadingValue(0.0);
+                ((DriveBase) Core.getSubsystemManager()
+                        .getSubsystem(WSSubsystems.DRIVE_BASE.getName())).overrideHeadingValue(0.0);
 
                 // TODO: What would the equivalent be to set an input value for a
                 // subsystem to react to, rather than set the output directly??

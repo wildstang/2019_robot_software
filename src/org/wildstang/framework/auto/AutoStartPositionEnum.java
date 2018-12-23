@@ -29,6 +29,7 @@ public enum AutoStartPositionEnum {
         this.index = index;
         this.description = description;
     }
+
     /**
      * Converts the enum type to a String.
      *

@@ -24,7 +24,8 @@ public class StepResetShifterToggle extends AutoStep {
 
     @Override
     public void update() {
-        ((DigitalInput) Core.getInputManager().getInput(WSInputs.DRV_BUTTON_7.getName())).setValue(false);
+        ((DigitalInput) Core.getInputManager().getInput(WSInputs.DRV_BUTTON_7.getName()))
+                .setValue(false);
     }
 
     @Override

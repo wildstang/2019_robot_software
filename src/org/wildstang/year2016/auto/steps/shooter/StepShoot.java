@@ -13,7 +13,8 @@ public class StepShoot extends AutoStep {
     @Override
     public void initialize() {
         // TODO Auto-generated method stub
-        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).setShotOverride(true);
+        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                .setShotOverride(true);
     }
 
     @Override
@@ -23,7 +24,8 @@ public class StepShoot extends AutoStep {
         // {
         // ((DigitalInput)Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName())).setValue(true);
         // }
-        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).shotOverride(true);
+        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                .shotOverride(true);
         setFinished(true);
     }
 

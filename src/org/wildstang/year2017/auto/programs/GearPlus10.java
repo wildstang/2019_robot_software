@@ -11,31 +11,28 @@ import org.wildstang.year2017.auto.steps.TrackVisionToGearStep;
 import org.wildstang.year2017.auto.steps.TurnByNDegreesStep;
 import org.wildstang.year2017.auto.steps.TurnByNDegreesStepMagic;
 
-public class GearPlus10 extends AutoProgram
-{
+public class GearPlus10 extends AutoProgram {
 
-   @Override
-   protected void defineSteps()
-   {
-      //Drop off Gear
-      addStep(new SideGearStepGroup(60, 76));
-      
-      addStep(new PathFollowerStep(PathNameConstants.GEAR_BACKUP_FAR));
-      addStep(new AutoStepDelay(200));
-      addStep(new TurnByNDegreesStep(-175, 0.6));
-      addStep(new AutoStepDelay(200));
-      addStep(new PathFollowerStep(PathNameConstants.GEAR_TO_BOILER));
-      
-      addStep(new ShooterOnAndReady());
-      addStep(new ShootStep());
-      addStep(new AutoStepDelay(15000));
-      addStep(new StopShooting());
-   }
+    @Override
+    protected void defineSteps() {
+        // Drop off Gear
+        addStep(new SideGearStepGroup(60, 76));
 
-   @Override
-   public String toString()
-   {
-      return "Gear plus 10";
-   }
+        addStep(new PathFollowerStep(PathNameConstants.GEAR_BACKUP_FAR));
+        addStep(new AutoStepDelay(200));
+        addStep(new TurnByNDegreesStep(-175, 0.6));
+        addStep(new AutoStepDelay(200));
+        addStep(new PathFollowerStep(PathNameConstants.GEAR_TO_BOILER));
+
+        addStep(new ShooterOnAndReady());
+        addStep(new ShootStep());
+        addStep(new AutoStepDelay(15000));
+        addStep(new StopShooting());
+    }
+
+    @Override
+    public String toString() {
+        return "Gear plus 10";
+    }
 
 }

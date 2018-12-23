@@ -17,8 +17,10 @@ public class StepSetShooterPosition extends AutoStep {
     @Override
     public void initialize() {
         // TODO Auto-generated method stub
-        if (((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName())).hoodPos() != state) {
-            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_6.getName())).setValue(true);
+        if (((Shooter) Core.getSubsystemManager().getSubsystem(WSSubsystems.SHOOTER.getName()))
+                .hoodPos() != state) {
+            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_6.getName()))
+                    .setValue(true);
         }
         setFinished(true);
     }

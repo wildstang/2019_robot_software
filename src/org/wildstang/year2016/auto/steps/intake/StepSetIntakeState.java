@@ -25,7 +25,8 @@ public class StepSetIntakeState extends AutoStep {
         // TODO Auto-generated method stub
         if (((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
                 .isDeployed() != deployed) {
-            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_7.getName())).setValue(true);
+            ((DigitalInput) Core.getInputManager().getInput(WSInputs.MAN_BUTTON_7.getName()))
+                    .setValue(true);
         }
         setFinished(true);
     }

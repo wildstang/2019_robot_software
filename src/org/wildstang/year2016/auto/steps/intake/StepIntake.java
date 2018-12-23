@@ -15,14 +15,16 @@ public class StepIntake extends AutoStep {
     @Override
     public void initialize() {
         // TODO Auto-generated method stub
-        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).setIntakeOverrideOn(true);
+        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                .setIntakeOverrideOn(true);
     }
 
     @Override
     public void update() {
         // TODO Auto-generated method stub
         // ((AnalogInput)Core.getInputManager().getInput(WSInputs.MAN_LEFT_JOYSTICK_Y.getName())).setValue(speed);
-        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName())).IntakeValue(speed);
+        ((Intake) Core.getSubsystemManager().getSubsystem(WSSubsystems.INTAKE.getName()))
+                .IntakeValue(speed);
         setFinished(true);
     }
 

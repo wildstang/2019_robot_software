@@ -128,15 +128,19 @@ public class Intake implements Subsystem {
     @Override
     public void init() {
         // TODO Auto-generated method stub
-        intakeDeploy = ((WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_DEPLOY.getName()));
-        intakeFrontLower = ((WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_FRONT_LOWER.getName()));
-        frontRoller = ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.FRONT_ROLLER.getName()));
-        frontRoller2 = ((AnalogOutput) Core.getOutputManager().getOutput(WSOutputs.FRONT_ROLLER_2.getName()));
+        intakeDeploy = ((WsDoubleSolenoid) Core.getOutputManager()
+                .getOutput(WSOutputs.INTAKE_DEPLOY.getName()));
+        intakeFrontLower = ((WsSolenoid) Core.getOutputManager()
+                .getOutput(WSOutputs.INTAKE_FRONT_LOWER.getName()));
+        frontRoller = ((AnalogOutput) Core.getOutputManager()
+                .getOutput(WSOutputs.FRONT_ROLLER.getName()));
+        frontRoller2 = ((AnalogOutput) Core.getOutputManager()
+                .getOutput(WSOutputs.FRONT_ROLLER_2.getName()));
 
-        intakeSpeedIn = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + intakeSpeedInKey,
-                INTAKE_IN_DEFAULT);
-        intakeSpeedOut = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + intakeSpeedOutKey,
-                INTAKE_OUT_DEFAULT);
+        intakeSpeedIn = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + intakeSpeedInKey, INTAKE_IN_DEFAULT);
+        intakeSpeedOut = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + intakeSpeedOutKey, INTAKE_OUT_DEFAULT);
 
         // Reset intake state
         deployPneumatic = false;
@@ -150,8 +154,10 @@ public class Intake implements Subsystem {
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_8.getName()).addInputListener(this);
         Core.getInputManager().getInput(WSInputs.MAN_BUTTON_9.getName()).addInputListener(this);
         Core.getInputManager().getInput(WSInputs.DRV_BUTTON_2.getName()).addInputListener(this);
-        Core.getInputManager().getInput(WSInputs.MAN_LEFT_JOYSTICK_Y.getName()).addInputListener(this);
-        Core.getInputManager().getInput(WSInputs.INTAKE_BOLDER_SENSOR.getName()).addInputListener(this);
+        Core.getInputManager().getInput(WSInputs.MAN_LEFT_JOYSTICK_Y.getName())
+                .addInputListener(this);
+        Core.getInputManager().getInput(WSInputs.INTAKE_BOLDER_SENSOR.getName())
+                .addInputListener(this);
     }
 
     @Override
@@ -254,9 +260,11 @@ public class Intake implements Subsystem {
     }
 
     public void notifyConfigChange(Config p_newConfig) {
-        intakeSpeedIn = p_newConfig.getDouble(this.getClass().getName() + intakeSpeedInKey, INTAKE_IN_DEFAULT);
+        intakeSpeedIn = p_newConfig.getDouble(this.getClass().getName() + intakeSpeedInKey,
+                INTAKE_IN_DEFAULT);
 
-        intakeSpeedOut = p_newConfig.getDouble(this.getClass().getName() + intakeSpeedOutKey, INTAKE_OUT_DEFAULT);
+        intakeSpeedOut = p_newConfig.getDouble(this.getClass().getName() + intakeSpeedOutKey,
+                INTAKE_OUT_DEFAULT);
 
     }
 

@@ -67,30 +67,36 @@ public class RoboRIOOutputFactory implements OutputFactory {
         Output out = null;
 
         if (s_log.isLoggable(Level.FINE)) {
-            s_log.fine("Creating digital output: Name = " + p_output.getName() + ", type = " + p_output.getType());
+            s_log.fine("Creating digital output: Name = " + p_output.getName() + ", type = "
+                    + p_output.getType());
         }
 
         switch ((WSOutputType) p_output.getType()) {
         case DIGITAL_OUTPUT:
-            out = new WsDigitalOutput(p_output.getName(), ((WsDigitalOutputConfig) p_output.getConfig()).getChannel(),
+            out = new WsDigitalOutput(p_output.getName(),
+                    ((WsDigitalOutputConfig) p_output.getConfig()).getChannel(),
                     ((WsDigitalOutputConfig) p_output.getConfig()).getDefault());
         break;
         case SERVO:
             // out = new WsServo(p_output.getName(), ((WsAnalogOutputConfig)
             // p_output.getConfig()).getChannel(), ((WsAnalogOutputConfig)
             // p_output.getConfig()).getDefault());
-            out = new WsServo(p_output.getName(), ((WsServoConfig) p_output.getConfig()).getChannel(),
+            out = new WsServo(p_output.getName(),
+                    ((WsServoConfig) p_output.getConfig()).getChannel(),
                     ((WsServoConfig) p_output.getConfig()).getDefault());
         break;
         case RELAY:
-            out = new WsRelay(p_output.getName(), ((WsRelayConfig) p_output.getConfig()).getChannel());
+            out = new WsRelay(p_output.getName(),
+                    ((WsRelayConfig) p_output.getConfig()).getChannel());
         break;
         case VICTOR:
-            out = new WsVictor(p_output.getName(), ((WsVictorConfig) p_output.getConfig()).getChannel(),
+            out = new WsVictor(p_output.getName(),
+                    ((WsVictorConfig) p_output.getConfig()).getChannel(),
                     ((WsVictorConfig) p_output.getConfig()).getDefault());
         break;
         case TALON:
-            out = new WsTalon(p_output.getName(), ((WsTalonConfig) p_output.getConfig()).getChannel(),
+            out = new WsTalon(p_output.getName(),
+                    ((WsTalonConfig) p_output.getConfig()).getChannel(),
                     ((WsTalonConfig) p_output.getConfig()).getDefault());
         break;
         case SOLENOID_SINGLE:
@@ -100,11 +106,12 @@ public class RoboRIOOutputFactory implements OutputFactory {
         break;
         case SOLENOID_DOUBLE:
             WsDoubleSolenoidConfig dsConfig = (WsDoubleSolenoidConfig) p_output.getConfig();
-            out = new WsDoubleSolenoid(p_output.getName(), dsConfig.getModule(), dsConfig.getChannel1(),
-                    dsConfig.getChannel2(), dsConfig.getDefault());
+            out = new WsDoubleSolenoid(p_output.getName(), dsConfig.getModule(),
+                    dsConfig.getChannel1(), dsConfig.getChannel2(), dsConfig.getDefault());
         break;
         case I2C:
-            out = new WsI2COutput(p_output.getName(), ((WsI2COutputConfig) p_output.getConfig()).getPort(),
+            out = new WsI2COutput(p_output.getName(),
+                    ((WsI2COutputConfig) p_output.getConfig()).getPort(),
                     ((WsI2COutputConfig) p_output.getConfig()).getAddress());
         break;
         case REMOTE_DIGITAL:

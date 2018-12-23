@@ -6,7 +6,8 @@ import org.wildstang.year2016.robot.WSSubsystems;
 import org.wildstang.year2016.subsystems.DriveBase;
 
 public class StepResetEncoders extends AutoStep {
-    DriveBase driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
+    DriveBase driveBase = ((DriveBase) Core.getSubsystemManager()
+            .getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
 
     @Override
     public void initialize() {

@@ -22,23 +22,35 @@ import org.wildstang.year2016.auto.steps.drivebase.StepWaitForDriveMotionProfile
  */
 public class AutoProgramDrivePatterns extends AutoProgram {
 
-    private double firstAngle, secondAngle, firstDriveDistance, firstDriveVelocity, secondDriveDistance,
-            secondDriveVelocity;
+    private double firstAngle, secondAngle, firstDriveDistance, firstDriveVelocity,
+            secondDriveDistance, secondDriveVelocity;
 
     @Override
     public void defineSteps() {
-        firstAngle = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".FirstRelativeAngle", 45);
-        secondAngle = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".SecondRelativeAngle", 45);
-        firstDriveDistance = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".FirstDriveDistance", -100);
-        firstDriveVelocity = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".FirstDriveVelocity", 0.0);
-        secondDriveDistance = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".SecondDriveDistance", -30);
-        secondDriveVelocity = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".SecondDriveVelocity", 0.0);
+        firstAngle = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + "."
+                        + AutoManager.getInstance().getStartPosition().toConfigString()
+                        + ".FirstRelativeAngle", 45);
+        secondAngle = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + "."
+                        + AutoManager.getInstance().getStartPosition().toConfigString()
+                        + ".SecondRelativeAngle", 45);
+        firstDriveDistance = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + "."
+                        + AutoManager.getInstance().getStartPosition().toConfigString()
+                        + ".FirstDriveDistance", -100);
+        firstDriveVelocity = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + "."
+                        + AutoManager.getInstance().getStartPosition().toConfigString()
+                        + ".FirstDriveVelocity", 0.0);
+        secondDriveDistance = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + "."
+                        + AutoManager.getInstance().getStartPosition().toConfigString()
+                        + ".SecondDriveDistance", -30);
+        secondDriveVelocity = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + "."
+                        + AutoManager.getInstance().getStartPosition().toConfigString()
+                        + ".SecondDriveVelocity", 0.0);
 
         addStep(new StepStartDriveUsingMotionProfile(firstDriveDistance, firstDriveVelocity));
         addStep(new StepWaitForDriveMotionProfile());

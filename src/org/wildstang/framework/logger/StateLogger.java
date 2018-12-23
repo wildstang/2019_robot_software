@@ -58,7 +58,8 @@ public class StateLogger implements Runnable {
 
                 if (m_tracker.isTrackingState()) {
                     if (!m_infoWritten) {
-                        // These calls should not go back to the state manager - need to pass the list
+                        // These calls should not go back to the state manager - need to pass the
+                        // list
                         // in somehow
                         writeInfo(m_output, m_tracker.getIoSet());
                         m_infoWritten = true;

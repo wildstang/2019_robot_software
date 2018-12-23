@@ -65,7 +65,10 @@ public class Core {
         s_inputManager = new InputManager();
         s_inputManager.init();
 
-        s_outputManager = new OutputManager(); /* FIXME no point in IOutputManager interface if this is hard-coded */
+        s_outputManager = new OutputManager(); /*
+                                                * FIXME no point in IOutputManager interface if this
+                                                * is hard-coded
+                                                */
         s_outputManager.init();
 
         s_subsystemManager = new SubsystemManager();
@@ -108,7 +111,8 @@ public class Core {
             // Add the output to the output manager
             if (output.isTrackingState()) {
                 out.setStateTracker(s_stateTracker);
-                s_stateTracker.addIOInfo(output.getName(), output.getType().toString(), "Output", output.getConfig());
+                s_stateTracker.addIOInfo(output.getName(), output.getType().toString(), "Output",
+                        output.getConfig());
             }
             s_outputManager.addOutput(out);
         }
@@ -136,7 +140,8 @@ public class Core {
             // Add the input to the input manager
             if (input.isTrackingState()) {
                 in.setStateTracker(s_stateTracker);
-                s_stateTracker.addIOInfo(input.getName(), input.getType().toString(), "Input", input.getConfig());
+                s_stateTracker.addIOInfo(input.getName(), input.getType().toString(), "Input",
+                        input.getConfig());
             }
             s_inputManager.addInput(in);
         }
@@ -186,7 +191,8 @@ public class Core {
                 Input input = entry.getValue();
 
                 Output out = null;
-                if (!(input instanceof RemoteAnalogInput) && !(input instanceof RemoteDigitalInput)) {
+                if (!(input instanceof RemoteAnalogInput)
+                        && !(input instanceof RemoteDigitalInput)) {
                     if (input instanceof AnalogInput) {
                         out = new RemoteAnalogOutput(name, "remoteIO", 0);
                     } else if (input instanceof DigitalInput) {
@@ -213,7 +219,8 @@ public class Core {
                 Output output = entry.getValue();
 
                 Input in = null;
-                if (!(output instanceof RemoteAnalogInput) && !(output instanceof RemoteDigitalInput)) {
+                if (!(output instanceof RemoteAnalogInput)
+                        && !(output instanceof RemoteDigitalInput)) {
                     if (output instanceof AnalogOutput) {
                         in = new RemoteAnalogInput(name, "remoteIO");
                     } else if (output instanceof DigitalOutput) {

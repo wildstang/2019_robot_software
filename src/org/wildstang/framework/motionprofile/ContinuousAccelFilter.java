@@ -69,8 +69,8 @@ public class ContinuousAccelFilter {
         currAcc = acc;
     }
 
-    public void calculateSystem(double distance_to_target, double v, double goal_v, double max_a, double max_v,
-            double dt) {
+    public void calculateSystem(double distance_to_target, double v, double goal_v, double max_a,
+            double max_v, double dt) {
         dt2 = 0;
         a = 0;
         const_time = 0;
@@ -99,7 +99,8 @@ public class ContinuousAccelFilter {
         }
     }
 
-    public void maxAccelTime(double distance_left, double curr_vel, double goal_vel, double max_a, double max_v) {
+    public void maxAccelTime(double distance_left, double curr_vel, double goal_vel, double max_a,
+            double max_v) {
         double local_const_time = 0;
         double start_a = 0;
         if (distance_left > 0) {
@@ -131,14 +132,15 @@ public class ContinuousAccelFilter {
             final_a = max_a;
         }
 
-        double top_v = Math.sqrt(
-                (distance_left + (curr_vel * curr_vel) / (2.0 * start_a) + (goal_vel * goal_vel) / (2.0 * final_a))
+        double top_v = Math.sqrt((distance_left + (curr_vel * curr_vel) / (2.0 * start_a)
+                + (goal_vel * goal_vel) / (2.0 * final_a))
                 / (-1.0 / (2.0 * final_a) + 1.0 / (2.0 * start_a)));
 
         double accel_time = 0;
         if (top_v > max_v) {
             accel_time = (max_v - curr_vel) / max_a;
-            local_const_time = (distance_left + (goal_vel * goal_vel - max_v * max_v) / (2.0 * max_a)) / max_v;
+            local_const_time = (distance_left
+                    + (goal_vel * goal_vel - max_v * max_v) / (2.0 * max_a)) / max_v;
         } else {
             accel_time = (top_v - curr_vel) / start_a;
         }

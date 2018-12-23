@@ -15,7 +15,8 @@ public class StepWaitForDriveMotionProfile extends AutoStep {
 
     @Override
     public void initialize() {
-        driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
+        driveBase = ((DriveBase) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
     }
 
     @Override
@@ -25,7 +26,8 @@ public class StepWaitForDriveMotionProfile extends AutoStep {
         if ((distanceRemaining < 0.01) && (distanceRemaining > -0.01)) {
             setFinished(true);
         }
-        if ((distanceRemaining < 12.0) && (distanceRemaining > -12.0) && (velocity < 0.10) && (velocity > -0.10)) {
+        if ((distanceRemaining < 12.0) && (distanceRemaining > -12.0) && (velocity < 0.10)
+                && (velocity > -0.10)) {
             setFinished(true);
         }
     }

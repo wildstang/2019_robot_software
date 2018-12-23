@@ -52,7 +52,8 @@ public class TwoBall extends AutoProgram {
         addStep(new StepShoot());
         addStep(new StepResetShotToggle());
 
-        AutoParallelStepGroup leaveCourtyard = new AutoParallelStepGroup("Stop flywheel and go to low bar");
+        AutoParallelStepGroup leaveCourtyard = new AutoParallelStepGroup(
+                "Stop flywheel and go to low bar");
         AutoSerialStepGroup gotoLowBar = new AutoSerialStepGroup("Go to low bar");
         // Stop flywheel
         leaveCourtyard.addStep(new StepRunFlywheel(Shooter.FLYWHEEL_SPEED_ZERO));
@@ -87,7 +88,8 @@ public class TwoBall extends AutoProgram {
         // Turn to face ball
         addStep(new StepQuickTurn(-21));
 
-        AutoParallelStepGroup grabBall = new AutoParallelStepGroup("Run intake and go to/return from ball");
+        AutoParallelStepGroup grabBall = new AutoParallelStepGroup(
+                "Run intake and go to/return from ball");
         AutoSerialStepGroup gotoBall = new AutoSerialStepGroup("Go to ball");
         // Intake ball
         grabBall.addStep(new StepIntake(1));
@@ -111,7 +113,8 @@ public class TwoBall extends AutoProgram {
         // Turn to face low bar
         addStep(new StepQuickTurn(21));
 
-        AutoParallelStepGroup shootTwo = new AutoParallelStepGroup("Return to shooting position and shoot");
+        AutoParallelStepGroup shootTwo = new AutoParallelStepGroup(
+                "Return to shooting position and shoot");
         AutoSerialStepGroup gotoGoalTwo = new AutoSerialStepGroup("Go to goal again");
         // Start shooter to get to speed
         shootTwo.addStep(new StepRunFlywheel(speed));

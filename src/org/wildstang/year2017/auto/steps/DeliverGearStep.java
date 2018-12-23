@@ -5,27 +5,24 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.year2017.robot.WSSubsystems;
 import org.wildstang.year2017.subsystems.Gear;
 
-public class DeliverGearStep extends AutoStep
-{
-   Gear m_gearSubsystem;
-   
-   @Override
-   public void initialize()
-   {
-      m_gearSubsystem = (Gear)Core.getSubsystemManager().getSubsystem(WSSubsystems.GEAR.getName());
-   }
+public class DeliverGearStep extends AutoStep {
+    Gear m_gearSubsystem;
 
-   @Override
-   public void update()
-   {
-      m_gearSubsystem.deliverGear();
-      setFinished(true);
-   }
+    @Override
+    public void initialize() {
+        m_gearSubsystem = (Gear) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.GEAR.getName());
+    }
 
-   @Override
-   public String toString()
-   {
-      return "Deliver Gear Step";
-   }
+    @Override
+    public void update() {
+        m_gearSubsystem.deliverGear();
+        setFinished(true);
+    }
+
+    @Override
+    public String toString() {
+        return "Deliver Gear Step";
+    }
 
 }

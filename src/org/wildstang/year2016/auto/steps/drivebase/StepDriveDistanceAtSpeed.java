@@ -37,14 +37,16 @@ public class StepDriveDistanceAtSpeed extends AutoStep {
 
     @Override
     public void initialize() {
-        driveBase = ((DriveBase) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
+        driveBase = ((DriveBase) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVE_BASE.getName()));
         driveBase.resetLeftEncoder();
         driveBase.resetRightEncoder();
         if (distance < 0) {
             speed = -speed;
         }
 
-        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(speed);
+        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName()))
+                .setValue(speed);
         hasReachedTarget = false;
     }
 
@@ -53,12 +55,14 @@ public class StepDriveDistanceAtSpeed extends AutoStep {
         double leftDistance = driveBase.getLeftDistance();
         double rightDistance = driveBase.getRightDistance();
         if (!hasReachedTarget) {
-            if (Math.abs(leftDistance) > Math.abs(distance) || Math.abs(rightDistance) > Math.abs(distance)) {
+            if (Math.abs(leftDistance) > Math.abs(distance)
+                    || Math.abs(rightDistance) > Math.abs(distance)) {
                 hasReachedTarget = true;
                 timeWhenTargetReached = System.currentTimeMillis();
             } else {
                 if (USE_DRIFTING_COMPENSATION_FACTOR_CONFIG) {
-                    SmartDashboard.putBoolean("Using comp factor NOW", USE_DRIFTING_COMPENSATION_FACTOR_CONFIG);
+                    SmartDashboard.putBoolean("Using comp factor NOW",
+                            USE_DRIFTING_COMPENSATION_FACTOR_CONFIG);
                     // Still need to reach target. Try to compensate for drifting by
                     // applying a heading.
                     double distanceDifference = rightDistance - leftDistance;
@@ -66,14 +70,16 @@ public class StepDriveDistanceAtSpeed extends AutoStep {
                         // We're driving forward
                         // driveBase.overrideHeadingValue(distanceDifference *
                         // DRIFTING_COMPENSATION_FACTOR);
-                        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName()))
-                                .setValue(distanceDifference * DRIFTING_COMPENSATION_FACTOR);
+                        ((AnalogInput) Core.getInputManager()
+                                .getInput(WSInputs.DRV_HEADING.getName())).setValue(
+                                        distanceDifference * DRIFTING_COMPENSATION_FACTOR);
                     } else {
                         // We're driving backwards. Heading compensation is reversed.
                         // driveBase.overrideHeadingValue(distanceDifference *
                         // DRIFTING_COMPENSATION_FACTOR * -1);
-                        ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_HEADING.getName()))
-                                .setValue(-1 * distanceDifference * DRIFTING_COMPENSATION_FACTOR);
+                        ((AnalogInput) Core.getInputManager()
+                                .getInput(WSInputs.DRV_HEADING.getName())).setValue(
+                                        -1 * distanceDifference * DRIFTING_COMPENSATION_FACTOR);
                     }
                 }
             }
@@ -82,7 +88,8 @@ public class StepDriveDistanceAtSpeed extends AutoStep {
             if (hasReachedTarget && shouldHardStop) {
                 if (System.currentTimeMillis() < timeWhenTargetReached + MILLIS_TO_REVERSE) {
                     // driveBase.overrideThrottleValue(-speed);
-                    ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName())).setValue(-speed);
+                    ((AnalogInput) Core.getInputManager().getInput(WSInputs.DRV_THROTTLE.getName()))
+                            .setValue(-speed);
                 } else {
                     // driveBase.disableDriveOverride();
                     setFinished(true);

@@ -96,7 +96,8 @@ public class WsMJPEGstreamer implements Subsystem, Runnable {
                 serverSocket.setPerformancePreferences(1, 2, 1);
                 Socket connection = serverSocket.accept();
                 connection.setTcpNoDelay(true);
-                System.out.println("Connection received from " + connection.getInetAddress().getHostName());
+                System.out.println(
+                        "Connection received from " + connection.getInetAddress().getHostName());
 
                 SocketWorker sw = new SocketWorker(counter++, connection, this);
                 exeSvc.execute(sw);

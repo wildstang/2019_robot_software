@@ -21,7 +21,8 @@ public class StepSetTurbo extends AutoStep {
     @Override
     public void update() {
         // TODO Auto-generated method stub
-        ((DigitalInput) Core.getInputManager().getInput(WSInputs.DRV_BUTTON_5.getName())).setValue(turbo);
+        ((DigitalInput) Core.getInputManager().getInput(WSInputs.DRV_BUTTON_5.getName()))
+                .setValue(turbo);
     }
 
     @Override

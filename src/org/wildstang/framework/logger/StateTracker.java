@@ -44,7 +44,8 @@ public class StateTracker {
                     s_log.finer("Current state is not null. Throwing exception.");
                 }
 
-                throw new IllegalStateException("Cannot being a new state cycle while already in a cycle.");
+                throw new IllegalStateException(
+                        "Cannot being a new state cycle while already in a cycle.");
             } else {
                 if (s_log.isLoggable(Level.FINER)) {
                     s_log.finer("Beginning new StateGroup");
@@ -76,7 +77,8 @@ public class StateTracker {
                     s_log.finer("Current state is null. Throwing exception.");
                 }
 
-                throw new IllegalStateException("Cannot add state information while not in a cycle.");
+                throw new IllegalStateException(
+                        "Cannot add state information while not in a cycle.");
             } else {
                 if (s_log.isLoggable(Level.FINER)) {
                     s_log.finer("Adding state");

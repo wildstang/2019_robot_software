@@ -28,7 +28,8 @@ public class AutoProgramDriveDistanceMotionProfile extends AutoProgram {
     @Override
     public void defineSteps() {
         distance = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
-                + AutoManager.getInstance().getStartPosition().toConfigString() + ".distance", 10.0);
+                + AutoManager.getInstance().getStartPosition().toConfigString() + ".distance",
+                10.0);
         heading = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + "."
                 + AutoManager.getInstance().getStartPosition().toConfigString() + ".heading", 0.0);
         addStep(new StepSetShifter(true));

@@ -105,19 +105,20 @@ public class Shooter implements Subsystem, ConfigListener {
         RingLight.enable();
 
         flyWheel = (WsVictor) (Core.getOutputManager().getOutput(WSOutputs.SHOOTER.getName()));
-        shooterHood = ((WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.SHOOTER_HOOD.getName()));
+        shooterHood = ((WsDoubleSolenoid) Core.getOutputManager()
+                .getOutput(WSOutputs.SHOOTER_HOOD.getName()));
 
-        highFlywheelSpeedConf = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + highSpeedKey,
-                HIGH_DEFAULT);
-        lowFlywheelSpeedConf = Core.getConfigManager().getConfig().getDouble(this.getClass().getName() + lowSpeedKey,
-                LOW_DEFAULT);
+        highFlywheelSpeedConf = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + highSpeedKey, HIGH_DEFAULT);
+        lowFlywheelSpeedConf = Core.getConfigManager().getConfig()
+                .getDouble(this.getClass().getName() + lowSpeedKey, LOW_DEFAULT);
 
         expectedHighRateConf = Core.getConfigManager().getConfig()
                 .getDouble(this.getClass().getName() + expectedHighRateKey, HIGH_RATE_DEFAULT);
         expectedLowRateConf = Core.getConfigManager().getConfig()
                 .getDouble(this.getClass().getName() + expectedLowRateKey, LOW_RATE_DEFAULT);
-        onSpeedFlyWheelDiff = Core.getConfigManager().getConfig().getInt(this.getClass().getName() + onSpeedDiffKey,
-                ON_SPEED_FLYWHEEL_DIFF_DEFAULT);
+        onSpeedFlyWheelDiff = Core.getConfigManager().getConfig()
+                .getInt(this.getClass().getName() + onSpeedDiffKey, ON_SPEED_FLYWHEEL_DIFF_DEFAULT);
 
         // Need to figure out these values to configure the encoder.
         // flyWheelEncoder.setMaxPeriod(0.1);
@@ -144,23 +145,23 @@ public class Shooter implements Subsystem, ConfigListener {
         case 0:
             flySpeed = 0;
             expectedRate = 0;
-            break;
+        break;
         case 1:
             flySpeed = LOW_DEFAULT;
             expectedRate = LOW_RATE_DEFAULT;
-            break;
+        break;
         case 2:
             flySpeed = MEDIUM_DEFAULT;
             expectedRate = MEDIUM_RATE_DEFAULT;
-            break;
+        break;
         case 3:
             flySpeed = HIGH_DEFAULT;
             expectedRate = HIGH_RATE_DEFAULT;
-            break;
+        break;
         default:
             flySpeed = MEDIUM_DEFAULT;
             expectedRate = MEDIUM_RATE_DEFAULT;
-            break;
+        break;
         }
 
         if (true == flyWheelToggle) {
@@ -187,7 +188,8 @@ public class Shooter implements Subsystem, ConfigListener {
 
                     if (flyWheelRate > expectedRate) {
                         // Decrease Speed
-                        SmartDashboard.putNumber("flyWheelRate greater than expectedRate", flySpeed);
+                        SmartDashboard.putNumber("flyWheelRate greater than expectedRate",
+                                flySpeed);
                         flySpeed -= outputAdjust;
                     } else if (flyWheelRate < expectedRate) {
                         SmartDashboard.putNumber("flyWheelRate less than expectedRate", flySpeed);
@@ -249,11 +251,14 @@ public class Shooter implements Subsystem, ConfigListener {
 
     @Override
     public void notifyConfigChange(Config p_newConfig) {
-        highFlywheelSpeedConf = p_newConfig.getDouble(this.getClass().getName() + highSpeedKey, HIGH_DEFAULT);
-        lowFlywheelSpeedConf = p_newConfig.getDouble(this.getClass().getName() + lowSpeedKey, LOW_DEFAULT);
-        expectedHighRateConf = p_newConfig.getDouble(this.getClass().getName() + expectedHighRateKey,
-                HIGH_RATE_DEFAULT);
-        expectedLowRateConf = p_newConfig.getDouble(this.getClass().getName() + expectedLowRateKey, LOW_RATE_DEFAULT);
+        highFlywheelSpeedConf = p_newConfig.getDouble(this.getClass().getName() + highSpeedKey,
+                HIGH_DEFAULT);
+        lowFlywheelSpeedConf = p_newConfig.getDouble(this.getClass().getName() + lowSpeedKey,
+                LOW_DEFAULT);
+        expectedHighRateConf = p_newConfig
+                .getDouble(this.getClass().getName() + expectedHighRateKey, HIGH_RATE_DEFAULT);
+        expectedLowRateConf = p_newConfig.getDouble(this.getClass().getName() + expectedLowRateKey,
+                LOW_RATE_DEFAULT);
         onSpeedFlyWheelDiff = p_newConfig.getInt(this.getClass().getName() + onSpeedDiffKey,
                 ON_SPEED_FLYWHEEL_DIFF_DEFAULT);
     }
