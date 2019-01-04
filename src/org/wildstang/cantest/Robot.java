@@ -21,12 +21,15 @@ package org.wildstang.cantest;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class Robot extends IterativeRobot {
     TalonSRX _talon = new TalonSRX(8);
+    VictorSPX _victor1 = new VictorSPX(8);
+    VictorSPX _victor2 = new VictorSPX(3);
     Joystick _joy = new Joystick(0);
     StringBuilder _sb = new StringBuilder();
     int _loops = 0;
@@ -37,6 +40,9 @@ public class Robot extends IterativeRobot {
         _talon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0,
                 Constants.kTimeoutMs);
         _talon.setSensorPhase(true);
+
+        _victor1.follow(_talon);
+        _victor2.follow(_talon);
 
         /* set the peak, nominal outputs */
         _talon.configNominalOutputForward(0, Constants.kTimeoutMs);
