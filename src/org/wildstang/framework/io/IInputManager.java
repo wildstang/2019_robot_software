@@ -2,6 +2,8 @@ package org.wildstang.framework.io;
 
 import java.util.HashMap;
 
+import org.wildstang.framework.core.Inputs;
+
 public interface IInputManager {
 
     public void init();
@@ -16,6 +18,8 @@ public interface IInputManager {
     public void removeInput(Input p_input);
 
     public Input getInput(String p_name);
+
+    public Input getInput(Inputs p_input);
 
     public int size();
 

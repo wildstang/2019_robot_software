@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.wildstang.framework.CoreUtils;
+import org.wildstang.framework.core.Inputs;
 
 /**
  * This class in the manager for all inputs.
@@ -42,7 +43,6 @@ public class InputManager implements IInputManager {
 
         // Iterate over all inputs and update each one
         for (Input in : m_inputs.values()) {
-            /* FIXME: everything in this block should be factored into Input */
             if (in.isEnabled()) {
                 if (s_log.isLoggable(Level.FINEST)) {
                     s_log.finest("Updating Input: " + in.getName());
@@ -96,6 +96,11 @@ public class InputManager implements IInputManager {
         result = m_inputs.get(p_name);
 
         return result;
+    }
+
+    @Override
+    public Input getInput(Inputs p_input) {
+        return getInput(p_input.getName());
     }
 
     @Override

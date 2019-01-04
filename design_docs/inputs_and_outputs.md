@@ -2,6 +2,10 @@
 
 The WS framework has a concept of *inputs* and *outputs*. An *output* is a signal from the RIO to another device; an *input* is a signal from another device to the RIO. An input could be, for example, a sensor or a network message from another device. An output could be, for example, a motor or a network message to another device.
 
+CAVEAT: The CAN motor controllers are NOT SET UP AS OUTPUTS. Unfortunately, their API is complicated and doesn't really lend itself to the Output abstraction. The drive base subsystem handles them separately.
+
+TODO: Prove me wrong and roll the TalonSRX and VictorSPX into the outputs system. We could do this if each control mode were a separate output. If outputs could be enabled and disabled, then we could create a TalonSRXVelocity output, a TalonSRXPosition output, etc. and when you activate one, it disables the rest. Distinct output for each PID profile and all that. Then the complex API reduces back down to scalar outputs.
+
 ## Code locations
 
 -  `org.wildstang.framework.io`: The bulk of inputs and outputs framework code.
@@ -35,7 +39,14 @@ During robot startup, `Robot.robotInit` calls `Core.createOutputs` in org.wildst
 
 For each `Outputs` in `WSOutputs`, createOutputs creates an `Output` (not to be confused with `Outputs`) and uses the `OutputManager`'s `addOutput()` to add the `Output` (not `Outputs`) to the `OutputManager`.
 
-The parallel is true for input.
+The parallel is true for input. For input, any object (like a subsystem) that wants to know about changes to an input must subscribe to the input e.g. 
+
+
+        headingInput = (AnalogInput) Core.getInputManager()
+                                         .getInput(WSInputs.HEADING.getName());
+        headingInput.addInputListener(this);
 
 ## Operation
 `Robot.autonomousPeriodic` and `Robot.teleopPeriodic` periodically call `Core.executeUpdate()`. `Core.executeUpdate()` calls `update()` methods of `InputManager` and `OutputManager`, which call the `update()` methods of individual inputs and outputs.
+
+Inputs and outputs call inputUpdate method of objects subscribve
