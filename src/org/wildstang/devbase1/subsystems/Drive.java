@@ -8,14 +8,14 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.pid.PIDConstants;
 import org.wildstang.framework.subsystems.Subsystem;
 
-import com.ctre.phoenix.ParamEnum;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /** This subsystem controls the drive wheels so that the robot can move
  * around. */
@@ -27,9 +27,14 @@ public class Drive implements Subsystem {
     private static final double WHEEL_DIAMETER_INCHES = 4;
     /** Number of encoder ticks in one revolution of the wheel */
     private static final double ENCODER_CPR = 4096;
-    /** Surface inches of drive wheel motion per encoder tick (a small number) */
-    private static final double TICKS_TO_INCHES = WHEEL_DIAMETER_INCHES * Math.PI / ENCODER_CPR;
+    /** # of ticks in one surface inch of wheel movement */
+    private static final double TICKS_PER_INCH = ENCODER_CPR / (WHEEL_DIAMETER_INCHES * Math.PI);
     private static final double RADIANS = Math.PI / 180;
+
+    /** Maximum wheel speed in inches / 100ms */
+    private static final double MAX_SPEED_INCHES = 1.5;
+    /** Max wheel speed in ticks / 100ms */
+    private static final double MAX_SPEED_TICKS = MAX_SPEED_INCHES * TICKS_PER_INCH;
 
     /** Status frame period controls how frequently the TalonSRX reports back with
      * its sensor status over the CANBus. This constant is in milliseconds. */
@@ -44,12 +49,12 @@ public class Drive implements Subsystem {
     private static final int[] SIDES = {LEFT, RIGHT};
     private static final String[] SIDE_NAMES = {"left", "right"};
     // left then right
-    private static final int[] MASTER_IDS = {8, 7};
+    private static final int[] MASTER_IDS = {7, 8};
     // left two then right two
-    private static final int[][] FOLLOWER_IDS = {{8, 3}, {4, 11}};
+    private static final int[][] FOLLOWER_IDS = {{4, 11}, {8, 3}};
 
     private static final PIDConstants MANUAL_DRIVE_PID_CONSTANTS =
-            new PIDConstants(0.5, 0, 0, 0.25);
+            new PIDConstants(.8, 0.001, 10, 0.55);
 
     /** Left and right Talon master controllers */
     private TalonSRX[] masters = new TalonSRX[2];
@@ -60,6 +65,8 @@ public class Drive implements Subsystem {
     private AnalogInput headingInput;
     /** Input to control forward-backward movement */
     private AnalogInput throttleInput;
+
+    private int updateCounter;
 
     public Drive() {
         /* Nothing to do in constructor. */
@@ -109,28 +116,31 @@ public class Drive implements Subsystem {
     private void initMaster(int side, TalonSRX master) throws CoreUtils.CTREException {
         System.out.println("Initializing TalonSRX master ID " + MASTER_IDS[side]);
 
-        master.set(ControlMode.PercentOutput, 0);
-        master.setNeutralMode(NeutralMode.Brake);
-
         // The Talon SRX should be directly connected to an encoder
-        master.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
 
         /* If one of the sensors is on backwards we might do
          * if (side == LEFT) {
          *     master.setSensorPhase(true); // invert sensor w.r.t. motor
-
          * } */
-        master.setInverted(side == RIGHT);
+        if (side == LEFT) {
+            master.setInverted(false);
+            master.setSensorPhase(true);
+        } else {
+            master.setInverted(true);
+            master.setSensorPhase(true);
+        }
 
+        /*
         CoreUtils.checkCTRE(master.setStatusFramePeriod(
                 StatusFrame.Status_2_Feedback0, STATUS_FRAME_PERIOD, TIMEOUT));
 
-        CoreUtils.checkCTRE(master.configNeutralDeadband(NEUTRAL_DEADBAND, TIMEOUT));
+        CoreUtils.checkCTRE(master.configNeutralDeadband(NEUTRAL_DEADBAND, TIMEOUT));*/
 
         // Configure output to range from full-forward to full-reverse.
+        CoreUtils.checkCTRE(master.configNominalOutputForward(0, TIMEOUT));
+        CoreUtils.checkCTRE(master.configNominalOutputReverse(0, TIMEOUT));
         CoreUtils.checkCTRE(master.configPeakOutputForward(+1.0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configPeakOutputReverse(-1.0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configPeakOutputForward(1.0, TIMEOUT));
         CoreUtils.checkCTRE(master.configPeakOutputReverse(-1.0, TIMEOUT));
 
         // Put in sane default PID constants.
@@ -138,12 +148,13 @@ public class Drive implements Subsystem {
         CoreUtils.checkCTRE(master.config_kI(0, MANUAL_DRIVE_PID_CONSTANTS.i, TIMEOUT));
         CoreUtils.checkCTRE(master.config_kD(0, MANUAL_DRIVE_PID_CONSTANTS.d, TIMEOUT));
         CoreUtils.checkCTRE(master.config_kF(0, MANUAL_DRIVE_PID_CONSTANTS.f, TIMEOUT));
-        CoreUtils.checkCTRE(master.configClosedLoopPeakOutput(0, 1, TIMEOUT));
 
-        CoreUtils.checkCTRE(master.configSetParameter(
-                ParamEnum.ePIDLoopPeriod, PID_PERIOD, 0 /*Subvalue, ignored */, 0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configSetParameter(
-                ParamEnum.ePIDLoopPeriod, PID_PERIOD, 0 /*Subvalue, ignored */, 1, TIMEOUT));
+        master.setNeutralMode(NeutralMode.Coast);
+
+        // CoreUtils.checkCTRE(master.configSetParameter(
+        //         ParamEnum.ePIDLoopPeriod, PID_PERIOD, 0 /*Subvalue, ignored */, 0, TIMEOUT));
+        // CoreUtils.checkCTRE(master.configSetParameter(
+        //         ParamEnum.ePIDLoopPeriod, PID_PERIOD, 0 /*Subvalue, ignored */, 1, TIMEOUT));
 
         CoreUtils.checkCTRE(master.getSensorCollection().setQuadraturePosition(0, TIMEOUT));
 
@@ -153,9 +164,10 @@ public class Drive implements Subsystem {
     }
 
     private void initFollower(int side, VictorSPX follower) {
-        int masterID = MASTER_IDS[side];
-        follower.set(ControlMode.Follower, masterID);
-        follower.setNeutralMode(NeutralMode.Brake);
+        TalonSRX master = masters[side];
+        follower.setInverted(side == RIGHT);
+        follower.follow(master);
+        follower.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
@@ -172,7 +184,20 @@ public class Drive implements Subsystem {
     @Override
     public void update() {
         // TODO
-        updateDrive(0, 1);
+        if (updateCounter % 10 == 0) {
+            for (int side : SIDES) {
+                TalonSRX master = masters[side];
+                double output = master.getMotorOutputPercent();
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " output", output);
+                double speed = master.getSelectedSensorVelocity();
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " speed", speed);
+                double error = master.getClosedLoopError();
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " error", error);
+                double target = master.getClosedLoopTarget();
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);
+            }
+        }
+        updateCounter += 1;
     }
 
     @Override
@@ -189,7 +214,10 @@ public class Drive implements Subsystem {
         double normalized_left_throttle = left_throttle / Math.max(1, max_throttle);
         double normalized_right_throttle = right_throttle / Math.max(1, max_throttle);
 
-        masters[LEFT].set(ControlMode.PercentOutput, normalized_left_throttle);
-        masters[RIGHT].set(ControlMode.PercentOutput, normalized_right_throttle);
+        //System.out.println(normalized_left_throttle + "   " + normalized_right_throttle);
+        masters[LEFT].set(ControlMode.Velocity, left_throttle * MAX_SPEED_TICKS);
+        masters[RIGHT].set(ControlMode.Velocity, right_throttle * MAX_SPEED_TICKS);
+        //masters[LEFT].set(ControlMode.PercentOutput, normalized_left_throttle);
+        //masters[RIGHT].set(ControlMode.PercentOutput, normalized_right_throttle);
     }
 }
