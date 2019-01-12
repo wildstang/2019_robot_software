@@ -1,6 +1,7 @@
 package org.wildstang.framework.io.inputs;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  *
@@ -11,14 +12,12 @@ public class RemoteAnalogInput extends AnalogInput {
 
     public RemoteAnalogInput(String p_name, String p_networkTbl) {
         super(p_name);
-        remoteIOTable = NetworkTable.getTable(p_networkTbl);
+        remoteIOTable = NetworkTableInstance.getDefault().getTable(p_networkTbl);
     }
 
     @Override
     public double readRawValue() {
-        // System.out.println("Getting: " + getName() + " From "
-        // + remoteIOTable.toString());
-        return remoteIOTable.getNumber(getName(), 0);
+        return remoteIOTable.getEntry(getName()).getDouble(0);
     }
 
 }

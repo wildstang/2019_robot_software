@@ -1,7 +1,7 @@
 # 2019_robot_software
 ## Getting Started
 ### Setting up required software
-*  These instructions are currently Windows-specific. It is possible to do everything but run the driver's station from Linux or OS X; ask #software if you're going down that road.
+*  These software setup instructions are currently Windows-specific. It is possible to do everything but run the driver's station from Linux or OS X; ask #software if you're going down that road.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027503-installing-c-and-java-development-tools-for-frc to install VSCode and WPIlib.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027504-installing-the-frc-update-suite-all-languages to install driver's station.
 *  Download and run CTRE installer at https://github.com/CrossTheRoadElec/Phoenix-Releases/releases/download/v5.12.0.1/CTRE.Phoenix.Framework.Windows.Installer.v5.12.0.1.zip .
@@ -14,7 +14,7 @@
 ### Building and deploying to the robot
 To build the code, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Build robot code".
 
-To build and deploy, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Deploy robot code". Or just press F5.
+To build and deploy, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Deploy robot code". Or just press shift-F5.
 
 To debug the code on the robot, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Debug robot code".
 ## Robots

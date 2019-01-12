@@ -23,10 +23,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class Robot extends IterativeRobot {
+public class Robot extends TimedRobot {
     TalonSRX _talon = new TalonSRX(8);
     VictorSPX _victor1 = new VictorSPX(8);
     VictorSPX _victor2 = new VictorSPX(3);

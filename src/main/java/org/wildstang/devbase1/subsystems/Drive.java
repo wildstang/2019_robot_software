@@ -22,14 +22,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Drive implements Subsystem {
     // Constants
     /** Distance from the centerline of left wheels to centerline of right wheels */
-    private static final double WHEELBASE_WIDTH_INCHES = 30;
+    // private static final double WHEELBASE_WIDTH_INCHES = 30;
     /** Diameter of drive wheels */
     private static final double WHEEL_DIAMETER_INCHES = 4;
     /** Number of encoder ticks in one revolution of the wheel */
     private static final double ENCODER_CPR = 4096;
     /** # of ticks in one surface inch of wheel movement */
     private static final double TICKS_PER_INCH = ENCODER_CPR / (WHEEL_DIAMETER_INCHES * Math.PI);
-    private static final double RADIANS = Math.PI / 180;
+    // private static final double RADIANS = Math.PI / 180;
 
     /** Maximum wheel speed in inches / 100ms */
     private static final double MAX_SPEED_INCHES = 1.5;
@@ -50,7 +50,7 @@ public class Drive implements Subsystem {
     // left then right
     private static final int[] MASTER_IDS = {7, 8};
     // left two then right two
-    private static final int[][] FOLLOWER_IDS = {{4, 11}, {8, 3}};
+    private static final int[][] FOLLOWER_IDS = {{4, 11}, {9, 3}};
 
     private static final PIDConstants MANUAL_DRIVE_PID_CONSTANTS =
             new PIDConstants(.8, 0.001, 10, 0.55);
@@ -208,10 +208,10 @@ public class Drive implements Subsystem {
         double left_throttle = throttle + heading;
         double right_throttle = throttle - heading;
 
-        double max_throttle = Math.max(Math.abs(left_throttle), Math.abs(right_throttle));
+        // double max_throttle = Math.max(Math.abs(left_throttle), Math.abs(right_throttle));
 
-        double normalized_left_throttle = left_throttle / Math.max(1, max_throttle);
-        double normalized_right_throttle = right_throttle / Math.max(1, max_throttle);
+        // double normalized_left_throttle = left_throttle / Math.max(1, max_throttle);
+        // double normalized_right_throttle = right_throttle / Math.max(1, max_throttle);
 
         //System.out.println(normalized_left_throttle + "   " + normalized_right_throttle);
         masters[LEFT].set(ControlMode.Velocity, left_throttle * MAX_SPEED_TICKS);

@@ -1,6 +1,6 @@
 package org.wildstang.framework.io.inputs;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTable;
 
 public class RemoteDigitalInput extends DigitalInput {
 
