@@ -1,6 +1,7 @@
 package org.wildstang.framework.io.outputs;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  *
@@ -12,7 +13,7 @@ public class RemoteDigitalOutput extends DigitalOutput {
     public RemoteDigitalOutput(String name, String p_networkTbl, boolean p_default) {
         super(name, p_default);
         System.out.println("Getting Network Table: " + p_networkTbl);
-        remoteIOTable = NetworkTable.getTable(p_networkTbl);
+        remoteIOTable = NetworkTableInstance.getDefault().getTable(p_networkTbl);
     }
 
     public void notifyConfigChange() {
@@ -22,7 +23,7 @@ public class RemoteDigitalOutput extends DigitalOutput {
 
     @Override
     protected void sendDataToOutput() {
-        remoteIOTable.putBoolean(getName(), getValue());
+        remoteIOTable.getEntry(getName()).forceSetBoolean(getValue());
     }
 
 }
