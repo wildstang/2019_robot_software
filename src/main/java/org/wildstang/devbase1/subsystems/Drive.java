@@ -214,9 +214,9 @@ public class Drive implements Subsystem {
         double normalized_right_throttle = right_throttle / Math.max(1, max_throttle);
 
         //System.out.println(normalized_left_throttle + "   " + normalized_right_throttle);
-        masters[LEFT].set(ControlMode.Velocity, left_throttle * MAX_SPEED_TICKS);
-        masters[RIGHT].set(ControlMode.Velocity, right_throttle * MAX_SPEED_TICKS);
-        //masters[LEFT].set(ControlMode.PercentOutput, normalized_left_throttle);
-        //masters[RIGHT].set(ControlMode.PercentOutput, normalized_right_throttle);
+        //masters[LEFT].set(ControlMode.Velocity, left_throttle * MAX_SPEED_TICKS);
+        //masters[RIGHT].set(ControlMode.Velocity, right_throttle * MAX_SPEED_TICKS);
+        masters[LEFT].set(ControlMode.PercentOutput, normalized_left_throttle);
+        masters[RIGHT].set(ControlMode.PercentOutput, normalized_right_throttle);
     }
 }
