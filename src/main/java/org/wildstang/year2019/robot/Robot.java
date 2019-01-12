@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         Drive drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
-        drive.setFullBrakeMode();
+        //drive.setFullBrakeMode();
     }
 
     @Override
