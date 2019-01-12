@@ -6,7 +6,7 @@ import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2016.robot.WSInputs;
 
-//import edu.wpi.first.wpilibj.networktables.NetworkTable;
+//import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision implements Subsystem {

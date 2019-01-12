@@ -29,8 +29,8 @@ public class AutoManager {
         currentPosition = AutoStartPositionEnum.UNKNOWN;
         chooser = new SendableChooser<>();
         lockinChooser = new SendableChooser<>();
-        lockinChooser.addDefault("Unlocked", false);
-        lockinChooser.addObject("Locked", true);
+        lockinChooser.setDefaultOption("Unlocked", false);
+        lockinChooser.addOption("Locked", true);
 
         definePrograms();
 
@@ -129,6 +129,6 @@ public class AutoManager {
 
     public void addProgram(AutoProgram program) {
         programs.add(program);
-        chooser.addObject(program.toString(), program);
+        chooser.addOption(program.toString(), program);
     }
 }

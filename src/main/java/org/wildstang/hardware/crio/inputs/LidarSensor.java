@@ -91,7 +91,7 @@ public class LidarSensor {
             if (i < recordedDistances.length - 1) {
                 recordedDistances[i] = recordedDistances[i + 1];
             } else {
-                recordedDistances[i] = new Integer(getDistance());
+                recordedDistances[i] = Integer.valueOf(getDistance());
             }
         }
     }

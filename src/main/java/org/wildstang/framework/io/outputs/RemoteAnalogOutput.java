@@ -1,6 +1,7 @@
 package org.wildstang.framework.io.outputs;
 
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  *
@@ -11,7 +12,7 @@ public class RemoteAnalogOutput extends AnalogOutput {
 
     public RemoteAnalogOutput(String name, String p_networkTbl, double p_default) {
         super(name, p_default);
-        remoteIOTable = NetworkTable.getTable(p_networkTbl);
+        remoteIOTable = NetworkTableInstance.getDefault().getTable(p_networkTbl);
         System.out.println("Got Table");
     }
 
@@ -22,7 +23,7 @@ public class RemoteAnalogOutput extends AnalogOutput {
 
     @Override
     protected void sendDataToOutput() {
-        remoteIOTable.putNumber(getName(), getValue());
+        remoteIOTable.getEntry(getName()).forceSetDouble(getValue());
     }
 
 }

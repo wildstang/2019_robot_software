@@ -258,12 +258,8 @@ public class Core {
         Object obj = null;
 
         try {
-            obj = p_class.newInstance();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
+            obj = p_class.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
 
