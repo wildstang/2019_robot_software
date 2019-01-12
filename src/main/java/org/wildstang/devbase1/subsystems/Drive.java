@@ -38,10 +38,9 @@ public class Drive implements Subsystem {
 
     /** Status frame period controls how frequently the TalonSRX reports back with
      * its sensor status over the CANBus. This constant is in milliseconds. */
-    private static final int STATUS_FRAME_PERIOD = 10;
-    private static final double NEUTRAL_DEADBAND = 0.001;
+    //private static final int STATUS_FRAME_PERIOD = 10;
+    //private static final double NEUTRAL_DEADBAND = 0.001;
     private static final int TIMEOUT = 100; // milliseconds
-    private static final double PID_PERIOD = 1; // milliseconds
 
     // Makes motor setup code DRYer
     private static final int LEFT = 0;
