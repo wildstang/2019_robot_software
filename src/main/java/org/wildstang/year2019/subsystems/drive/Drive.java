@@ -202,6 +202,7 @@ public class Drive implements Subsystem {
             collectDriveState(); */
         break;
 
+        
         case CHEESY:
             double effectiveThrottle = commandThrottle;
             if (commandAntiTurbo) {
@@ -362,6 +363,7 @@ public class Drive implements Subsystem {
     public void setQuickTurn(boolean quickTurn) {
         this.commandQuickTurn = false;
     }
+    
 
     /////////////////////////////////////////////////////////
     // PRIVATE METHODS
@@ -468,7 +470,10 @@ public class Drive implements Subsystem {
     }
 
     private void setMotorSpeeds(DriveSignal speeds) {
+        System.out.println("speeds are updating");
         masters[LEFT].set(ControlMode.Velocity, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.Velocity, speeds.rightMotor);
+        System.out.println(masters[LEFT].getControlMode());
+        System.out.println(speeds);
     }
 }

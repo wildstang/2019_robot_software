@@ -6,6 +6,9 @@ import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.subsystems.drive.Drive;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -45,6 +48,11 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         System.out.println("Engaging teleoperation mode.");
+        Core.getSubsystemManager().resetState();
+        Drive driveBase = ((Drive) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.setOpenLoopDrive();
+        driveBase.setBrakeMode(false);
     }
 
     @Override
@@ -59,7 +67,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        Drive drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
+        //Drive drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
         //drive.setFullBrakeMode();
     }
 
@@ -69,6 +77,24 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        try {
+
+            // Update all inputs, outputs and subsystems
+            
+            long start = System.currentTimeMillis();
+            core.executeUpdate();
+            long end = System.currentTimeMillis();
+
+            
+            SmartDashboard.putNumber("Cycle Time", (end - start));
+        } catch (Throwable e) {
+            SmartDashboard.putString("Last error", "Exception thrown during teleopPeriodic");
+            SmartDashboard.putString("Exception thrown", e.toString());
+            //exceptionThrown = true;
+            throw e;
+        } finally {
+            SmartDashboard.putBoolean("ExceptionThrown",true);
+        }
     }
 
     @Override
