@@ -687,7 +687,7 @@ public class Drive implements Subsystem {
                 master.selectProfileSlot(DriveConstants.BASE_LOCK_PROFILE_SLOT, 0);
                 master.configAllowableClosedloopError(DriveConstants.BASE_LOCK_PROFILE_SLOT,
                         DriveConstants.BRAKE_MODE_ALLOWABLE_ERROR);
-                master.set(ControlMode.Position, m_leftMaster.getSelectedSensorPosition());
+                master.set(ControlMode.Position, master.getSelectedSensorPosition());
 
                 master.config_kP(DriveConstants.BASE_LOCK_PROFILE_SLOT,
                         DriveConstants.BASE_LOCK_P_GAIN);
