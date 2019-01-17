@@ -7,7 +7,7 @@ import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
-import org.wildstang.year2016.robot.WSOutputs;
+import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
@@ -25,24 +25,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Claw_Example implements Subsystem{
 
     private DigitalInput button;
+    private DigitalInput button2;
     private boolean position;
     private WsSolenoid solenoid;
+    private WsSolenoid solenoid2;
 
     public void init(){
         //registers and creates all sensors and other items
         button = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
         button.addInputListener(this);
-        solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.ARMS.getName());
+        button2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.SHIFT.getName());
+        button2.addInputListener(this);
+        solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_HOLD.getName());
+        solenoid2 = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_TILT.getName());
+
         resetState();
     }
     public void update(){
         //called every time the core framework updates (~.02 seconds)
         solenoid.setValue(position);
+        solenoid2.setValue(position);
     }
     public void inputUpdate(Input signal){
         //used to read local sensors and put them into variables
         if (signal==button){
-            position=button.getValue();
+            if (button.getValue()){
+                position=true;
+            }
+        }
+        if (signal==button2){
+            if (button2.getValue()){
+                position=false;
+            }
         }
     }
     public void selfTest(){
