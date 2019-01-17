@@ -8,7 +8,6 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
-import org.wildstang.year2019.robot.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -468,7 +467,7 @@ public class Drive implements Subsystem {
     }
 
     private void setMotorSpeeds(DriveSignal speeds) {
-        masters[LEFT].set(ControlMode.Velocity, speeds.leftMotor);
-        masters[RIGHT].set(ControlMode.Velocity, speeds.rightMotor);
+        masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
+        masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
     }
 }
