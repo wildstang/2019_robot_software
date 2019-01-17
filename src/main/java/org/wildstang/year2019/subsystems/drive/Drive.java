@@ -209,6 +209,8 @@ public class Drive implements Subsystem {
 
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
+            SmartDashboard.putNumber("driveSignal.left", driveSignal.leftMotor);
+            SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
             setMotorSpeeds(driveSignal);
 
             /* FIXME re-enable this 
@@ -450,9 +452,9 @@ public class Drive implements Subsystem {
     private void initFollower(int side, VictorSPX follower) {
         TalonSRX master = masters[side];
         if (side == LEFT) {
-            master.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
+            follower.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
         } else {
-            master.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
+            follower.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
         }
         follower.follow(master);
         // TODO should neutral mode on followers ever change?
