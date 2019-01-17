@@ -225,11 +225,12 @@ public class Drive implements Subsystem {
             System.out.println("Drive::update::commandAntiTurbo::commandHeading: " + commandHeading);
             }
             logCounter3++;
-
+            SmartDashboard.putBoolean("Quick Turn", commandQuickTurn);
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
             SmartDashboard.putNumber("driveSignal.left", driveSignal.leftMotor);
             SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
+            
             setMotorSpeeds(driveSignal);
 
             /* FIXME re-enable this 
