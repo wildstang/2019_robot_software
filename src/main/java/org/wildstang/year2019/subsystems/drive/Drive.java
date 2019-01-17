@@ -8,7 +8,6 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
-import org.wildstang.year2019.robot.Robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -229,6 +228,8 @@ public class Drive implements Subsystem {
 
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
+            SmartDashboard.putNumber("driveSignal.left", driveSignal.leftMotor);
+            SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
             setMotorSpeeds(driveSignal);
 
             /* FIXME re-enable this 
@@ -471,9 +472,9 @@ public class Drive implements Subsystem {
     private void initFollower(int side, VictorSPX follower) {
         TalonSRX master = masters[side];
         if (side == LEFT) {
-            master.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
+            follower.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
         } else {
-            master.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
+            follower.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
         }
         follower.follow(master);
         // TODO should neutral mode on followers ever change?
@@ -488,10 +489,8 @@ public class Drive implements Subsystem {
     }
 
     private void setMotorSpeeds(DriveSignal speeds) {
-        //System.out.println("speeds are updating");
-        masters[LEFT].set(ControlMode.Velocity, speeds.leftMotor);
-        masters[RIGHT].set(ControlMode.Velocity, speeds.rightMotor);
-        //System.out.println(masters[LEFT].getControlMode());
-        //System.out.println(speeds);
+        masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
+        masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
+
     }
 }
