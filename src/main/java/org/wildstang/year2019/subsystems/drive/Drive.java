@@ -28,6 +28,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * TODO: Factor the helper classes into core framework */
 public class Drive implements Subsystem {
 
+    int logCounter1 = 0;
+    int logCounter2 = 0;
+    int logCounter3 = 0;
+
     /** Status frame period controls how frequently the TalonSRX reports back with
      * its sensor status over the CANBus. This constant is in milliseconds. */
     //private static final int STATUS_FRAME_PERIOD = 10;
@@ -139,8 +143,16 @@ public class Drive implements Subsystem {
     public void inputUpdate(Input source) {
 
         if (source == throttleInput) {
+            if (logCounter1 % 1000 == 0)
+                System.out.println("Drive::inputUpdate::throttleInput: " + throttleInput.getValue());
+            logCounter1++;
+            
             setThrottle(throttleInput.getValue());
         } else if (source == headingInput) {
+            if (logCounter2 % 1000 == 0)
+                System.out.println("Drive::inputUpdate::headingInput: " + headingInput.getValue());
+            logCounter2++;
+
             setHeading(headingInput.getValue());
         }
         // TODO: Do we want to make quickturn automatic?
@@ -208,6 +220,12 @@ public class Drive implements Subsystem {
             if (commandAntiTurbo) {
                 effectiveThrottle = commandThrottle * DriveConstants.ANTI_TURBO_FACTOR;
             }
+
+            if (logCounter3 % 1000 == 0) {
+            System.out.println("Drive::update::commandAntiTurbo::effectiveThrottle: " + effectiveThrottle);
+            System.out.println("Drive::update::commandAntiTurbo::commandHeading: " + commandHeading);
+            }
+            logCounter3++;
 
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
@@ -470,10 +488,10 @@ public class Drive implements Subsystem {
     }
 
     private void setMotorSpeeds(DriveSignal speeds) {
-        System.out.println("speeds are updating");
+        //System.out.println("speeds are updating");
         masters[LEFT].set(ControlMode.Velocity, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.Velocity, speeds.rightMotor);
-        System.out.println(masters[LEFT].getControlMode());
-        System.out.println(speeds);
+        //System.out.println(masters[LEFT].getControlMode());
+        //System.out.println(speeds);
     }
 }
