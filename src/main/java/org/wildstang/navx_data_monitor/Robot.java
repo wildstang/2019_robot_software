@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.TimedRobot;
 
 /** This is a demo program providing a real-time display of navX-MXP values.
  *
@@ -24,7 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * As well, Board Information is also retrieved; this can be useful for
  * debugging connectivity issues after initial installation of the navX-MXP
  * sensor. */
-public class Robot extends SampleRobot {
+public class Robot extends TimedRobot {
     AHRS ahrs;
     Joystick stick;
 
@@ -42,13 +43,13 @@ public class Robot extends SampleRobot {
 
     /** Runs during autonomous mode */
     @Override
-    public void autonomous() {
+    public void autonomousPeriodic() {
         Timer.delay(2.0); //    for 2 seconds
     }
 
     /** Display navX-MXP Sensor Data on Smart Dashboard */
     @Override
-    public void operatorControl() {
+    public void teleopPeriodic() {
         while (isOperatorControl() && isEnabled()) {
 
             Timer.delay(0.020); /* wait for one motor update time period (50Hz)     */
@@ -140,6 +141,6 @@ public class Robot extends SampleRobot {
 
     /** Runs during test mode */
     @Override
-    public void test() {
+    public void testPeriodic() {
     }
 }
