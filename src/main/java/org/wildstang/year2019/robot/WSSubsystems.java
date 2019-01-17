@@ -1,6 +1,7 @@
 package org.wildstang.year2019.robot;
 
 import org.wildstang.year2019.subsystems.drive.Drive;
+import org.wildstang.year2019.subsystems.Claw_Example;
 import org.wildstang.framework.core.Subsystems;
 
 /**
@@ -8,7 +9,8 @@ import org.wildstang.framework.core.Subsystems;
  * initialize all subsystems.
  **/
 public enum WSSubsystems implements Subsystems {
-    DRIVEBASE("Drive Base", Drive.class);
+    DRIVEBASE("Drive Base", Drive.class),
+    CLAW_EXAMPLE("CLAW_EXAMPLE",Claw_Example.class);
 
     private String name;
 
