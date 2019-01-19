@@ -1,4 +1,7 @@
 # 2019_robot_software
+
+Further documentation is in the [`design_docs`](design_docs/) folder.
+
 ## Getting Started
 ### Setting up required software
 *  These software setup instructions are currently Windows-specific. It is possible to do everything but run the driver's station from Linux or OS X; ask #software if you're going down that road.
@@ -17,6 +20,11 @@ To build the code, open the command palette with F1, cntl-shift-P or cmd-shift-P
 To build and deploy, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Deploy robot code". Or just press shift-F5.
 
 To debug the code on the robot, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Debug robot code".
+
+### Next Steps
+You'll want to have a look below and at the detailed docs in the
+[`design_docs`](design_docs/) folder for more information on where to go next.
+
 ## Robots
 This combined codebase has logic for multiple robots in it. 
 
