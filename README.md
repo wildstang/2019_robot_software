@@ -11,6 +11,7 @@ Further documentation is in the [`design_docs`](design_docs/) folder.
 *  Download and run navX-XMP installer at https://www.kauailabs.com/public_files/navx-mxp/navx-mxp.zip. 
 *  Follow instructions for offline install at https://pdocs.kauailabs.com/navx-mxp/software/roborio-libraries/java/ , except select both the navx and CTRE libraries when given the option to do so.
 ### Downloading the code
+*  Install [Git for Windows](https://gitforwindows.org). Non-Windows users: you probably already have it and if not it's in your package manager.
 *  Open WPI VSCode (hexagonal icon with a W in it).
 *  Open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "Git: Clone" and select it.
 *  When prompted, paste in this link: https://github.com/wildstang/2019_robot_software.git
