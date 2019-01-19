@@ -9,7 +9,6 @@ Further documentation is in the [`design_docs`](design_docs/) folder.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027504-installing-the-frc-update-suite-all-languages to install driver's station.
 *  Download and run the latest "CTRE Phoenix Framework Installer" CTRE installer at http://www.ctr-electronics.com/hro.html#product_tabs_technical_resources.
 *  Download and run navX-XMP installer at https://www.kauailabs.com/public_files/navx-mxp/navx-mxp.zip. 
-*  Follow instructions for offline install at https://pdocs.kauailabs.com/navx-mxp/software/roborio-libraries/java/ , except select both the navx and CTRE libraries when given the option to do so.
 ### Downloading the code
 *  Install [Git for Windows](https://gitforwindows.org). Non-Windows users: you probably already have it and if not it's in your package manager.
 *  Open WPI VSCode (hexagonal icon with a W in it).
