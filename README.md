@@ -31,7 +31,7 @@ Each robot has a package under `org.wildstang` e.g. `org.wildstang.year2016`, `o
 This robot uses CANbus motor controllers. The code was ported in late 2018 to a more recent CTRE and it is very alpha at this writing, so no bets on whether it works.
 
 ### year2019
-2019 robot. Coming Soon!
+See [year2019 documentation](design_docs/year2019/README.md).
 
 ### devbase1
 A practice drivebase.
