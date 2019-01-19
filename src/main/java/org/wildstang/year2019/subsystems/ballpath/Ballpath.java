@@ -1,3 +1,8 @@
+package org.wildstang.year2019.subsystems.ballpath;
+
+import org.wildstang.framework.io.Input;
+import org.wildstang.framework.subsystems.Subsystem;
+
 /** This subsystem is responsible for handling cargo from entry to exit in the robot.
 
 This subsystem includes the intake, ball hopper and carriage machinery. 
@@ -17,12 +22,6 @@ Actuators:
 </ul>
 
 */
-
-package org.wildstang.year2019.subsystems.ballpath;
-
-import org.wildstang.framework.io.Input;
-import org.wildstang.framework.subsystems.Subsystem;
-
 public class Ballpath implements Subsystem {
 
     @Override

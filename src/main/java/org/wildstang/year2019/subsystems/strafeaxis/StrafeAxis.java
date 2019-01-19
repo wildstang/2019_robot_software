@@ -1,3 +1,8 @@
+package org.wildstang.year2019.subsystems.strafeaxis;
+
+import org.wildstang.framework.io.Input;
+import org.wildstang.framework.subsystems.Subsystem;
+
 /** This subsystem is responsible for lining up hatch panels left-to-right.
  * 
  * There should probably be a PID loop controlling the position of this axis.
@@ -15,11 +20,6 @@
  * </ul>
  * 
  */
-
-package org.wildstang.year2019.subsystems.strafeaxis;
-
-import org.wildstang.framework.io.Input;
-import org.wildstang.framework.subsystems.Subsystem;
 
 public class StrafeAxis implements Subsystem {
 

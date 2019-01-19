@@ -1,3 +1,8 @@
+package org.wildstang.year2019.subsystems.lift;
+
+import org.wildstang.framework.io.Input;
+import org.wildstang.framework.subsystems.Subsystem;
+
 /** This subsystem goes up and down and puts hatches on holes.
  * 
  * Because this year's lift is continuous and not staged, the PID constants do
@@ -24,12 +29,6 @@
  * </ul>
  * 
  */
-
-package org.wildstang.year2019.subsystems.lift;
-
-import org.wildstang.framework.io.Input;
-import org.wildstang.framework.subsystems.Subsystem;
-
 public class Lift implements Subsystem {
 
     @Override
