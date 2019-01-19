@@ -7,7 +7,7 @@ Further documentation is in the [`design_docs`](design_docs/) folder.
 *  These software setup instructions are currently Windows-specific. It is possible to do everything but run the driver's station from Linux or OS X; ask #software if you're going down that road.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027503-installing-c-and-java-development-tools-for-frc to install VSCode and WPIlib.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027504-installing-the-frc-update-suite-all-languages to install driver's station.
-*  Download and run CTRE installer at https://github.com/CrossTheRoadElec/Phoenix-Releases/releases/download/v5.12.0.1/CTRE.Phoenix.Framework.Windows.Installer.v5.12.0.1.zip .
+*  Download and run the latest "CTRE Phoenix Framework Installer" CTRE installer at http://www.ctr-electronics.com/hro.html#product_tabs_technical_resources.
 *  Download and run navX-XMP installer at https://www.kauailabs.com/public_files/navx-mxp/navx-mxp.zip. 
 ### Downloading the code
 *  Open WPI VSCode (hexagonal icon with a W in it).
