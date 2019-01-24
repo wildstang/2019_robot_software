@@ -102,13 +102,13 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator Buttons
     // ---------------------------------
-    GEAR_TILT_BUTTON("Gear Wall", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Gear
+    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Gear
                                                                                                   // Subsystem
-    GEAR_HOLD_BUTTON("Gear Hold", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Gear
+    CARRIAGE_ROLLER("Carriage rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Gear
                                                                                                   // Subsystem
-    GEAR_RECEIVE("Gear Receive", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Gear
+    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Gear
                                                                                                  // Subsystem
-    GEAR_DELIVER("Gear Deliver", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Gear
+    EVERYTHING("Run Everything", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Gear
                                                                                                  // Subsystem
     INTAKE_ON("Intake Turn on/off", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 4), false), // Intake
                                                                                                     // Subsystem
