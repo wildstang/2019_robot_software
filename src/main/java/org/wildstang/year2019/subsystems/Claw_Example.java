@@ -32,6 +32,7 @@ public class Claw_Example implements Subsystem{
 
     public void init(){
         //registers and creates all sensors and other items
+        //test
         button = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
         button.addInputListener(this);
         button2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.SHIFT.getName());
