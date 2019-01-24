@@ -10,7 +10,7 @@ public enum DrivePID {
     // FIXME: Document the units each of these FPID constants are in.
     // Constants in order F, P, I, D
     PATH(0, new PIDConstants(0.55, .8, 0.001, 10)),
-    BASE_LOCK(1, new PIDConstants(0.55, .8, 0.001, 10)),
+    BASE_LOCK(1, new PIDConstants(0.0, .8, 0.001, 10)),
     MM_QUICK(2, new PIDConstants(0.55, .8, 0.001, 10)),
     MM_DRIVE(3, new PIDConstants(0.55, .8, 0.001, 10));
     // only four slots are available on the Talon

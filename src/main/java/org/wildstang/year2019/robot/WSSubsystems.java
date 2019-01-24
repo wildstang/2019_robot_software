@@ -1,6 +1,11 @@
 package org.wildstang.year2019.robot;
 
 import org.wildstang.year2019.subsystems.drive.Drive;
+import org.wildstang.year2019.subsystems.ballpath.Ballpath;
+import org.wildstang.year2019.subsystems.climbwedge.ClimbWedge;
+import org.wildstang.year2019.subsystems.lift.Lift;
+import org.wildstang.year2019.subsystems.strafeaxis.StrafeAxis;
+import org.wildstang.year2019.subsystems.Claw_Example;
 import org.wildstang.framework.core.Subsystems;
 
 /**
@@ -8,7 +13,12 @@ import org.wildstang.framework.core.Subsystems;
  * initialize all subsystems.
  **/
 public enum WSSubsystems implements Subsystems {
-    DRIVEBASE("Drive Base", Drive.class);
+    DRIVEBASE("Drive Base", Drive.class),
+    CLAW_EXAMPLE("CLAW_EXAMPLE",Claw_Example.class),
+    BALLPATH("Ballpath", Ballpath.class),
+    CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
+    LIFT("Lift", Lift.class),
+    STRAFE_AXIS("Strafe Axis", StrafeAxis.class);
 
     private String name;
 
