@@ -19,37 +19,37 @@ public enum WSInputs implements Inputs {
     // im.addSensorInput(LIDAR, new WsLIDAR());
     //
     //***************************************************************
-   //      Driver and Manipulator Controller Button Locations
-   //***************************************************************
-   //
-   //    +-------------------------------------------------------+
-   //  +  +---------+              [TOP]              +---------+  +       
-   //  |  |    6    |                                 |    7    |  |       
-   //  |  +---------+                                 +---------+  |       
-   //  |      			                                           |   
-   //  |  +---------+                                 +---------+  |       
-   //  |  |    4    |                                 |    5    |  |
-   //  +  +---------+                                 +---------+  +
-   //    +-------------------------------------------------------+
-   //  
-   //    +-------------------------------------------------------+
-   //   /    +--+                 [FRONT]                         \
-   //  +     |YU|                                         (3)      +       
-   //  |  +--+  +--+        +----+       +----+                    | 
-   //  |  |XL    XR|        |  8 |  (X)  |  9 |       (0)     (2)  |       
-   //  |  +--+  +--+        +----+       +----+                    | 
-   //  |     |YD|                                         (1)      |       
-   //  |     +--+     +--+          (X)          +--+              |
-   //  |             /    \                     /    \             |
-   //  |            |  10  |                   |  11  |            |
-   //  |             \    /                     \    /             |
-   //  +              +--+                       +--+              +
-   //   \                                                         /
-   //    \            +-----------------------------+            /
-   //     \          /                               \          /
-   //      \        /                                 \        /
-   //       \      /                                   \      /
-   //        +----+                                     +----+
+    //      Driver and Manipulator Controller Button Locations
+    //***************************************************************
+    //
+    //    +-------------------------------------------------------+
+    //  +  +---------+              [TOP]              +---------+  +       
+    //  |  |    6    |                                 |    7    |  |       
+    //  |  +---------+                                 +---------+  |       
+    //  |      			                                           |   
+    //  |  +---------+                                 +---------+  |       
+    //  |  |    4    |                                 |    5    |  |
+    //  +  +---------+                                 +---------+  +
+    //    +-------------------------------------------------------+
+    //  
+    //    +-------------------------------------------------------+
+    //   /    +--+                 [FRONT]                         \
+    //  +     |YU|                                         (3)      +       
+    //  |  +--+  +--+        +----+       +----+                    | 
+    //  |  |XL    XR|        |  8 |  (X)  |  9 |       (0)     (2)  |       
+    //  |  +--+  +--+        +----+       +----+                    | 
+    //  |     |YD|                                         (1)      |       
+    //  |     +--+     +--+          (X)          +--+              |
+    //  |             /    \                     /    \             |
+    //  |            |  10  |                   |  11  |            |
+    //  |             \    /                     \    /             |
+    //  +              +--+                       +--+              +
+    //   \                                                         /
+    //    \            +-----------------------------+            /
+    //     \          /                               \          /
+    //      \        /                                 \        /
+    //       \      /                                   \      /
+    //        +----+                                     +----+
     //
     //
     // ********************************
@@ -69,8 +69,6 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Driver Buttons
     // ---------------------------------
-    AUTO_GEAR_DROP("Auto gear drop", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 1), false), // Intake
-                                                                                                     // Subsystem
     ANTITURBO("Antiturbo", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 4), false), // Drive
                                                                                            // Subsystem
     SHIFT("Driver Shift", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 5), false), // Driver
@@ -93,8 +91,8 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator DPAD Buttons
     // ---------------------------------
-    CLIMBER_UP("Climber Up", WSInputType.JS_DPAD_BUTTON,
-            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_UP), false), // Climber Subsystem
+    CLIMBER_UP("Climber Up", WSInputType.JS_DPAD_BUTTON, new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_UP),
+            false), // Climber Subsystem
     CLIMBER_HALF_SPEED("Climber Down", WSInputType.JS_DPAD_BUTTON,
             new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_DOWN), false), // Climber
                                                                                  // Subsystem
@@ -103,11 +101,11 @@ public enum WSInputs implements Inputs {
     // Manipulator Buttons
     // ---------------------------------
     INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Gear
-                                                                                                  // Subsystem
+                                                                                     // Subsystem
     CARRIAGE_ROLLER("Carriage rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Gear
-                                                                                                  // Subsystem
+    // Subsystem
     HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Gear
-                                                                                                 // Subsystem
+    // Subsystem
     EVERYTHING("Run Everything", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Gear
                                                                                                  // Subsystem
     INTAKE_ON("Intake Turn on/off", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 4), false), // Intake
@@ -125,6 +123,13 @@ public enum WSInputs implements Inputs {
     // WsDigitalInputConfig(1, true), false), // Shooter Subsystem
     // BALLS_WAITING_RIGHT("Digital Waiting Right", WSInputType.SWITCH, new
     // WsDigitalInputConfig(2, true), false), // Shooter Subsystem
+
+    // -------------------------------
+    // Networked sensors
+    // -------------------------------
+    /** Message from the RasPi telling us where the line is */
+    // FIXME TABLE NAME
+    LINE_POSITION("Line position", WSInputType.REMOTE_ANALOG, new WsRemoteAnalogInputConfig("line"), false),
 
     // ********************************
     // Others ...
