@@ -81,38 +81,61 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator Joysticks
     // ---------------------------------
-    FEEDER_LEFT("Feeder Left Up/Down", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Shooter
+    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_JOYSTICK,
+            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Ballpath
                                                                                       // Subsystem
-    FEEDER_RIGHT("Feeder Right Up/Down", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Shooter
+    //OPEN JOYSTICK("name", WSInputType.JS_JOYSTICK,
+    //        new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_X), true), // OPEN
+                                                                                      // Subsystem
+    LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
+            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
-
+    HATCH_STRAFE("Hatch Strafe", WSInputType.JS_JOYSTICK,
+            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_X), true), // Lift
+                                                                                       // Subsystem
     // ---------------------------------
     // Manipulator DPAD Buttons
     // ---------------------------------
-    CLIMBER_UP("Climber Up", WSInputType.JS_DPAD_BUTTON, new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_UP),
-            false), // Climber Subsystem
-    CLIMBER_HALF_SPEED("Climber Down", WSInputType.JS_DPAD_BUTTON,
-            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_DOWN), false), // Climber
+    LIFT_PRESENT_UP("Lift Present 1", WSInputType.JS_DPAD_BUTTON,
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_UP), false), // Lift 
+                                                                               //Subsystem
+    LIFT_PRESENT_DOWN("Lift Present 2", WSInputType.JS_DPAD_BUTTON,
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_DOWN), false), // Lift
+                                                                                 // Subsystem
+    LIFT_PRESENT_RIGHT("Lift Present 3", WSInputType.JS_DPAD_BUTTON,
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_X_RIGHT), false), // Lift 
+                                                                                  //Subsystem
+    LIFT_PRESENT_LEFT("Lift Present 4", WSInputType.JS_DPAD_BUTTON,
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_X_LEFT), false), // Lift
                                                                                  // Subsystem
 
     // ---------------------------------
     // Manipulator Buttons
     // ---------------------------------
-    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Gear
-                                                                                     // Subsystem
-    CARRIAGE_ROLLER("Carriage rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Gear
-    // Subsystem
-    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Gear
-    // Subsystem
-    EVERYTHING("Run Everything", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Gear
-                                                                                                 // Subsystem
-    INTAKE_ON("Intake Turn on/off", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 4), false), // Intake
+    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Ballpath
+                                                                                    // Subsystem
+    //OPEN BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // OPEN
+                                                                                          // Subsystem
+    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Ballpath
+                                                                                                        // Subsystem
+    FULL_BALLPATH("Full Ballpath", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Ballpath
+                                                                                                   // Subsystem
+    HATCH_COLLECT("Hatch Collect", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 4), false), // Strafe
                                                                                                     // Subsystem
-    FLYWHEEL("Flywheel On/Off", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 5), true),
-
-    OVERRIDE("Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false),
+    HATCH_DEPLOY("Hatch Deploy", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 5), false), // Strafe
+                                                                                                // Subsystem
+    //OPEN TRIGGER("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // OPEN
+                                                                                           // Subsystem
+    //OPEN TRIGGER("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN
+                                                                                           // Subsystem
+    WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 8), false), // Wedge
+                                                                                                         // Subsystem
+    WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
+                                                                                                          // Subsystem
+    //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
+                                                                                                   // Subsystem
+    //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
+                                                                                                   // Subsystem
 
     // ********************************
     // Digital IOs
