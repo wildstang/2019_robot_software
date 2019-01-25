@@ -19,21 +19,10 @@ public enum WSOutputs implements Outputs {
     // ---------------------------------
     // Motors
     // ---------------------------------
-    FEEDER_LEFT("Left Feeder Motor", WSOutputType.VICTOR, new WsVictorConfig(0, 0.0), false), // Shooter
-                                                                                              // Subsystem
-    FEEDER_RIGHT("Right Feeder Motor", WSOutputType.VICTOR, new WsVictorConfig(1, 0.0), false), // Shooter
-                                                                                                // Subsystem
-    INTAKE("Intake Motor", WSOutputType.VICTOR, new WsVictorConfig(2, 0.0), false), // Intake
-                                                                                    // Subsystem
-    WINCH("Winch motor", WSOutputType.VICTOR, new WsVictorConfig(3, 0.0), false), // Winch Subsystem
-    BLENDER("Blender motor", WSOutputType.VICTOR, new WsVictorConfig(4, 0.0), false), // Blender
-                                                                                      // Subsystem
 
     // ---------------------------------
     // Servos
     // ---------------------------------
-    // SERVO_0("Test Servo 0", WSOutputType.SERVO, new WsServoConfig(0, 0.0),
-    // false), // PWM 0, Initial Rotation Angle 0.0
 
     // ********************************
     // DIO Outputs
@@ -44,23 +33,10 @@ public enum WSOutputs implements Outputs {
     // ********************************
     // Solenoids
     // ********************************
-    SHIFTER("Shifter single solenoid", WSOutputType.SOLENOID_SINGLE,
-            new WsSolenoidConfig(0, 7, false), false), // Ctrl 1, Pins 0 Driver Subsystem
-    // GATE("Gate", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 4, false),
-    // false), // Ctrl 1, Pin 1 Shooter Subsystem
-    GEAR_HOLD("Gear Doors", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 0, false), false), // Ctrl
-                                                                                                     // 1,
-                                                                                                     // Pin
-                                                                                                     // 2
-                                                                                                     // Gear
-                                                                                                     // Subsystem
-    GEAR_TILT("Gear Tilt", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 1, false), false), // Ctrl
-                                                                                                    // 1,
-                                                                                                    // Pin
-                                                                                                    // 3
-                                                                                                    // Gear
-                                                                                                    // Subsystem
-    //HOPPER_SOLENOID_OUTPUT("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 2, false), false),
+    // TODO IDs
+    WEDGE_SOLENOID("Wedge solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, -1, false), false),
+    // TODO IDs
+    HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, -1, false), false),
     
     // ********************************
     // Relays

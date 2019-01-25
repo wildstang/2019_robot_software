@@ -51,14 +51,13 @@ public class ClimbWedge implements Subsystem {
     @Override
     public void init() {
         //Links digital inputs and outputs to the physical controller and robot
-        //TODO: get WSOutput for piston solenoid (references the fictional, "PISTON", for now)
         wedgeButton1 = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_1.getName());
         wedgeButton1.addInputListener(this);
 
         wedgeButton2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
         wedgeButton2.addInputListener(this);
 
-        deployWedge = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.PISTON.getName());
+        deployWedge = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.WEDGE_SOLENOID.getName());
 
         resetState();
     }

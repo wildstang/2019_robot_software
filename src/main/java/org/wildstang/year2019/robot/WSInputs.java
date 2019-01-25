@@ -140,12 +140,10 @@ public enum WSInputs implements Inputs {
     // ********************************
     // Digital IOs
     // ********************************
-    // GEAR_IN_POSITION("Gear In Position Sensor", WSInputType.SWITCH, new
-    // WsDigitalInputConfig(0, true), false), // Gear Subsystem
-    // BALLS_WAITING_LEFT("Balls Waiting Left", WSInputType.SWITCH, new
-    // WsDigitalInputConfig(1, true), false), // Shooter Subsystem
-    // BALLS_WAITING_RIGHT("Digital Waiting Right", WSInputType.SWITCH, new
-    // WsDigitalInputConfig(2, true), false), // Shooter Subsystem
+    // TODO IDs
+    STRAFE_LEFT_LIMIT("Strafe left limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    // TODO IDs
+    STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
 
     // -------------------------------
     // Networked sensors
