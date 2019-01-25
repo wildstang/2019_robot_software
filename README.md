@@ -4,7 +4,7 @@ Further documentation is in the [`design_docs`](design_docs/) folder.
 
 ## Getting Started
 ### Setting up required software
-*  These software setup instructions are currently Windows-specific. It is possible to do everything but run the driver's station from Linux or OS X; ask #software if you're going down that road.
+*  These software setup instructions are currently Windows-specific. It is possible to do everything but run the driver's station from Linux or OS X; ask @zachary.mccord or #software if you're going down that road.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027503-installing-c-and-java-development-tools-for-frc to install VSCode and WPIlib.
 *  Follow instructions at https://wpilib.screenstepslive.com/s/currentCS/m/java/l/1027504-installing-the-frc-update-suite-all-languages to install driver's station.
 *  Download and run the latest "CTRE Phoenix Framework Installer" CTRE installer at http://www.ctr-electronics.com/hro.html#product_tabs_technical_resources.
