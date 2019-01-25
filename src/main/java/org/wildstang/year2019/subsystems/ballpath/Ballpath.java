@@ -43,42 +43,55 @@ Actuators:
 */
 public class Ballpath implements Subsystem {
 
-    private DigitalInput intake;
-    private DigitalInput carriage_rollers;
-    private DigitalInput everything;
-    private DigitalInput hopper_button;
+    private AnalogInput carriage_rollersInput;
+    private DigitalInput intakeInput;
+    private DigitalInput full_ballpathInput;
+    private DigitalInput hopper_buttonInput;
+
     private WsSolenoid hopper_solenoid;
-    private boolean position;
+
+    private VictorSPX intakeVictor;
+    private VictorSPX hopperVictor1;
+    private VictorSPX hopperVictor2;
+    private VictorSPX carriageVictor;
+
+    private boolean hopper_position;
+    private static final double ROLLER_SPEED = 1.0;
+    /** 
+     * TODO: Names set up for each Victor that we are going to need
+     * TODO: Add variables that can be updated when buttons are pressed down
+     * 
+     */
 
     @Override
     public void inputUpdate(Input source) {
         //Set up 4 buttons
         /**
-         * 1 button (INTAKE) to deploy the hopper intake and run the motors (Hold)
-         * 1 button(HOPPER_SOLENOID) to actuate the hopper rollers (Hold)
-         * 1 button (CARRIAGE_ROLLERS) to run carriage rollers (Hold)
-         * 1 button (EVERYTHING) to deploy the hopper intake, run the intake motors, run the hopper rollers, 
-         * and the carriage rollers (Hold)
+         * 1 button (INTAKE) to deploy the hopper intake and run the motors (HOLD)
+         * 1 button(HOPPER_SOLENOID) to actuate the hopper rollers (HOLD)
+         * 1 button (CARRIAGE_ROLLERS) to run carriage rollers (JOYSTICK)
+         * 1 button (FULL_BALLPATH) to deploy the hopper intake, run the intake motors, run the hopper rollers, 
+         * and the carriage rollers (HOLD)
          * 
          * Update local variables
          */
 
-        if(source == hopper_button)
+        if(source == hopper_buttonInput)
         {
-            if(hopper_button.getValue())
+            if(hopper_buttonInput.getValue())
             {
-                position = true;
+                hopper_position = true;
             }
         }//hopper
-        if(source == intake)
+        if(source == intakeInput)
         {
-
+             
         }//intake
-        if(source == carriage_rollers)
+        if(source == carriage_rollersInput)
         {
             
         }//carriage rollers
-        if(source == everything)
+        if(source == full_ballpathInput)
         {
             
         }//everything
@@ -89,16 +102,25 @@ public class Ballpath implements Subsystem {
     @Override
     public void init() {
 
-        intake = (DigitalInput) Core.getInputManager().getInput(WSInputs.INTAKE.getName());
-        intake.addInputListener(this);
-        carriage_rollers = (DigitalInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLER.getName());
-        carriage_rollers.addInputListener(this);
-        everything = (DigitalInput) Core.getInputManager().getInput(WSInputs.EVERYTHING.getName());
-        everything.addInputListener(this);
-        hopper_button = (DigitalInput) Core.getInputManager().getInput(WSInputs.HOPPER_SOLENOID.getName());
-        hopper_button.addInputListener(this);
-        hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID_OUTPUT.getName());
+        //Input listeners
+        intakeInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.INTAKE.getName());
+        intakeInput.addInputListener(this);
+        carriage_rollersInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
+        carriage_rollersInput.addInputListener(this);
+        full_ballpathInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.FULL_BALLPATH.getName());
+        full_ballpathInput.addInputListener(this);
+        hopper_buttonInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.HOPPER_SOLENOID.getName());
+        hopper_buttonInput.addInputListener(this);
+
+        //Solenoids
+        //hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID_OUTPUT.getName());
+        //intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID_OUTPUT.getName()); // SET UP OUTPUT
         
+        //WsVictors
+        //intakeVictor = new VictorSPX(DEVICE ID);
+        //hopperVictor1 = new VictorSPX(DEVICE ID);
+        //hopperVictor2 = new VictorSPX(DEVICE ID);
+        //carriageVictor = new VictorSPX(DEVICE ID);
         resetState();
     }
 
@@ -112,17 +134,23 @@ public class Ballpath implements Subsystem {
         /**
          * If INTAKE is pressed down then deploy the intake and set the intake motors to
          * run
+         * - Deploy pistons that put the intake mech into position
+         * - Set motors to run at full power
          * 
          * If HOPPER_SOLENOID is pressed then actuate the piston. In when it's false, out 
          * when it's true
+         * - Set the value of the solenoid while the button is being pressed
          * 
          * If CARRIAGE_ROLLER is pressed then run the carriage motors
+         * - JOYSTICK? Button HOLD?
+         * - Button - Set the motors to run at full power
+         * - JOYSTICK - Set the value of the 
          * 
          * If EVERYTHING is pressed when deploy the intake, run the intake motors,
          * carriage and hopper rollers
          * 
          */
-        hopper_solenoid.setValue(position);
+        hopper_solenoid.setValue(hopper_position);
     }
 
     @Override

@@ -60,7 +60,8 @@ public enum WSOutputs implements Outputs {
                                                                                                     // 3
                                                                                                     // Gear
                                                                                                     // Subsystem
-    HOPPER_SOLENOID_OUTPUT("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 1, false), false),
+    //HOPPER_SOLENOID_OUTPUT("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 2, false), false),
+    
     // ********************************
     // Relays
     // ********************************
