@@ -89,7 +89,12 @@ public class Ballpath implements Subsystem {
             {
                 hopper_position = true;
             }
+        }
+        else
+        {
+         hopper_position = false;   
         }//hopper
+
         if(source == intakeInput)
         {
             if(intakeInput.getValue())
@@ -98,12 +103,22 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
             }
 
+        }
+        else{
+         intake_position = false;
+         isIntake_motor = false;   
         }//intake
+
         if(source == carriageRollersInput)
         {
             isCarriageMotor = true;
             CarriageValue = carriageRollersInput.getValue();
             
+        }
+        else
+        {
+         isCarriageMotor = false;
+         CarriageValue = 0.0;   
         }//carriage rollers
         if(source == fullBallpathInput)
         {
@@ -114,6 +129,15 @@ public class Ballpath implements Subsystem {
             isHopper_motor = true;
             CarriageValue = carriageRollersInput.getValue();
         
+        }
+        else
+        {
+         hopper_position = false;
+         intake_position = false;
+         isIntake_motor = false;
+         isCarriageMotor = false;
+         isHopper_motor = false;
+         CarriageValue = 0.0;   
         }//everything
 
 
