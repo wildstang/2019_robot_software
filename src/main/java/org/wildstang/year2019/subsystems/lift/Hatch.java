@@ -11,33 +11,53 @@ import org.wildstang.hardware.crio.outputs.WsSolenoid;
 
 public class Hatch implements Subsystem{
 
-    
-    
+    // Input variables
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;
 
+    // Output variables
     private WsSolenoid hatchOut;
     private WsSolenoid hatchLock;
 
-    private Boolean outPosition;
-    private Boolean lockPosition;
+    // Logical variables
+    private boolean deployRestart;
+    private boolean collectRestart;
+
+    private boolean outPosition;
+    private boolean lockPosition;
+
+    private long deployRestartLastMovementTime;
+    private long deployLastMovementTime;
+    
+    private long collectRestartLastMovementTime;
+    private long collectLastMovementTime;
+
+    private int currentCommand;
 
     @Override
     public void inputUpdate(Input source) {
-        
         if (source == hatchDeploy) {
-            
-        }
+            if (currentCommand != 0 && hatchDeploy.getValue() == true) {
+                deployRestart = true;
+            }
 
-        if (source == hatchCollect) {
-           
-        }
+            if (currentCommand == 0) {
+                currentCommand = 1;
+            }
+        } else if (source == hatchCollect) {
+            if (currentCommand != 0 && hatchDeploy.getValue() == true) {
+                collectRestart = true;
+            }
 
+            if (currentCommand == 0) {
+                currentCommand = 2;
+            }
+        }
     }
 
     @Override
     public void init() {
-        //Links digital inputs and outputs to the physical controller and robot
+        // Links digital inputs and outputs to the physical controller and robot
         hatchDeploy = (DigitalInput) Core.getInputManager().getInput(WSInputs.HATCH_DEPLOY.getName());
         hatchDeploy.addInputListener(this);
 
@@ -46,9 +66,6 @@ public class Hatch implements Subsystem{
 
         hatchOut = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
         hatchLock = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_LOCK_SOLENOID.getName());
-
-        outPosition=false;
-        lockPosition=true;
 
         resetState();
     }
@@ -59,23 +76,92 @@ public class Hatch implements Subsystem{
 
     @Override
     public void update() {
-        
+        if (deployRestart) {
+            if (deployRestartLastMovementTime == 0) {
+                outPosition = true;
+                hatchOut.setValue(outPosition);
+
+                deployRestartLastMovementTime = System.currentTimeMillis();
+            } else if (deployRestartLastMovementTime + 500 >= System.currentTimeMillis()) {
+                lockPosition = true;
+                hatchLock.setValue(lockPosition);
+            } else if (deployRestartLastMovementTime + 1000 >= System.currentTimeMillis()) {
+                deployRestart = false;
+                collectRestart = false;
+                currentCommand = 1;
+
+                deployRestartLastMovementTime = 0;
+            }
+        } else if (collectRestart) {
+            if (collectRestartLastMovementTime == 0) {
+                outPosition = true;
+                hatchOut.setValue(outPosition);
+
+                collectRestartLastMovementTime = System.currentTimeMillis();
+            } else if (collectRestartLastMovementTime + 500 >= System.currentTimeMillis()) {
+                deployRestart = false;
+                collectRestart = true;
+                currentCommand = 2;
+
+                collectRestartLastMovementTime = 0;
+            }
+        } else if (currentCommand == 1) {
+            if (deployLastMovementTime == 0) {
+                outPosition = false;
+                hatchOut.setValue(outPosition);
+
+                deployLastMovementTime = System.currentTimeMillis();
+            } else if (deployLastMovementTime + 500 >= System.currentTimeMillis()) {
+                lockPosition = false;
+                hatchLock.setValue(lockPosition);
+            } else if (deployLastMovementTime + 1000 >= System.currentTimeMillis()) {
+                outPosition = true;
+                hatchOut.setValue(outPosition);
+            } else if (deployLastMovementTime + 1500 >= System.currentTimeMillis()) {
+                lockPosition = true;
+                hatchLock.setValue(lockPosition);
+
+                deployLastMovementTime = 0;
+
+                currentCommand = 0;
+            }
+        } else if (currentCommand == 2) {
+            if (collectLastMovementTime == 0) {
+                outPosition = false;
+                hatchOut.setValue(outPosition);
+
+                collectLastMovementTime = System.currentTimeMillis();
+            } else if (collectLastMovementTime + 500 >= System.currentTimeMillis()) {
+                outPosition = true;
+                hatchOut.setValue(outPosition);
+
+                collectLastMovementTime = 0;
+
+                currentCommand = 0;
+            }
+        }
     }
 
     @Override
     public void resetState() {
-        //Reset local variables back to default state
-        outPosition=false;
-        lockPosition=true;
+        // Reset local variables back to default state
+        deployRestart = false;
+        collectRestart = false;
+
+        outPosition = false;
+        lockPosition = true;
+
+        deployRestartLastMovementTime = 0;
+        deployLastMovementTime = 0;
+
+        collectRestartLastMovementTime = 0;
+        collectLastMovementTime = 0;
+
+        currentCommand = 0;
     }
 
     @Override
     public String getName() {
         return "Hatch";
     }
-
-
-
-
-
 }
