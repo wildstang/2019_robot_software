@@ -43,12 +43,13 @@ Actuators:
 */
 public class Ballpath implements Subsystem {
 
-    private AnalogInput carriage_rollersInput;
+    private AnalogInput carriageRollersInput;
     private DigitalInput intakeInput;
-    private DigitalInput full_ballpathInput;
-    private DigitalInput hopper_buttonInput;
+    private DigitalInput fullBallpathInput;
+    private DigitalInput hopperInput;
 
     private WsSolenoid hopper_solenoid;
+    private WsSolenoid intake_solenoid;
 
     private VictorSPX intakeVictor;
     private VictorSPX hopperVictor1;
@@ -56,7 +57,12 @@ public class Ballpath implements Subsystem {
     private VictorSPX carriageVictor;
 
     private boolean hopper_position;
+    private boolean intake_position;
     private static final double ROLLER_SPEED = 1.0;
+    private boolean isIntake_motor;
+    private boolean isCarriageMotor;
+    private double CarriageValue;
+
     /** 
      * TODO: Names set up for each Victor that we are going to need
      * TODO: Add variables that can be updated when buttons are pressed down
@@ -76,22 +82,29 @@ public class Ballpath implements Subsystem {
          * Update local variables
          */
 
-        if(source == hopper_buttonInput)
+        if(source == hopperInput)
         {
-            if(hopper_buttonInput.getValue())
+            if(hopperInput.getValue())
             {
-                hopper_position = true;
+                hopperPosition = true;
             }
         }//hopper
         if(source == intakeInput)
         {
-             
+            if(intakeInput.getValue())
+            {
+                intake_position = true;
+                isIntake_motor = true;
+            }
+
         }//intake
-        if(source == carriage_rollersInput)
+        if(source == carriageRollersInput)
         {
+            isCarriageMotor = true;
+            CarriageValue = carriage_rollersInput.getValue();
             
         }//carriage rollers
-        if(source == full_ballpathInput)
+        if(source == fullBallpathInput)
         {
             
         }//everything
@@ -105,22 +118,22 @@ public class Ballpath implements Subsystem {
         //Input listeners
         intakeInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.INTAKE.getName());
         intakeInput.addInputListener(this);
-        carriage_rollersInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
-        carriage_rollersInput.addInputListener(this);
-        full_ballpathInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.FULL_BALLPATH.getName());
-        full_ballpathInput.addInputListener(this);
-        hopper_buttonInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.HOPPER_SOLENOID.getName());
-        hopper_buttonInput.addInputListener(this);
+        carriageRollersInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
+        carriageRollersInput.addInputListener(this);
+        fullBallpathInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.FULL_BALLPATH.getName());
+        fullBallpathInput.addInputListener(this);
+        hopperInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.HOPPER_SOLENOID.getName());
+        hopperInput.addInputListener(this);
 
         //Solenoids
         //hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID_OUTPUT.getName());
         //intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID_OUTPUT.getName()); // SET UP OUTPUT
         
         //WsVictors
-        //intakeVictor = new VictorSPX(DEVICE ID);
+        intakeVictor = new VictorSPX(CANConstants.INTAKE_VICTOR);
         //hopperVictor1 = new VictorSPX(DEVICE ID);
         //hopperVictor2 = new VictorSPX(DEVICE ID);
-        //carriageVictor = new VictorSPX(DEVICE ID);
+        carriageVictor = new VictorSPX(CANConstants.CARRIAGE_VICTOR);
         resetState();
     }
 
@@ -151,6 +164,19 @@ public class Ballpath implements Subsystem {
          * 
          */
         hopper_solenoid.setValue(hopper_position);
+        intake_solenoid.setValue(intake_position);
+        if(isIntake_motor)
+        {
+            intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
+
+
+        }
+        if(isCarriageMotor)
+        {
+            carriageVictor.set(ControlMode.PercentOutput, CarriageValue);
+        }
+
+    
     }
 
     @Override

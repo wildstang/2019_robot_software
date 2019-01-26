@@ -9,4 +9,8 @@ public final class CANConstants {
 
     // TODO IDs
     public static final int STRAFE_TALON = -1;
+    public static final int INTAKE_VICTOR = -1;
+    public static final int CARRIAGE_VICTOR = -1;
+    public static final int HOPPER_VICTOR1 = -1;
+    public static final int HOPPER_VICTOR2 = -1;
 }
