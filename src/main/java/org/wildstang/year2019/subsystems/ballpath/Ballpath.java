@@ -61,6 +61,7 @@ public class Ballpath implements Subsystem {
     private static final double ROLLER_SPEED = 1.0;
     private boolean isIntake_motor;
     private boolean isCarriageMotor;
+    private boolean isHopper_motor;
     private double CarriageValue;
 
     /** 
@@ -110,6 +111,7 @@ public class Ballpath implements Subsystem {
             intake_position = true;
             isIntake_motor = true;
             isCarriageMotor = true;
+            isHopper_motor = true;
             CarriageValue = carriageRollersInput.getValue();
         
         }//everything
@@ -131,13 +133,13 @@ public class Ballpath implements Subsystem {
         hopperInput.addInputListener(this);
 
         //Solenoids
-        //hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID_OUTPUT.getName());
-        //intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID_OUTPUT.getName()); // SET UP OUTPUT
+        hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
+        intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
         
         //WsVictors
         intakeVictor = new VictorSPX(CANConstants.INTAKE_VICTOR);
-        //hopperVictor1 = new VictorSPX(DEVICE ID);
-        //hopperVictor2 = new VictorSPX(DEVICE ID);
+        hopperVictor1 = new VictorSPX(CANConstants.HOPPER_VICTOR1);
+        hopperVictor2 = new VictorSPX(CANConstants.HOPPER_VICTOR2);
         carriageVictor = new VictorSPX(CANConstants.CARRIAGE_VICTOR);
         resetState();
     }
@@ -180,12 +182,24 @@ public class Ballpath implements Subsystem {
         {
             carriageVictor.set(ControlMode.PercentOutput, CarriageValue);
         }
+        if(isHopper_motor)
+        {
+            hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED);
+            hopperVictor2.set(ControlMode.PercentOutput, ROLLER_SPEED);
 
+        }
     
     }
 
     @Override
     public void resetState() {
+        hopper_solenoid.setValue(false);
+        intake_solenoid.setValue(false);
+        intakeVictor.set(ControlMode.PercentOutput, 0.0);
+        carriageVictor.set(ControlMode.PercentOutput, 0.0);
+        hopperVictor1.set(ControlMode.PercentOutput, 0.0);
+        hopperVictor2.set(ControlMode.PercentOutput, 0.0);
+
         //Set desired positions for solenoids
     }
 
