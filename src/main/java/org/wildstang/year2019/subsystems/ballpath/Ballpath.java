@@ -96,10 +96,12 @@ public class Ballpath implements Subsystem {
             {
                 hopper_position = true;
             }
-        }
-        else
-        {
-         hopper_position = false;   
+            
+            else
+            {
+                hopper_position = false;
+            }
+
         }//hopper
 
         if(source == intakeInput)
@@ -110,48 +112,66 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
             }
 
-        }
-        else{
-         intake_position = false;
-         isIntake_motor = false;   
+            else
+            {
+                intake_position = false;
+                isIntake_motor = false;
+            }
+ 
         }//intake
 
         if(source == carriageRollersInput)
         {
-            isCarriageMotor = true;
-            CarriageValue = carriageRollersInput.getValue();
-
-        }
-        else
-        {
-         isCarriageMotor = false;
-         CarriageValue = 0.0;   
+            if(intakeInput.getValue())
+            {
+                isCarriageMotor = true;
+                CarriageValue = carriageRollersInput.getValue();
+            }
+            
+            else
+            {
+                isCarriageMotor = false;
+                CarriageValue = 0.0; 
+            } 
         }//carriage rollers
+
         if(source == fullBallpathInput)
         {
-            hopper_position = true;
-            intake_position = true;
-            isIntake_motor = true;
-            isCarriageMotor = true;
-            isHopper_motor = true;
-            CarriageValue = carriageRollersInput.getValue();
+            if(intakeInput.getValue())
+            {
+                hopper_position = true;
+                intake_position = true;
+                isIntake_motor = true;
+                isCarriageMotor = true;
+                isHopper_motor = true;
+                CarriageValue = carriageRollersInput.getValue();
+            }
+
+            else
+            {
+                hopper_position = false;
+                intake_position = false;
+                isIntake_motor = false;
+                isCarriageMotor = false;
+                isHopper_motor = false;
+                CarriageValue = 0.0;
+            }//everything
         
         }
-        else
-        {
-         hopper_position = false;
-         intake_position = false;
-         isIntake_motor = false;
-         isCarriageMotor = false;
-         isHopper_motor = false;
-         CarriageValue = 0.0;   
-        }//everything
 
         if(source == reverseInput)
         {
-            reverseValue = true;
-            intake_position = true;
-            
+            if(intakeInput.getValue())
+            {
+                reverseValue = true;
+                intake_position = true;
+            }
+
+            else
+            {
+                reverseValue = false;
+                intake_position = false;
+            }
         }
 
 
