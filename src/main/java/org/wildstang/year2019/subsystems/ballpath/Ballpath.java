@@ -49,6 +49,7 @@ public class Ballpath implements Subsystem {
     private DigitalInput hopper_buttonInput;
 
     private WsSolenoid hopper_solenoid;
+    private WsSolenoid intake_solenoid;
 
     private VictorSPX intakeVictor;
     private VictorSPX hopperVictor1;
@@ -56,7 +57,12 @@ public class Ballpath implements Subsystem {
     private VictorSPX carriageVictor;
 
     private boolean hopper_position;
+    private boolean intake_position;
     private static final double ROLLER_SPEED = 1.0;
+    private boolean isIntake_motor;
+    private boolean isCarriageMotor;
+    private double CarriageValue;
+
     /** 
      * TODO: Names set up for each Victor that we are going to need
      * TODO: Add variables that can be updated when buttons are pressed down
@@ -85,10 +91,17 @@ public class Ballpath implements Subsystem {
         }//hopper
         if(source == intakeInput)
         {
-             
+            if(intakeInput.getValue())
+            {
+                intake_position = true;
+                isIntake_motor = true;
+            }
+
         }//intake
         if(source == carriage_rollersInput)
         {
+            isCarriageMotor = true;
+            CarriageValue = carriage_rollersInput.getValue();
             
         }//carriage rollers
         if(source == full_ballpathInput)
@@ -151,6 +164,19 @@ public class Ballpath implements Subsystem {
          * 
          */
         hopper_solenoid.setValue(hopper_position);
+        intake_solenoid.setValue(intake_position);
+        if(isIntake_motor)
+        {
+            intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
+
+
+        }
+        if(isCarriageMotor)
+        {
+            carriageVictor.set(ControlMode.PercentOutput, CarriageValue);
+        }
+
+    
     }
 
     @Override
