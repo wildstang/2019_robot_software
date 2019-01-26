@@ -106,7 +106,12 @@ public class Ballpath implements Subsystem {
         }//carriage rollers
         if(source == fullBallpathInput)
         {
-            
+            hopper_position = true;
+            intake_position = true;
+            isIntake_motor = true;
+            isCarriageMotor = true;
+            CarriageValue = carriageRollersInput.getValue();
+        
         }//everything
 
 
