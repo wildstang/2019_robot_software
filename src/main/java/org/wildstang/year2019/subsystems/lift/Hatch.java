@@ -9,7 +9,7 @@ import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
 
-public class Hatch implements Subsystem{
+public class Hatch implements Subsystem {
 
     // Input variables
     private DigitalInput hatchDeploy;
@@ -41,15 +41,17 @@ public class Hatch implements Subsystem{
                 deployRestart = true;
             }
 
-            if (currentCommand == 0) {
+            if (currentCommand == 0 && hatchDeploy.getValue() == true) {
                 currentCommand = 1;
             }
-        } else if (source == hatchCollect) {
+        }
+        
+        if (source == hatchCollect) {
             if (currentCommand != 0 && hatchDeploy.getValue() == true) {
                 collectRestart = true;
             }
 
-            if (currentCommand == 0) {
+            if (currentCommand == 0 && hatchDeploy.getValue() == true) {
                 currentCommand = 2;
             }
         }
@@ -78,7 +80,7 @@ public class Hatch implements Subsystem{
     public void update() {
         if (deployRestart) {
             if (deployRestartLastMovementTime == 0) {
-                outPosition = true;
+                outPosition = false;
                 hatchOut.setValue(outPosition);
 
                 deployRestartLastMovementTime = System.currentTimeMillis();
@@ -94,7 +96,7 @@ public class Hatch implements Subsystem{
             }
         } else if (collectRestart) {
             if (collectRestartLastMovementTime == 0) {
-                outPosition = true;
+                outPosition = false;
                 hatchOut.setValue(outPosition);
 
                 collectRestartLastMovementTime = System.currentTimeMillis();
@@ -107,7 +109,7 @@ public class Hatch implements Subsystem{
             }
         } else if (currentCommand == 1) {
             if (deployLastMovementTime == 0) {
-                outPosition = false;
+                outPosition = true;
                 hatchOut.setValue(outPosition);
 
                 deployLastMovementTime = System.currentTimeMillis();
@@ -115,7 +117,7 @@ public class Hatch implements Subsystem{
                 lockPosition = false;
                 hatchLock.setValue(lockPosition);
             } else if (deployLastMovementTime + 1000 >= System.currentTimeMillis()) {
-                outPosition = true;
+                outPosition = false;
                 hatchOut.setValue(outPosition);
             } else if (deployLastMovementTime + 1500 >= System.currentTimeMillis()) {
                 lockPosition = true;
@@ -127,12 +129,12 @@ public class Hatch implements Subsystem{
             }
         } else if (currentCommand == 2) {
             if (collectLastMovementTime == 0) {
-                outPosition = false;
+                outPosition = true;
                 hatchOut.setValue(outPosition);
 
                 collectLastMovementTime = System.currentTimeMillis();
             } else if (collectLastMovementTime + 500 >= System.currentTimeMillis()) {
-                outPosition = true;
+                outPosition = false;
                 hatchOut.setValue(outPosition);
 
                 collectLastMovementTime = 0;
