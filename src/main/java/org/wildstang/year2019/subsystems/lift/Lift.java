@@ -13,6 +13,7 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.subsystems.Subsystem;
+import org.wildstang.year2019.subsystems.common.Axis;
 
 /** This subsystem goes up and down and puts hatches on holes.
  * 
@@ -40,10 +41,7 @@ import org.wildstang.framework.subsystems.Subsystem;
  * </ul>
  * 
  */
-public class Lift implements Subsystem {
-
-    // Local inputs
-    private AnalogInput manualAdjustmentJoystick;
+public class Lift extends Axis implements Subsystem {
 
     private DigitalInput position1Button;
     private DigitalInput position2Button;
@@ -63,13 +61,10 @@ public class Lift implements Subsystem {
 
     @Override
     public void inputUpdate(Input source) {
+        super.inputUpdate(source);
         // TODO
 
-        if (source == manualAdjustmentJoystick) {
-            desiredPosition = 0;
-
-            // TODO
-        } else if (source == position1Button) {
+        if (source == position1Button) {
             desiredPosition = 1;
         } else if (source == position2Button) {
             desiredPosition = 2;
@@ -101,6 +96,7 @@ public class Lift implements Subsystem {
     }
 
     private void initInputs() {
+        super.initInputs();
         // FIXME Get proper names for each input (temporary position shown)
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput("Right Vertical Joystick");
         manualAdjustmentJoystick.addInputListener(this);
@@ -156,7 +152,8 @@ public class Lift implements Subsystem {
 
     @Override
     public void update() {
-        // TODO
+        // 
+        super.update();
 
         if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
             liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
@@ -168,6 +165,7 @@ public class Lift implements Subsystem {
     @Override
     public void resetState() {
         // TODO
+        super.resetState();
 
         currentPosition = 0;
         desiredPosition = 0;

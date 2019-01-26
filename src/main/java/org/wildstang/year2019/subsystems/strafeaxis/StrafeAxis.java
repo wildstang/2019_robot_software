@@ -17,6 +17,7 @@ import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.framework.timer.WsTimer;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
+import org.wildstang.year2019.subsystems.common.Axis;
 
 /** This subsystem is responsible for lining up hatch panels left-to-right.
  * 
@@ -36,7 +37,7 @@ import org.wildstang.year2019.robot.WSInputs;
  * 
  */
 
-public class StrafeAxis implements Subsystem {
+public class StrafeAxis extends Axis implements Subsystem {
 
     private static int TIMEOUT = 100;
 
@@ -44,8 +45,6 @@ public class StrafeAxis implements Subsystem {
     private RemoteAnalogInput linePositionInput;
     private DigitalInput leftLimitSwitch;
     private DigitalInput rightLimitSwitch;
-    /** Stick operator uses to fine-tune left-right position */
-    private AnalogInput fineTuneInput;
 
     /* Width of the space we have to play in */
     private int leftMaxTravel;
@@ -113,30 +112,12 @@ public class StrafeAxis implements Subsystem {
 
     @Override
     public void update() {
-        double time = timer.get();
-        double dT = time - lastUpdateTime;
-        lastUpdateTime = time;
-        // Clamp the dT to be no more than MAX_UPDATE_DT so that
-        // if we glitch and don't update for a while we don't do a big jerk motion
-        dT = Math.min(dT, StrafeConstants.MAX_UPDATE_DT);
-
-        if (mode == Mode.TRACKING) {
-            fineTuneOffset += fineTuneInput.getValue() * StrafeConstants.FINE_TUNE_MAX_SPEED * dT;
-            setTarget(linePositionInput.getValue() + fineTuneOffset);
-        }
-
-        if (mode == Mode.HOMING_LEFT || mode == Mode.HOMING_RIGHT) {
-            if (time - timeBeginHoming > StrafeConstants.MAX_HOMING_TIME) {
-                System.out.println("FAILED TO HOME STRAFE AXIS! DISABLING!");
-                // FIXME proper logging
-                disable();
-            }
-        }
+        super.update();
     }
 
     @Override
     public void resetState() {
-        fineTuneOffset = 0.0;
+        super.resetState();
     }
 
     @Override
