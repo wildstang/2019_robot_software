@@ -13,6 +13,7 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.subsystems.Subsystem;
+import org.wildstang.year2019.robot.WSInputs;
 
 /** This subsystem goes up and down and puts hatches on holes.
  * 
@@ -59,7 +60,7 @@ public class Lift implements Subsystem {
     // Logical variables
     private int currentPosition;
     private int desiredPosition;
-    
+    private boolean movingToPosition;
 
     @Override
     public void inputUpdate(Input source) {
@@ -67,8 +68,6 @@ public class Lift implements Subsystem {
 
         if (source == manualAdjustmentJoystick) {
             desiredPosition = 0;
-
-            // TODO
         } else if (source == position1Button) {
             desiredPosition = 1;
         } else if (source == position2Button) {
@@ -86,10 +85,9 @@ public class Lift implements Subsystem {
 
     @Override
     public void init() {
-        // TODO
-
         currentPosition = 0;
         desiredPosition = 0;
+        movingToPosition = false;
 
         initInputs();
 
@@ -102,16 +100,16 @@ public class Lift implements Subsystem {
 
     private void initInputs() {
         // FIXME Get proper names for each input (temporary position shown)
-        manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput("Right Vertical Joystick");
+        manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
 
-        position1Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 1");
+        position1Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_UP);
         position1Button.addInputListener(this);
-        position2Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 2");
+        position2Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_DOWN);
         position2Button.addInputListener(this);
-        position3Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 3");
+        position3Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_RIGHT);
         position3Button.addInputListener(this);
-        position4Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 4");
+        position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_LEFT);
         position4Button.addInputListener(this);
 
         lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
@@ -156,21 +154,26 @@ public class Lift implements Subsystem {
 
     @Override
     public void update() {
-        // TODO
-
+        // Movement should occur under any of the following conditions (in order of control priority):
+        //   1. Manipulator uses joystick to manually adjust lift height
+        //   2. Lift's current preset position differs from desired one (manipulator presses a lift preset button)
+        //   3. Manipulator hasn't finished movement (failover in case manipulator requests to go back to current position)
         if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
             liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
-        } else if (currentPosition != desiredPosition) { // If current position differs from desired one, movement is required
-            // TODO
+        } else if (currentPosition != desiredPosition || movingToPosition) {
+            // TODO PID stuff
+        } else if (movingToPosition) {
+            // TODO More PID stuff
         }
     }
 
     @Override
     public void resetState() {
-        // TODO
-
         currentPosition = 0;
         desiredPosition = 0;
+        movingToPosition = false;
+
+        // TODO What else?
     }
 
     @Override
