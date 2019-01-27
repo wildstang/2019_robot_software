@@ -154,12 +154,6 @@ public class Lift extends Axis implements Subsystem {
     public void update() {
         // 
         super.update();
-
-        if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
-            liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
-        } else if (currentPosition != desiredPosition) { // If current position differs from desired one, movement is required
-            // TODO
-        }
     }
 
     @Override
