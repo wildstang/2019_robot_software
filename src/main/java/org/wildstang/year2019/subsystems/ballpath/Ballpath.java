@@ -82,7 +82,7 @@ public class Ballpath implements Subsystem {
         //Set up 4 buttons
         /**
          * 1 button (INTAKE) to deploy the hopper intake and run the motors (HOLD)
-         * 1 button(HOPPER_SOLENOID) to actuate the hopper rollers (HOLD)
+         * 1 button (HOPPER_SOLENOID) to actuate the hopper rollers (HOLD)
          * 1 button (CARRIAGE_ROLLERS) to run carriage rollers (JOYSTICK)
          * 1 button (FULL_BALLPATH) to deploy the hopper intake, run the intake motors, run the hopper rollers, 
          * and the carriage rollers (HOLD)
@@ -96,11 +96,11 @@ public class Ballpath implements Subsystem {
             {
                 hopper_position = true;
             }
+            else
+            {
+                hopper_position = false;   
+            }//hopper
         }
-        else
-        {
-         hopper_position = false;   
-        }//hopper
 
         if(source == intakeInput)
         {
