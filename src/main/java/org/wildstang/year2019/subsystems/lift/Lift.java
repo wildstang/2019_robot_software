@@ -55,9 +55,13 @@ public class Lift extends Axis implements Subsystem {
     private TalonSRX liftTalon;
 
     // Logical variables
+
     private int currentPosition;
-    private int desiredPosition;
+    //private int desiredPosition; (replaced by Axis.roughTarget)
     
+    
+    
+
 
     @Override
     public void inputUpdate(Input source) {
@@ -65,13 +69,13 @@ public class Lift extends Axis implements Subsystem {
         // TODO
 
         if (source == position1Button) {
-            desiredPosition = 1;
+            setRoughTarget(1.0);
         } else if (source == position2Button) {
-            desiredPosition = 2;
+            setRoughTarget(2.0);
         } else if (source == position3Button) {
-            desiredPosition = 3;
+            setRoughTarget(3.0);
         } else if (source == position4Button) {
-            desiredPosition = 4;
+            setRoughTarget(4.0);
         } else if (source == lowerLimitSwitch) {
             // TODO
         } else if (source == upperLimitSwitch) {
@@ -84,7 +88,7 @@ public class Lift extends Axis implements Subsystem {
         // TODO
 
         currentPosition = 0;
-        desiredPosition = 0;
+        setRoughTarget(0.0);
 
         initInputs();
 
@@ -96,11 +100,11 @@ public class Lift extends Axis implements Subsystem {
     }
 
     private void initInputs() {
-        super.initInputs();
+        //super.initInputs();
         // FIXME Get proper names for each input (temporary position shown)
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput("Right Vertical Joystick");
         manualAdjustmentJoystick.addInputListener(this);
-
+        
         position1Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 1");
         position1Button.addInputListener(this);
         position2Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 2");
@@ -162,7 +166,9 @@ public class Lift extends Axis implements Subsystem {
         super.resetState();
 
         currentPosition = 0;
-        desiredPosition = 0;
+        setRoughTarget(0.0);
+        
+
     }
 
     @Override
