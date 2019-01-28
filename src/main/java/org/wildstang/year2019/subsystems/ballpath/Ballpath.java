@@ -12,6 +12,8 @@ import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
 
+import javax.lang.model.util.ElementScanner6;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -42,10 +44,14 @@ Actuators:
 
 */
 public class Ballpath implements Subsystem {
+    private static final double ROLLER_SPEED = 1.0;
+    private static final double BACKWARDS_ROLLER_SPEED = -1.0;
+
 
     private AnalogInput carriageRollersInput;
     private DigitalInput intakeInput;
     private DigitalInput fullBallpathInput;
+    private DigitalInput reverseInput;
     private DigitalInput hopperInput;
 
     private WsSolenoid hopper_solenoid;
@@ -56,9 +62,10 @@ public class Ballpath implements Subsystem {
     private VictorSPX hopperVictor2;
     private VictorSPX carriageVictor;
 
+    
+    private boolean reverseValue;
     private boolean hopper_position;
     private boolean intake_position;
-    private static final double ROLLER_SPEED = 1.0;
     private boolean isIntake_motor;
     private boolean isCarriageMotor;
     private boolean isHopper_motor;
@@ -89,10 +96,12 @@ public class Ballpath implements Subsystem {
             {
                 hopper_position = true;
             }
-        }
-        else
-        {
-         hopper_position = false;   
+            
+            else
+            {
+                hopper_position = false;
+            }
+
         }//hopper
 
         if(source == intakeInput)
@@ -103,42 +112,67 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
             }
 
-        }
-        else{
-         intake_position = false;
-         isIntake_motor = false;   
+            else
+            {
+                intake_position = false;
+                isIntake_motor = false;
+            }
+ 
         }//intake
 
         if(source == carriageRollersInput)
         {
-            isCarriageMotor = true;
-            CarriageValue = carriageRollersInput.getValue();
+            if(intakeInput.getValue())
+            {
+                isCarriageMotor = true;
+                CarriageValue = carriageRollersInput.getValue();
+            }
             
-        }
-        else
-        {
-         isCarriageMotor = false;
-         CarriageValue = 0.0;   
+            else
+            {
+                isCarriageMotor = false;
+                CarriageValue = 0.0; 
+            } 
         }//carriage rollers
+
         if(source == fullBallpathInput)
         {
-            hopper_position = true;
-            intake_position = true;
-            isIntake_motor = true;
-            isCarriageMotor = true;
-            isHopper_motor = true;
-            CarriageValue = carriageRollersInput.getValue();
+            if(intakeInput.getValue())
+            {
+                hopper_position = true;
+                intake_position = true;
+                isIntake_motor = true;
+                isCarriageMotor = true;
+                isHopper_motor = true;
+                CarriageValue = carriageRollersInput.getValue();
+            }
+
+            else
+            {
+                hopper_position = false;
+                intake_position = false;
+                isIntake_motor = false;
+                isCarriageMotor = false;
+                isHopper_motor = false;
+                CarriageValue = 0.0;
+            }//everything
         
         }
-        else
+
+        if(source == reverseInput)
         {
-         hopper_position = false;
-         intake_position = false;
-         isIntake_motor = false;
-         isCarriageMotor = false;
-         isHopper_motor = false;
-         CarriageValue = 0.0;   
-        }//everything
+            if(intakeInput.getValue())
+            {
+                reverseValue = true;
+                intake_position = true;
+            }
+
+            else
+            {
+                reverseValue = false;
+                intake_position = false;
+            }
+        }
 
 
     }
@@ -210,6 +244,14 @@ public class Ballpath implements Subsystem {
         {
             hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED);
             hopperVictor2.set(ControlMode.PercentOutput, ROLLER_SPEED);
+
+        }
+        if(reverseValue)
+        {
+            hopperVictor1.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
+            hopperVictor2.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
+            carriageVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
+            intakeVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
 
         }
     
