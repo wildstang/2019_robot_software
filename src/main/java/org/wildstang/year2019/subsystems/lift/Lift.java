@@ -14,6 +14,7 @@ import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.WSInputs;
+import org.wildstang.year2019.subsystems.common.Axis;
 
 /** This subsystem goes up and down and puts hatches on holes.
  * 
@@ -41,10 +42,7 @@ import org.wildstang.year2019.robot.WSInputs;
  * </ul>
  * 
  */
-public class Lift implements Subsystem {
-
-    // Local inputs
-    private AnalogInput manualAdjustmentJoystick;
+public class Lift extends Axis implements Subsystem {
 
     private DigitalInput position1Button;
     private DigitalInput position2Button;
@@ -58,24 +56,24 @@ public class Lift implements Subsystem {
     private TalonSRX liftTalon;
 
     // Logical variables
+
     private int currentPosition;
-    private int desiredPosition;
-    private boolean movingToPosition;
+    //private int desiredPosition; (replaced by Axis.roughTarget)
+
 
     @Override
     public void inputUpdate(Input source) {
+        super.inputUpdate(source);
         // TODO
 
-        if (source == manualAdjustmentJoystick) {
-            desiredPosition = 0;
-        } else if (source == position1Button) {
-            desiredPosition = 1;
+        if (source == position1Button) {
+            setRoughTarget(1.0);
         } else if (source == position2Button) {
-            desiredPosition = 2;
+            setRoughTarget(2.0);
         } else if (source == position3Button) {
-            desiredPosition = 3;
+            setRoughTarget(3.0);
         } else if (source == position4Button) {
-            desiredPosition = 4;
+            setRoughTarget(4.0);
         } else if (source == lowerLimitSwitch) {
             // TODO
         } else if (source == upperLimitSwitch) {
@@ -86,8 +84,7 @@ public class Lift implements Subsystem {
     @Override
     public void init() {
         currentPosition = 0;
-        desiredPosition = 0;
-        movingToPosition = false;
+        setRoughTarget(0.0);
 
         initInputs();
 
@@ -99,6 +96,7 @@ public class Lift implements Subsystem {
     }
 
     private void initInputs() {
+        super.initInputs();
         // FIXME Get proper names for each input (temporary position shown)
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
@@ -112,6 +110,7 @@ public class Lift implements Subsystem {
         position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_LEFT);
         position4Button.addInputListener(this);
 
+        // FIXME ENUM THIS
         lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
         lowerLimitSwitch.addInputListener(this);
         upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
@@ -119,7 +118,7 @@ public class Lift implements Subsystem {
     }
 
     private void initOutputs() throws CTREException {
-        // FIXME Change CAN ID to appropriate one
+        // FIXME Change CAN ID to appropriate one; move to CANConstants
         System.out.println("Initializing TalonSRX master ID 0");
 
         liftTalon = new TalonSRX(0);
@@ -154,26 +153,18 @@ public class Lift implements Subsystem {
 
     @Override
     public void update() {
-        // Movement should occur under any of the following conditions (in order of control priority):
-        //   1. Manipulator uses joystick to manually adjust lift height
-        //   2. Lift's current preset position differs from desired one (manipulator presses a lift preset button)
-        //   3. Manipulator hasn't finished movement (failover in case manipulator requests to go back to current position)
-        if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
-            liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
-        } else if (currentPosition != desiredPosition || movingToPosition) {
-            // TODO PID stuff
-        } else if (movingToPosition) {
-            // TODO More PID stuff
-        }
+        super.update();
     }
 
     @Override
     public void resetState() {
-        currentPosition = 0;
-        desiredPosition = 0;
-        movingToPosition = false;
+        // TODO
+        super.resetState();
 
-        // TODO What else?
+        currentPosition = 0;
+
+        setRoughTarget(0.0);
+
     }
 
     @Override

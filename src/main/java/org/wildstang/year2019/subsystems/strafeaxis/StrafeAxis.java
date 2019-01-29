@@ -14,9 +14,9 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.framework.subsystems.Subsystem;
-import org.wildstang.framework.timer.WsTimer;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
+import org.wildstang.year2019.subsystems.common.Axis;
 
 /** This subsystem is responsible for lining up hatch panels left-to-right.
  * 
@@ -36,7 +36,7 @@ import org.wildstang.year2019.robot.WSInputs;
  * 
  */
 
-public class StrafeAxis implements Subsystem {
+public class StrafeAxis extends Axis implements Subsystem {
 
     private static int TIMEOUT = 100;
 
@@ -44,21 +44,12 @@ public class StrafeAxis implements Subsystem {
     private RemoteAnalogInput linePositionInput;
     private DigitalInput leftLimitSwitch;
     private DigitalInput rightLimitSwitch;
-    /** Stick operator uses to fine-tune left-right position */
-    private AnalogInput fineTuneInput;
 
     /* Width of the space we have to play in */
     private int leftMaxTravel;
     private int rightMaxTravel;
 
     private TalonSRX motor;
-
-    /** Accumulator for operator fine-tuning */
-    private double fineTuneOffset;
-
-    private WsTimer timer;
-    private double lastUpdateTime;
-    private double timeBeginHoming;
 
     /** The axis may be in different modes --- homing while finding limits, tracking while in operation. */
     private enum Mode {
@@ -74,7 +65,7 @@ public class StrafeAxis implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
         if (source == linePositionInput) {
-            // Nothing to do; we handle this in update()
+            setRoughTarget(linePositionInput.getValue());
         } else if (source == leftLimitSwitch) {
             if (mode == Mode.HOMING_LEFT) {
                 homingLeftLimitReached();
@@ -87,8 +78,6 @@ public class StrafeAxis implements Subsystem {
             } else {
                 // TODO
             }
-        } else if (source == fineTuneInput) {
-            // Nothing to do; we handle this in update()
         }
     }
 
@@ -101,8 +90,6 @@ public class StrafeAxis implements Subsystem {
             // FIXME crash
         }
         resetState();
-        timer = new WsTimer();
-        timer.start();
         mode = Mode.DISABLED;
     }
 
@@ -113,30 +100,12 @@ public class StrafeAxis implements Subsystem {
 
     @Override
     public void update() {
-        double time = timer.get();
-        double dT = time - lastUpdateTime;
-        lastUpdateTime = time;
-        // Clamp the dT to be no more than MAX_UPDATE_DT so that
-        // if we glitch and don't update for a while we don't do a big jerk motion
-        dT = Math.min(dT, StrafeConstants.MAX_UPDATE_DT);
-
-        if (mode == Mode.TRACKING) {
-            fineTuneOffset += fineTuneInput.getValue() * StrafeConstants.FINE_TUNE_MAX_SPEED * dT;
-            setTarget(linePositionInput.getValue() + fineTuneOffset);
-        }
-
-        if (mode == Mode.HOMING_LEFT || mode == Mode.HOMING_RIGHT) {
-            if (time - timeBeginHoming > StrafeConstants.MAX_HOMING_TIME) {
-                System.out.println("FAILED TO HOME STRAFE AXIS! DISABLING!");
-                // FIXME proper logging
-                disable();
-            }
-        }
+        super.update();
     }
 
     @Override
     public void resetState() {
-        fineTuneOffset = 0.0;
+        super.resetState();
     }
 
     @Override
@@ -151,7 +120,6 @@ public class StrafeAxis implements Subsystem {
         motor.configMotionAcceleration(StrafeConstants.HOMING_MAX_ACCEL);
         motor.configMotionCruiseVelocity(StrafeConstants.HOMING_MAX_SPEED);
         motor.set(ControlMode.MotionMagic, Double.NEGATIVE_INFINITY);
-        timeBeginHoming = timer.get();
     }
 
     ////////////////////////////////////////
@@ -165,8 +133,6 @@ public class StrafeAxis implements Subsystem {
         leftLimitSwitch.addInputListener(this);
         rightLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
         rightLimitSwitch.addInputListener(this);
-        fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
-        fineTuneInput.addInputListener(this);
     }
 
     private void initMotor() throws CoreUtils.CTREException {
