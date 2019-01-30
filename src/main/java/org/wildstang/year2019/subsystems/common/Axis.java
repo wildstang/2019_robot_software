@@ -84,7 +84,7 @@ public abstract class Axis implements Subsystem {
 
     public void inputUpdate(Input source) {
         if (source == axisConfig.manualAdjustmentJoystick) {
-            // Handled in update, nothin to do
+            // Handled in update, nothing to do
         }
     }
 
@@ -108,14 +108,15 @@ public abstract class Axis implements Subsystem {
         this.axisConfig = config;
         timer.start();
     
-        axisConfig.motor.configMotionAcceleration(axisConfig.runAcceleration);
-        axisConfig.motor.configMotionCruiseVelocity(axisConfig.runSpeed);
+        // FIXME ERROR CHECKING
+        axisConfig.motor.configMotionAcceleration((int)axisConfig.runAcceleration, -1);
+        axisConfig.motor.configMotionCruiseVelocity((int)axisConfig.runSpeed, -1);
     }
     /**
      * Set the exact target of axis motion in run mode.
      */
     private void setRunTarget(double target) {
         double clampedTarget = Math.max(Math.min(target, axisConfig.maxTravel), axisConfig.minTravel);
-        axisConfig.motor.set(ControlMode.MotionMagic, target);
+        axisConfig.motor.set(ControlMode.MotionMagic, clampedTarget);
     }
 }
