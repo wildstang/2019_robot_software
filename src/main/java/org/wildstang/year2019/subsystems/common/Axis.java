@@ -1,5 +1,6 @@
 package org.wildstang.year2019.subsystems.common;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -46,17 +47,22 @@ public abstract class Axis implements Subsystem {
     
         /** The number of motor encoder ticks in one inch of axis travel. */
         private double ticksPerInch;
-        /** The maximum motor acceleration during run */
+        /** The maximum motor acceleration during run in in/s^2 */
         private double runAcceleration;
-        /** The maximum motor speed during run */
+        /** The maximum motor speed during run in in/s*/
         private double runSpeed;
-        /** The maximum motor acceleration during homing */
+        /** The maximum motor acceleration during homing in in/s^2 */
         private double homingAcceleration;
-        /** The maximum motor speed during homing */
+        /** The maximum motor speed during homing in in/s */
         private double homingSpeed;
 
-        /** The maximum speed of the axis in fine-tuning. */
+        /** The maximum speed of the axis in fine-tuning in in/s */
         private double manualSpeed;
+
+        /** The furthest in the negative direction axis may travel in inches */
+        private double minTravel;
+        /** The furthest in the positive direction that the axis may travel in inches */
+        private double maxTravel;
 
         /** This input is used by the manipulator controller to fine-tune the axis position. */
         private AnalogInput manualAdjustmentJoystick;
@@ -81,7 +87,7 @@ public abstract class Axis implements Subsystem {
         }
 
         manualAdjustment += axisConfig.manualAdjustmentJoystick.getValue() * axisConfig.manualSpeed * dT;
-        setTarget(roughTarget + manualAdjustment);
+        setRunTarget(roughTarget + manualAdjustment);
     }
 
     public void inputUpdate(Input source) {
@@ -109,10 +115,12 @@ public abstract class Axis implements Subsystem {
     protected void initAxis(AxisConfig config) {
         this.axisConfig = config;
         timer.start();
+    
+        axisConfig.motor.configMotionAcceleration(axisConfig.runAcceleration);
+        axisConfig.motor.configMotionCruiseVelocity(axisConfig.runSpeed);
     }
-
     /**
-     * Set the exact target of axis motion. For private use to move the axis.
+     * Set the exact target of axis motion in run mode.
      */
     private void setTarget(double target) {
         //target = 
