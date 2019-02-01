@@ -82,6 +82,7 @@ public class Hatch implements Subsystem {
 
     @Override
     public void update() {
+        // Restart commands (1 and 2) take priority over regular ones (3 and 4)
         if (currentCommand == 1) {
             if (deployRestartLastMovementTime == 0) {
                 outPosition = false;
@@ -92,9 +93,9 @@ public class Hatch implements Subsystem {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
             } else if (deployRestartLastMovementTime + 1000 >= System.currentTimeMillis()) {
-                currentCommand = 2;
-
                 deployRestartLastMovementTime = 0;
+
+                currentCommand = 2;
             }
         } else if (currentCommand == 2) {
             if (collectRestartLastMovementTime == 0) {
@@ -103,11 +104,9 @@ public class Hatch implements Subsystem {
 
                 collectRestartLastMovementTime = System.currentTimeMillis();
             } else if (collectRestartLastMovementTime + 500 >= System.currentTimeMillis()) {
-                deployRestart = false;
-                collectRestart = true;
-                currentCommand = 4;
-
                 collectRestartLastMovementTime = 0;
+
+                currentCommand = 4;
             }
         } else if (currentCommand == 3) {
             if (deployLastMovementTime == 0) {
@@ -149,9 +148,6 @@ public class Hatch implements Subsystem {
     @Override
     public void resetState() {
         // Reset local variables back to default state
-        deployRestart = false;
-        collectRestart = false;
-
         outPosition = false;
         lockPosition = true;
 
