@@ -37,6 +37,7 @@ public enum WSOutputs implements Outputs {
     WEDGE_SOLENOID("Wedge solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, -1, false), false),
     // TODO IDs
     HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, -1, false), false),
+    INTAKE_SOLENOID("Intake Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, -1, false), false),
     // TODO IDs
     HATCH_OUT_SOLENOID("Hatch Out Solenoid",WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,-1,false),false),
     HATCH_LOCK_SOLENOID("Hatch Lock Solenoid",WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,-1,false),false),

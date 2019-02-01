@@ -43,8 +43,10 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
-    private DigitalInput leftLimitSwitch;
-    private DigitalInput rightLimitSwitch;
+    //private DigitalInput AxisConfig.lowerLimitSwitch; (replaced with AxisConfig.lowerLimitSwitch)
+    //private DigitalInput AxisConfig.upperLimitSwitch; (replaced with AxisConfig.upperLimitSwitch)
+
+    
 
     /* Width of the space we have to play in */
     private int leftMaxTravel;
@@ -74,21 +76,21 @@ public class StrafeAxis extends Axis implements Subsystem {
     public void inputUpdate(Input source) {
         if (source == linePositionInput) {
             // Nothing to do; we handle this in update()
-        } else if (source == leftLimitSwitch) {
+        } else if (source == AxisConfig.lowerLimitSwitch) {
             if (mode == Mode.HOMING_LEFT) {
                 homingLeftLimitReached();
             } else {
                 // TODO
             }
-        } else if (source == rightLimitSwitch) {
+        } else if (source == AxisConfig.upperLimitSwitch) {
             if (mode == Mode.HOMING_RIGHT) {
                 homingRightLimitReached();
             } else {
                 // TODO
             }
-        } else if (source == fineTuneInput) {
+        //} else if (source == fineTuneInput) {
             // Nothing to do; we handle this in update()
-        }
+        //}
     }
 
     @Override
@@ -142,12 +144,12 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
         linePositionInput.addInputListener(this);
-        leftLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
-        leftLimitSwitch.addInputListener(this);
-        rightLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
-        rightLimitSwitch.addInputListener(this);
-        fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
-        fineTuneInput.addInputListener(this);
+        AxisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
+        AxisConfig.lowerLimitSwitch.addInputListener(this);
+        AxisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
+        AxisConfig.upperLimitSwitch.addInputListener(this);
+        //fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
+        //fineTuneInput.addInputListener(this);
     }
 
     private void initMotor() throws CoreUtils.CTREException {

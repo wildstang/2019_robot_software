@@ -8,6 +8,7 @@ import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.framework.timer.WsTimer;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * This is a base class for controlled axes. This year it's the base for the lift and the strafe axes.
@@ -32,7 +33,10 @@ public abstract class Axis implements Subsystem {
     private WsTimer timer;
     private double lastUpdateTime;
 
-    protected class AxisConfig {
+
+
+
+    protected static class AxisConfig {
         // TODO: refactor CAN motors into output so this can just be an output
         /**
          * The motor used to control the axis. Subclass must configure the motor and hand it
@@ -56,6 +60,10 @@ public abstract class Axis implements Subsystem {
 
         /** This input is used by the manipulator controller to fine-tune the axis position. */
         private AnalogInput manualAdjustmentJoystick;
+
+        public static DigitalInput lowerLimitSwitch; 
+
+        public static DigitalInput upperLimitSwitch; 
     }
 
     private AxisConfig axisConfig;
@@ -107,6 +115,6 @@ public abstract class Axis implements Subsystem {
      * Set the exact target of axis motion. For private use to move the axis.
      */
     private void setTarget(double target) {
-        target = 
+        //target = 
     }
 }

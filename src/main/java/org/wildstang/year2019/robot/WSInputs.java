@@ -114,7 +114,7 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Ballpath
                                                                                     // Subsystem
-    //OPEN BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // OPEN
+    REVERSE_BUTTON("Reverse", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Ballpath
                                                                                           // Subsystem
     HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Ballpath
                                                                                                         // Subsystem

@@ -48,8 +48,8 @@ public class Lift extends Axis implements Subsystem {
     private DigitalInput position3Button;
     private DigitalInput position4Button;
 
-    private DigitalInput lowerLimitSwitch;
-    private DigitalInput upperLimitSwitch;
+    //private DigitalInput AxisConfig.upperLimitSwitch; (AxisConfig.AxisConfig.upperLimitSwitch)
+    //private DigitalInput AxisConfig.upperLimitSwitch; (AxisConfig.AxisConfig.upperLimitSwitch)
 
     // Local outputs
     private TalonSRX liftTalon;
@@ -76,17 +76,15 @@ public class Lift extends Axis implements Subsystem {
             setRoughTarget(3.0);
         } else if (source == position4Button) {
             setRoughTarget(4.0);
-        } else if (source == lowerLimitSwitch) {
+        } else if (source == AxisConfig.upperLimitSwitch) {
             // TODO
-        } else if (source == upperLimitSwitch) {
+        } else if (source == AxisConfig.upperLimitSwitch) {
             // TODO
         }
     }
 
     @Override
     public void init() {
-        // TODO
-
         currentPosition = 0;
         setRoughTarget(0.0);
 
@@ -102,22 +100,22 @@ public class Lift extends Axis implements Subsystem {
     private void initInputs() {
         //super.initInputs();
         // FIXME Get proper names for each input (temporary position shown)
-        manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput("Right Vertical Joystick");
+        manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
         
         position1Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 1");
         position1Button.addInputListener(this);
-        position2Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 2");
+        position2Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_DOWN);
         position2Button.addInputListener(this);
-        position3Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 3");
+        position3Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_RIGHT);
         position3Button.addInputListener(this);
-        position4Button = (DigitalInput) Core.getInputManager().getInput("Lift Position 4");
+        position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_LEFT);
         position4Button.addInputListener(this);
 
-        lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
-        lowerLimitSwitch.addInputListener(this);
-        upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
-        upperLimitSwitch.addInputListener(this);
+        AxisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
+        AxisConfig.upperLimitSwitch.addInputListener(this);
+        AxisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
+        AxisConfig.upperLimitSwitch.addInputListener(this);
     }
 
     private void initOutputs() throws CTREException {
@@ -161,8 +159,10 @@ public class Lift extends Axis implements Subsystem {
 
         if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
             liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
-        } else if (currentPosition != desiredPosition) { // If current position differs from desired one, movement is required
-            // TODO
+        } else if (currentPosition != desiredPosition || movingToPosition) {
+            // TODO PID stuff
+        } else if (movingToPosition) {
+            // TODO More PID stuff
         }
     }
 
