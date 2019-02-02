@@ -70,6 +70,7 @@ public class Ballpath implements Subsystem {
     private boolean isCarriageMotor;
     private boolean isHopper_motor;
     private double CarriageValue;
+    private boolean TestBallpath;//set this later
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -134,8 +135,13 @@ public class Ballpath implements Subsystem {
                 hopper_position = true;
                 intake_position = true;
                 isIntake_motor = true;
-                isCarriageMotor = true;
                 isHopper_motor = true;
+
+                if(!TestBallpath)
+                {
+                    isCarriageMotor = true;
+                }
+
             }//everything
         
         }
