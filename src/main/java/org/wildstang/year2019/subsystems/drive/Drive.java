@@ -108,7 +108,7 @@ public class Drive implements Subsystem {
 
     @Override
     public void init() {
-        // TODO: set up logging
+        // TODO: set up logging DONE
         Core.getStateTracker().addIOInfo("Left speed (RPM)", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Right speed (RPM)", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Left output", "Drive", "Input", null);
@@ -203,7 +203,7 @@ public class Drive implements Subsystem {
     public void update() {
         
         // Update dashboard with statistics on motor performance
-        // TODO: Is this redundant with logging machinery?
+        // TODO: Is this redundant with logging machinery? (Not redundant?)
         if (updateCounter % 10 == 0) {
             for (int side : SIDES) {
                 TalonSRX master = masters[side];
@@ -250,14 +250,14 @@ public class Drive implements Subsystem {
             
             setMotorSpeeds(driveSignal);
 
-            /* FIXME re-enable this 
-            if (Robot.LOG_STATE) {
+            //  FIXME re-enable this (FIXED)
+            if (RobotTemplate.LOG_STATE) {
                 maxSpeedAchieved = Math.max(maxSpeedAchieved,
                         Math.max(Math.abs(masters[LEFT].getSelectedSensorVelocity()),
                                 Math.abs(masters[RIGHT].getSelectedSensorVelocity())));
 
-                SmartDashboard.putNumber("Max Encoder Speed", maxSpeed);
-            }*/
+                SmartDashboard.putNumber("Max Encoder Speed", maxSpeedAchieved);
+            }
         break;
         case FULL_BRAKE:
         break;
