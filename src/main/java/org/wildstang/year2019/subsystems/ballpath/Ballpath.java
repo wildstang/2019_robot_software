@@ -46,7 +46,7 @@ Actuators:
 public class Ballpath implements Subsystem {
     private static final double ROLLER_SPEED = 1.0;
     private static final double ROLLER_SPEED_SLOWED = 0.4;//for sensors A and B
-    private static final boolean ROLLER_SPEED_BRAKE = 0.0;//for sensors A and B
+    private static final double ROLLER_SPEED_BRAKE = 0.0;
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;//subject to change
 
@@ -73,11 +73,9 @@ public class Ballpath implements Subsystem {
     private boolean isIntake_motor;
     private boolean isCarriageMotor;
     private boolean isHopper_motor;
-    private double CarriageValue;
-    private boolean TestBallpath;//set this later
     private boolean Sensor_A_Value;
     private boolean Sensor_B_Value;
-    private boolean ROLLER_SPEED_Value;
+    private boolean carriage_slowed;
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -102,11 +100,18 @@ public class Ballpath implements Subsystem {
         isIntake_motor = false;
         isCarriageMotor = false;
         isHopper_motor = false;
+        carriage_slowed=false;
+        Sensor_A_Value = false;//assumption is that ball detected = true, no ball detected = false
+        Sensor_B_Value = false;
 
-        hopperVictor1.set(ControlMode.PercentOutput, 0);
-        hopperVictor2.set(ControlMode.PercentOutput, 0);
-        carriageVictor.set(ControlMode.PercentOutput, 0);
-        intakeVictor.set(ControlMode.PercentOutput, 0);
+        hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+        hopperVictor2.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+        carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+        intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+
+        //TODO
+        //UPDATE Sesor_A_Value and Sensor_B_Value
+
         if(source == intakeInput)
         {
             if(intakeInput.getValue())
@@ -144,9 +149,14 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
                 isHopper_motor = true;
 
-                if(!TestBallpath)
+                if(!Sensor_B_Value && Sensor_A_Value)
                 {
-                    isCarriageMotor = true;
+                    if (!isCarriageMotor){
+                        carriage_slowed=true;
+                    }
+                    isCarriageMotor=true;
+                } else if (!Sensor_B_Value && !Sensor_A_Value){
+                    isCarriageMotor=true;
                 }
 
             }//everything
@@ -164,35 +174,36 @@ public class Ballpath implements Subsystem {
 
         }
 
-        if(source == Sensor_A_Input)
-        {
-            if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
-            {
-                Sensor_A_Value = true;
-                Sensor_B_Value = true;
-
-                ROLLER_SPEED_Value = true;
-
-            }
-
-            if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
-            {
-                Sensor_A_Value = false;
-                Sensor_B_Value = true;
-
-                ROLLER_SPEED_SLOWED = 0.4;
-
-            }
-
-            if(Sensor_B_Input.getValue())
-            {
-                Sensor_B_Value = false;
-                ROLLER_SPEED_BRAKE = true;
-            }
-
-        }//sensors A and B
-
-        }
+        /** NOT NEEDED
+         * if(source == Sensor_A_Input)
+         * {
+         *     if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
+         *     {
+         *         Sensor_A_Value = true;
+         *         Sensor_B_Value = true;
+         *
+         *         ROLLER_SPEED_Value = true;
+         *
+         *     }
+         *
+         *     if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
+         *     {
+         *         Sensor_A_Value = false;
+         *         Sensor_B_Value = true;
+         *
+         *         ROLLER_SPEED_SLOWED = 0.4;
+         *
+         *     }
+         *
+         *     if(Sensor_B_Input.getValue())
+         *     {
+         *         Sensor_B_Value = false;
+         *         ROLLER_SPEED_BRAKE = true;
+         *     }
+         *
+         * }//sensors A and B
+         */
+        
 
     }
 
@@ -257,7 +268,9 @@ public class Ballpath implements Subsystem {
         }
         if(isCarriageMotor)
         {
-            carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
+            if (carriage_slowed){
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED);
+            } else carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
         }
         if(isHopper_motor)
         {
