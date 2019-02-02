@@ -67,13 +67,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
         if (source == linePositionInput) {
-<<<<<<< HEAD
-            // Nothing to do; we handle this in update()
-        } else if (source == AxisConfig.lowerLimitSwitch) {
-=======
             setRoughTarget(linePositionInput.getValue());
-        } else if (source == leftLimitSwitch) {
->>>>>>> f7c1120e485d9c5a8ad079ee4e7896f8d2145cd1
+        } else if (source == AxisConfig.lowerLimitSwitch) {
             if (mode == Mode.HOMING_LEFT) {
                 homingLeftLimitReached();
             } else {
@@ -85,13 +80,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             } else {
                 // TODO
             }
-<<<<<<< HEAD
-        //} else if (source == fineTuneInput) {
-            // Nothing to do; we handle this in update()
-        //}
-=======
         }
->>>>>>> f7c1120e485d9c5a8ad079ee4e7896f8d2145cd1
     }
 
     @Override
@@ -142,19 +131,12 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
         linePositionInput.addInputListener(this);
-<<<<<<< HEAD
         AxisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
         AxisConfig.lowerLimitSwitch.addInputListener(this);
         AxisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
         AxisConfig.upperLimitSwitch.addInputListener(this);
         //fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
         //fineTuneInput.addInputListener(this);
-=======
-        leftLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
-        leftLimitSwitch.addInputListener(this);
-        rightLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
-        rightLimitSwitch.addInputListener(this);
->>>>>>> f7c1120e485d9c5a8ad079ee4e7896f8d2145cd1
     }
 
     private void initMotor() throws CoreUtils.CTREException {

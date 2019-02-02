@@ -115,16 +115,24 @@ public abstract class Axis implements Subsystem {
     protected void initAxis(AxisConfig config) {
         this.axisConfig = config;
         timer.start();
-    
-        // FIXME ERROR CHECKING
-        axisConfig.motor.configMotionAcceleration((int)axisConfig.runAcceleration, -1);
-        axisConfig.motor.configMotionCruiseVelocity((int)axisConfig.runSpeed, -1);
+        setSpeedAndAccel(axisConfig.runSpeed, axisConfig.runAcceleration);
     }
+
+    private void setSpeedAndAccel(double speed, double accel) {
+        // Change from inches per second to ticks per decisecond
+        double speedTicks = speed / 10 * axisConfig.ticksPerInch;
+        // Change from in/s^2 to ticks/ds/s 
+        double accelTicks = speed / 10 * axisConfig.ticksPerInch;
+        
+        axisConfig.motor.configMotionAcceleration((int) accelTicks, -1);
+        axisConfig.motor.configMotionCruiseVelocity((int) speedTicks, -1);
+    }
+
     /**
      * Set the exact target of axis motion in run mode.
      */
-    private void setRunTarget(double target) {
+    private void setTarget(double target) {
         double clampedTarget = Math.max(Math.min(target, axisConfig.maxTravel), axisConfig.minTravel);
-        axisConfig.motor.set(ControlMode.MotionMagic, clampedTarget);
+        axisConfig.motor.set(ControlMode.MotionMagic, clampedTarget * axisConfig.ticksPerInch);
     }
 }
