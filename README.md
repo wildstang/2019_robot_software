@@ -11,10 +11,13 @@ Further documentation is in the [`design_docs`](design_docs/) folder.
 *  Download and run navX-XMP installer at https://www.kauailabs.com/public_files/navx-mxp/navx-mxp.zip. 
 ### Downloading the code
 *  Install [Git for Windows](https://gitforwindows.org). Non-Windows users: you probably already have it and if not it's in your package manager.
+*  Quit VSCode if you have it open, otherwise the next steps will not work.
 *  Open WPI VSCode (hexagonal icon with a W in it).
 *  Open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "Git: Clone" and select it.
-*  When prompted, paste in this link: https://github.com/wildstang/2019_robot_software.git
+*  When prompted for a "repository URL", paste in this link: https://github.com/wildstang/2019_robot_software.git
 *  You will be prompted for the location where you would like to save the project on your computer, which is up to you.
+*  You may be prompted for your GitHub credentials, which you'll need to enter. Don't have a GitHub account? Sign up, and then ask on #software to be given access to GitHub.
+ * TODO: Describe setting user name and emails
 ### Building and deploying to the robot
 To build the code, open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "robot" and select "WPILib: Build robot code".
 
