@@ -95,6 +95,10 @@ public class Ballpath implements Subsystem {
         isCarriageMotor = false;
         isHopper_motor = false;
 
+        hopperVictor1.set(ControlMode.PercentOutput, 0);
+        hopperVictor2.set(ControlMode.PercentOutput, 0);
+        carriageVictor.set(ControlMode.PercentOutput, 0);
+        intakeVictor.set(ControlMode.PercentOutput, 0);
         if(source == intakeInput)
         {
             if(intakeInput.getValue())
