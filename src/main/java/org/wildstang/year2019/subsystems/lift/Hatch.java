@@ -6,16 +6,15 @@ import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.robot.WSOutputs;
-import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
 
 public class Hatch implements Subsystem {
 
-    // Input variables
+    // Local inputs
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;
 
-    // Output variables
+    // Local outputs
     private WsSolenoid hatchOut;
     private WsSolenoid hatchLock;
 
@@ -63,7 +62,7 @@ public class Hatch implements Subsystem {
 
     @Override
     public void init() {
-        // Links digital inputs and outputs to the physical controller and robot
+        // Link digital inputs and outputs to physical controller and robot
         hatchDeploy = (DigitalInput) Core.getInputManager().getInput(WSInputs.HATCH_DEPLOY.getName());
         hatchDeploy.addInputListener(this);
 
