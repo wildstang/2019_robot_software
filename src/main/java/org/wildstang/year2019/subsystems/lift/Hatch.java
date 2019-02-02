@@ -20,11 +20,11 @@ public class Hatch implements Subsystem {
     private WsSolenoid hatchLock;
 
     // Logical variables
-    private boolean deployRestart;
-    private boolean collectRestart;
-
-    private boolean outPosition;
-    private boolean lockPosition;
+    private boolean outPosition;  // true  = Extended
+                                  // false = Retracted
+    private boolean lockPosition; // true  = Deployed (mechanism can push through hatch panel opening and extends so it cannot
+                                  //                      fit back through opening)
+                                  // false = Retracted (mechanism can freely move in any direction through hatch panel opening)
 
     private long deployRestartLastMovementTime;
     private long deployLastMovementTime;
@@ -32,27 +32,31 @@ public class Hatch implements Subsystem {
     private long collectRestartLastMovementTime;
     private long collectLastMovementTime;
 
-    private int currentCommand;
+    private int currentCommand; // 0 = Idle
+                                // 1 = Deploy restart
+                                // 2 = Collect restart
+                                // 3 = Deploy
+                                // 4 = Collect
 
     @Override
     public void inputUpdate(Input source) {
         if (source == hatchDeploy) {
             if (currentCommand != 0 && hatchDeploy.getValue() == true) {
-                deployRestart = true;
+                currentCommand = 1;
             }
 
             if (currentCommand == 0 && hatchDeploy.getValue() == true) {
-                currentCommand = 1;
+                currentCommand = 3;
             }
         }
         
         if (source == hatchCollect) {
             if (currentCommand != 0 && hatchDeploy.getValue() == true) {
-                collectRestart = true;
+                currentCommand = 2;
             }
 
             if (currentCommand == 0 && hatchDeploy.getValue() == true) {
-                currentCommand = 2;
+                currentCommand = 4;
             }
         }
     }
@@ -78,7 +82,8 @@ public class Hatch implements Subsystem {
 
     @Override
     public void update() {
-        if (deployRestart) {
+        // Restart commands (1 and 2) take priority over regular ones (3 and 4)
+        if (currentCommand == 1) {
             if (deployRestartLastMovementTime == 0) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
@@ -88,26 +93,22 @@ public class Hatch implements Subsystem {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
             } else if (deployRestartLastMovementTime + 1000 >= System.currentTimeMillis()) {
-                deployRestart = false;
-                collectRestart = false;
-                currentCommand = 1;
-
                 deployRestartLastMovementTime = 0;
+
+                currentCommand = 2;
             }
-        } else if (collectRestart) {
+        } else if (currentCommand == 2) {
             if (collectRestartLastMovementTime == 0) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
 
                 collectRestartLastMovementTime = System.currentTimeMillis();
             } else if (collectRestartLastMovementTime + 500 >= System.currentTimeMillis()) {
-                deployRestart = false;
-                collectRestart = true;
-                currentCommand = 2;
-
                 collectRestartLastMovementTime = 0;
+
+                currentCommand = 4;
             }
-        } else if (currentCommand == 1) {
+        } else if (currentCommand == 3) {
             if (deployLastMovementTime == 0) {
                 outPosition = true;
                 hatchOut.setValue(outPosition);
@@ -127,7 +128,7 @@ public class Hatch implements Subsystem {
 
                 currentCommand = 0;
             }
-        } else if (currentCommand == 2) {
+        } else if (currentCommand == 4) {
             if (collectLastMovementTime == 0) {
                 outPosition = true;
                 hatchOut.setValue(outPosition);
@@ -147,9 +148,6 @@ public class Hatch implements Subsystem {
     @Override
     public void resetState() {
         // Reset local variables back to default state
-        deployRestart = false;
-        collectRestart = false;
-
         outPosition = false;
         lockPosition = true;
 
