@@ -6,8 +6,10 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
+import org.wildstang.framework.logger.StateTracker;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
+import org.wildstang.year2017.robot.RobotTemplate;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -107,7 +109,22 @@ public class Drive implements Subsystem {
     @Override
     public void init() {
         // TODO: set up logging
-
+        Core.getStateTracker().addIOInfo("Left speed (RPM)", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right speed (RPM)", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left output", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right output", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 1 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 2 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 1 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 2 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 1 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 2 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 1 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 2 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Drive heading", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Drive throttle", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Vision distance", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Vision correction", "Drive", "Input", null);
         try {
             initMotorControllers();
         } catch (CoreUtils.CTREException e) {
@@ -252,34 +269,31 @@ public class Drive implements Subsystem {
             driveSignal = new DriveSignal(commandThrottle, commandThrottle);
         break;
         }
-
         SensorCollection leftEncoder = masters[LEFT].getSensorCollection();
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getQuadraturePosition());
         SensorCollection rightEncoder = masters[RIGHT].getSensorCollection();
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getQuadraturePosition());
 
-        /* FIXME re-enable this
-        if (Robot.LOG_STATE) {
+        if (RobotTemplate.LOG_STATE) {
             StateTracker tracker = Core.getStateTracker();
             tracker.addState("Drive heading", "Drive", commandHeading);
             tracker.addState("Drive throttle", "Drive", commandThrottle);
-            tracker.addState("Vision distance", "Drive", m_visionDistance);
-            tracker.addState("Vision correction", "Drive", m_visionXCorrection);
+            // tracker.addState("Vision distance", "Drive", m_visionDistance); # enable when vision is done
+            // tracker.addState("Vision correction", "Drive", m_visionXCorrection); # enable when vision is done
 
             String[] sides = {"Left ", "Right "};
-            for (int i = 0; i < m_masters.length; ++i) {
-                TalonSRX master = m_masters[i];
-                TalonSRX follower = m_followers[i];
+            for (int i = 0; i < masters.length; i++) {
+                TalonSRX master = masters[i];
+                VictorSPX[] follower = followers[i];
                 String side = sides[i];
                 tracker.addState(side + "output", "Drive", master.getMotorOutputPercent());
                 tracker.addState(side + "speed (RPM)", "Drive", master.getSelectedSensorVelocity());
                 tracker.addState(side + "1 voltage", "Drive", master.getMotorOutputVoltage());
-                tracker.addState(side + "2 voltage", "Drive", follower.getMotorOutputVoltage());
+                //tracker.addState(side + "2 voltage", "Drive", followers.getMotorOutputVoltage());
                 tracker.addState(side + "1 current", "Drive", master.getOutputCurrent());
-                tracker.addState(side + "2 current", "Drive", follower.getOutputCurrent());
+                //tracker.addState(side + "2 current", "Drive", followers.getOutputCurrent());
             }
-        }*/
-
+        }
         updateCounter += 1;
     }
 
