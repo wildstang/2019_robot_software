@@ -62,8 +62,8 @@ public class Lift extends Axis implements Subsystem {
     private DigitalInput position3Button;
     private DigitalInput position4Button;
 
-    private DigitalInput lowerLimitSwitch;
-    private DigitalInput upperLimitSwitch;
+    //private DigitalInput AxisConfig.upperLimitSwitch; (AxisConfig.AxisConfig.upperLimitSwitch)
+    //private DigitalInput AxisConfig.upperLimitSwitch; (AxisConfig.AxisConfig.upperLimitSwitch)
 
     // Local outputs
     private TalonSRX liftTalon;
@@ -87,9 +87,9 @@ public class Lift extends Axis implements Subsystem {
             setRoughTarget(POSITION_3);
         } else if (source == position4Button) {
             setRoughTarget(POSITION_4);
-        } else if (source == lowerLimitSwitch) {
+        } else if (source == AxisConfig.upperLimitSwitch) {
             // TODO
-        } else if (source == upperLimitSwitch) {
+        } else if (source == AxisConfig.upperLimitSwitch) {
             // TODO
         }
     }
@@ -112,7 +112,6 @@ public class Lift extends Axis implements Subsystem {
         // FIXME Get proper names for each input (temporary position shown)
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
- 
         position1Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_1);
         position1Button.addInputListener(this);
         position2Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_2);
@@ -123,6 +122,10 @@ public class Lift extends Axis implements Subsystem {
         position4Button.addInputListener(this);
 
         // FIXME ENUM THIS
+        AxisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
+        AxisConfig.upperLimitSwitch.addInputListener(this);
+        AxisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
+        AxisConfig.upperLimitSwitch.addInputListener(this);
         lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
         lowerLimitSwitch.addInputListener(this);
         upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
@@ -177,7 +180,6 @@ public class Lift extends Axis implements Subsystem {
         currentPosition = 0;
 
         setRoughTarget(0.0);
-
     }
 
     @Override
