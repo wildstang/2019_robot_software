@@ -62,10 +62,11 @@ public class Lift implements Subsystem {
     private int desiredPosition;
     private boolean movingToPosition;
 
+    private final int[] positionEncoderTickLocations = {0, 0, 0, 0};
+    private final int encoderTickDifferenceThreshold = 20;
+
     @Override
     public void inputUpdate(Input source) {
-        // TODO
-
         if (source == manualAdjustmentJoystick) {
             desiredPosition = 0;
         } else if (source == position1Button) {
@@ -76,10 +77,6 @@ public class Lift implements Subsystem {
             desiredPosition = 3;
         } else if (source == position4Button) {
             desiredPosition = 4;
-        } else if (source == lowerLimitSwitch) {
-            // TODO
-        } else if (source == upperLimitSwitch) {
-            // TODO
         }
     }
 
@@ -99,7 +96,7 @@ public class Lift implements Subsystem {
     }
 
     private void initInputs() {
-        // FIXME Get proper names for each input (temporary position shown)
+        // ASK How to implement final name
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
 
@@ -112,9 +109,9 @@ public class Lift implements Subsystem {
         position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESENT_LEFT);
         position4Button.addInputListener(this);
 
-        lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
+        lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_LOWER_LIMIT);
         lowerLimitSwitch.addInputListener(this);
-        upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
+        upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_UPPER_LIMIT);
         upperLimitSwitch.addInputListener(this);
     }
 
@@ -134,11 +131,10 @@ public class Lift implements Subsystem {
         CoreUtils.checkCTRE(liftTalon.configPeakOutputForward(+1.0, 100));
         CoreUtils.checkCTRE(liftTalon.configPeakOutputReverse(-1.0, 100));
         
-        // FIXME Find appropriate PID constants
-        liftTalon.config_kF(0, 0.55);
-        liftTalon.config_kP(0, 0.8);
-        liftTalon.config_kI(0, 0.001);
-        liftTalon.config_kD(0, 10.0);
+        liftTalon.config_kF(0, 0.0);
+        liftTalon.config_kP(0, 0.2);
+        liftTalon.config_kI(0, 0.0);
+        liftTalon.config_kD(0, 5.0);
 
         liftTalon.setNeutralMode(NeutralMode.Coast);
 
@@ -149,7 +145,6 @@ public class Lift implements Subsystem {
 
     @Override
     public void selfTest() {
-        // TODO
     }
 
     @Override
@@ -159,11 +154,32 @@ public class Lift implements Subsystem {
         //   2. Lift's current preset position differs from desired one (manipulator presses a lift preset button)
         //   3. Manipulator hasn't finished movement (failover in case manipulator requests to go back to current position)
         if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
-            liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
+            if (lowerLimitSwitch.getValue() == true && manualAdjustmentJoystick.getValue() < 0.0) {
+                liftTalon.set(ControlMode.PercentOutput, 0.0);
+            } else if (upperLimitSwitch.getValue() == true && manualAdjustmentJoystick.getValue() > 0.0) {
+                liftTalon.set(ControlMode.PercentOutput, 0.0);
+            } else {
+                liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
+            }
         } else if (currentPosition != desiredPosition || movingToPosition) {
-            // TODO PID stuff
-        } else if (movingToPosition) {
-            // TODO More PID stuff
+            if (findMinEncoderTickDiffernece(liftTalon.getSelectedSensorPosition(0)) < encoderTickDifferenceThreshold) {
+                movingToPosition = false;
+                currentPosition = desiredPosition;
+                liftTalon.selectProfileSlot(LiftPID.TRACKING.slot, 0);
+            } else {
+                movingToPosition = true;
+                liftTalon.selectProfileSlot(LiftPID.HOMING.slot, 0);
+
+                if (desiredPosition == 1) {
+                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[0]);
+                } else if (desiredPosition == 2) {
+                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[1]);
+                } else if (desiredPosition == 3) {
+                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[2]);
+                } else if (desiredPosition == 4) {
+                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[3]);
+                }
+            }
         }
     }
 
@@ -172,12 +188,26 @@ public class Lift implements Subsystem {
         currentPosition = 0;
         desiredPosition = 0;
         movingToPosition = false;
-
-        // TODO What else?
     }
 
     @Override
     public String getName() {
         return "Lift";
+    }
+
+    private int findMinEncoderTickDiffernece(int encoderTick) {
+        int[] encoderTickDifferences = new int[4];
+        for (int i = 0; i < encoderTickDifferences.length; i++) {
+            encoderTickDifferences[i] = Math.abs(encoderTick - positionEncoderTickLocations[i]);
+        }
+
+        int least = encoderTickDifferences[0];
+        for (int i = 0; i < encoderTickDifferences.length; i++) {
+            if (encoderTickDifferences[i] < least) {
+                least = encoderTickDifferences[i];
+            }
+        }
+
+        return least;
     }
 }
