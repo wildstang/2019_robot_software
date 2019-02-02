@@ -46,9 +46,9 @@ Actuators:
 public class Ballpath implements Subsystem {
     private static final double ROLLER_SPEED = 1.0;
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
+    private static final double CARRIAGE_ROLLER_SPEED = 1.0;//subject to change
 
-
-    private AnalogInput carriageRollersInput;
+    private DigitalInput carriageRollersInput;
     private DigitalInput intakeInput;
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
@@ -70,6 +70,7 @@ public class Ballpath implements Subsystem {
     private boolean isCarriageMotor;
     private boolean isHopper_motor;
     private double CarriageValue;
+    private boolean TestBallpath;//set this later
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -89,19 +90,16 @@ public class Ballpath implements Subsystem {
          * 
          * Update local variables
          */
+        hopper_position = false;
+        intake_position = false;
+        isIntake_motor = false;
+        isCarriageMotor = false;
+        isHopper_motor = false;
 
-        if(source == hopperInput)
-        {
-            if(hopperInput.getValue())
-            {
-                hopper_position = true;
-            }
-            else
-            {
-                hopper_position = false;   
-            }//hopper
-        }
-
+        hopperVictor1.set(ControlMode.PercentOutput, 0);
+        hopperVictor2.set(ControlMode.PercentOutput, 0);
+        carriageVictor.set(ControlMode.PercentOutput, 0);
+        intakeVictor.set(ControlMode.PercentOutput, 0);
         if(source == intakeInput)
         {
             if(intakeInput.getValue())
@@ -109,50 +107,56 @@ public class Ballpath implements Subsystem {
                 intake_position = true;
                 isIntake_motor = true;
             }
-
-        }
-        else{
-         intake_position = false;
-         isIntake_motor = false;   
+ 
         }//intake
+
+        if(source == hopperInput)
+        {
+            if(hopperInput.getValue())
+            {
+                hopper_position = true;
+            }
+
+        }//hopper
 
         if(source == carriageRollersInput)
         {
-            isCarriageMotor = true;
-            CarriageValue = carriageRollersInput.getValue();
-
-        }
-        else
-        {
-         isCarriageMotor = false;
-         CarriageValue = 0.0;   
+            if(carriageRollersInput.getValue())
+            {
+                isCarriageMotor = true;
+            }
+            
         }//carriage rollers
+
         if(source == fullBallpathInput)
         {
-            hopper_position = true;
-            intake_position = true;
-            isIntake_motor = true;
-            isCarriageMotor = true;
-            isHopper_motor = true;
-            CarriageValue = carriageRollersInput.getValue();
+            if(fullBallpathInput.getValue())
+            {
+                hopper_position = true;
+                intake_position = true;
+                isIntake_motor = true;
+                isHopper_motor = true;
+
+                if(!TestBallpath)
+                {
+                    isCarriageMotor = true;
+                }
+
+            }//everything
         
         }
-        else
-        {
-         hopper_position = false;
-         intake_position = false;
-         isIntake_motor = false;
-         isCarriageMotor = false;
-         isHopper_motor = false;
-         CarriageValue = 0.0;   
-        }//everything
 
         if(source == reverseInput)
         {
-            reverseValue = true;
-            intake_position = true;
             
+            if(reverseInput.getValue() && !(isIntake_motor || isCarriageMotor || isHopper_motor))
+            {
+                reverseValue = true;
+                intake_position = true;
+            } 
+
         }
+        
 
 
     }
@@ -163,7 +167,7 @@ public class Ballpath implements Subsystem {
         //Input listeners
         intakeInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.INTAKE.getName());
         intakeInput.addInputListener(this);
-        carriageRollersInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
+        carriageRollersInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
         carriageRollersInput.addInputListener(this);
         fullBallpathInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.FULL_BALLPATH.getName());
         fullBallpathInput.addInputListener(this);
@@ -218,7 +222,7 @@ public class Ballpath implements Subsystem {
         }
         if(isCarriageMotor)
         {
-            carriageVictor.set(ControlMode.PercentOutput, CarriageValue);
+            carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
         }
         if(isHopper_motor)
         {

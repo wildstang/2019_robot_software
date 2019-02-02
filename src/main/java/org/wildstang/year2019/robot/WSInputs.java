@@ -81,14 +81,14 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator Joysticks
     // ---------------------------------
-    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_JOYSTICK,
+    LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
             new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Ballpath
                                                                                       // Subsystem
     //OPEN JOYSTICK("name", WSInputType.JS_JOYSTICK,
     //        new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_X), true), // OPEN
                                                                                       // Subsystem
-    LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
+    //OPEN_JOYSTICK("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
+            //new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
     HATCH_STRAFE("Hatch Strafe", WSInputType.JS_JOYSTICK,
             new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_X), true), // Lift
@@ -132,7 +132,7 @@ public enum WSInputs implements Inputs {
                                                                                                          // Subsystem
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
-    //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
+    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
                                                                                                    // Subsystem
     //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
                                                                                                    // Subsystem
@@ -144,6 +144,11 @@ public enum WSInputs implements Inputs {
     STRAFE_LEFT_LIMIT("Strafe left limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
     // TODO IDs
     STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+
+    // TODO IDs
+    LIFT_LOWER_LIMIT("Lift Lower Limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    // TODO IDs
+    LIFT_UPPER_LIMIT("Lift Upper Limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
 
     // -------------------------------
     // Networked sensors
