@@ -141,14 +141,14 @@ public enum WSInputs implements Inputs {
     // Digital IOs
     // ********************************
     // TODO IDs
-    STRAFE_LEFT_LIMIT("Strafe left limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    STRAFE_LEFT_LIMIT("Strafe left limit", WSInputType.SWITCH, new WsDigitalInputConfig(1, false), false),
     // TODO IDs
-    STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(2, false), false),
 
     // TODO IDs
-    LIFT_LOWER_LIMIT("Lift Lower Limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    LIFT_LOWER_LIMIT("Lift Lower Limit", WSInputType.SWITCH, new WsDigitalInputConfig(3, false), false),
     // TODO IDs
-    LIFT_UPPER_LIMIT("Lift Upper Limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    LIFT_UPPER_LIMIT("Lift Upper Limit", WSInputType.SWITCH, new WsDigitalInputConfig(4, false), false),
 
     // -------------------------------
     // Networked sensors

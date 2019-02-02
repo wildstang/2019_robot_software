@@ -45,6 +45,8 @@ Actuators:
 */
 public class Ballpath implements Subsystem {
     private static final double ROLLER_SPEED = 1.0;
+    private static final double ROLLER_SPEED_SLOWED = 0.4;//for sensors A and B
+    private static final boolean ROLLER_SPEED_BRAKE = 0.0;//for sensors A and B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;//subject to change
 
@@ -53,6 +55,8 @@ public class Ballpath implements Subsystem {
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
     private DigitalInput hopperInput;
+    private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
+    private DigitalInput Sensor_B_Input;//controlled by sensor values, sensors to be set later
 
     private WsSolenoid hopper_solenoid;
     private WsSolenoid intake_solenoid;
@@ -71,6 +75,9 @@ public class Ballpath implements Subsystem {
     private boolean isHopper_motor;
     private double CarriageValue;
     private boolean TestBallpath;//set this later
+    private boolean Sensor_A_Value;
+    private boolean Sensor_B_Value;
+    private boolean ROLLER_SPEED_Value;
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -156,8 +163,36 @@ public class Ballpath implements Subsystem {
             } 
 
         }
-        
 
+        if(source == Sensor_A_Input)
+        {
+            if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
+            {
+                Sensor_A_Value = true;
+                Sensor_B_Value = true;
+
+                ROLLER_SPEED_Value = true;
+
+            }
+
+            if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
+            {
+                Sensor_A_Value = false;
+                Sensor_B_Value = true;
+
+                ROLLER_SPEED_SLOWED = 0.4;
+
+            }
+
+            if(Sensor_B_Input.getValue())
+            {
+                Sensor_B_Value = false;
+                ROLLER_SPEED_BRAKE = true;
+            }
+
+        }//sensors A and B
+
+        }
 
     }
 
