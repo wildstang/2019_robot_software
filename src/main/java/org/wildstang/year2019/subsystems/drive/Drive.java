@@ -1,5 +1,10 @@
 package org.wildstang.year2019.subsystems.drive;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
@@ -7,6 +12,7 @@ import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.logger.StateTracker;
+import org.wildstang.year2017.subsystems.drive.DriveState;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2017.robot.RobotTemplate;
@@ -48,7 +54,8 @@ public class Drive implements Subsystem {
                                              CANConstants.RIGHT_DRIVE_TALON};
     private static final int[][] FOLLOWER_IDS = {CANConstants.LEFT_DRIVE_VICTORS,
                                                  CANConstants.RIGHT_DRIVE_VICTORS};
-
+    private int pathNum = 1;
+    private static final String DRIVER_STATES_FILENAME = "/home/lvuser/drive_state_";
     /** Left and right Talon master controllers */
     private TalonSRX[] masters = new TalonSRX[2];
     /** Left and right pairs of Victor follower controllers */
@@ -85,6 +92,9 @@ public class Drive implements Subsystem {
     // constant stack allocation.
     // TODO: Determine whether this is premature optimization.
     private DriveSignal driveSignal;
+    
+    /** Drive State */
+    private LinkedList<DriveState> driveStates = new LinkedList<DriveState>();
 
     //////////////////////////////////////////////////////
     // Commanded values
@@ -349,17 +359,56 @@ public class Drive implements Subsystem {
         pathFollower = new PathFollower(p_path, masters[LEFT], masters[RIGHT]);
     }
 
+
+    public void startFollowingPath() {
+        if (pathFollower == null) {
+            throw new IllegalStateException("No path set");
+        }
+
+        if (pathFollower.isActive()) {
+            throw new IllegalStateException("Path is already active");
+        }
+    }
+
+
     /** Stop following and clean up path. */
     public void pathCleanup() {
         if (pathFollower != null) {
             pathFollower.stop();
             pathFollower = null;
             // FIXME fix the next two lines
-            //writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
-            //++pathNum;
+            writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
         }
     }
     
+    public void writeDriveStatesToFile(String fileName) {
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+            fw = new FileWriter(fileName);
+            bw = new BufferedWriter(fw);
+            for (DriveState ds : driveStates) {
+                bw.write(ds.toString());
+            }
+            System.out.println("Done");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (bw != null) {
+                bw.close();
+            }
+        }
+
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        driveStates.clear();
+
+    }
+
     /** Stop following this path. 
      * 
      * FIXME this is weirdly redundant with pathCleanup --- something is wrong
