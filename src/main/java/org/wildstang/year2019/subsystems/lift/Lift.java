@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.CoreUtils;
@@ -55,15 +56,18 @@ public class Lift implements Subsystem {
     private DigitalInput upperLimitSwitch;
 
     // Local outputs
-    private TalonSRX liftTalon;
+    private TalonSRX leftLift;
+    private VictorSPX rightLift;
 
     // Logical variables
     private int currentPosition;
     private int desiredPosition;
     private boolean movingToPosition;
 
-    private final int[] positionEncoderTickLocations = {0, 0, 0, 0};
+    // Constants
+    private final int[] positionEncoderTickLocations = {0, 0, 0, 0}; // TODO Determine locations
     private final int encoderTickDifferenceThreshold = 20;
+    private final double joystickDeadband = 0.05;
 
     @Override
     public void inputUpdate(Input source) {
@@ -96,7 +100,6 @@ public class Lift implements Subsystem {
     }
 
     private void initInputs() {
-        // ASK How to implement final name
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
 
@@ -116,31 +119,36 @@ public class Lift implements Subsystem {
     }
 
     private void initOutputs() throws CTREException {
-        // FIXME Change CAN ID to appropriate one
-        System.out.println("Initializing TalonSRX master ID 0");
+        System.out.println("Initializing TalonSRX master ID 7");
 
-        liftTalon = new TalonSRX(0);
+        leftLift = new TalonSRX(7);
 
-        // FIXME Below is a rough copy from Drive; tailoring to Lift's specific requirements may be required
-        liftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
-        liftTalon.setInverted(false);
-        liftTalon.setSensorPhase(true);
+        // TODO Below is a rough copy from Drive; tailoring to Lift's specific requirements may be required
+        leftLift.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100);
+        leftLift.setInverted(false);
+        leftLift.setSensorPhase(true);
 
-        CoreUtils.checkCTRE(liftTalon.configNominalOutputForward(0, 100));
-        CoreUtils.checkCTRE(liftTalon.configNominalOutputReverse(0, 100));
-        CoreUtils.checkCTRE(liftTalon.configPeakOutputForward(+1.0, 100));
-        CoreUtils.checkCTRE(liftTalon.configPeakOutputReverse(-1.0, 100));
+        CoreUtils.checkCTRE(leftLift.configNominalOutputForward(0, 100));
+        CoreUtils.checkCTRE(leftLift.configNominalOutputReverse(0, 100));
+        CoreUtils.checkCTRE(leftLift.configPeakOutputForward(+1.0, 100));
+        CoreUtils.checkCTRE(leftLift.configPeakOutputReverse(-1.0, 100));
         
-        liftTalon.config_kF(0, 0.0);
-        liftTalon.config_kP(0, 0.2);
-        liftTalon.config_kI(0, 0.0);
-        liftTalon.config_kD(0, 5.0);
+        leftLift.config_kF(0, 0.0);
+        leftLift.config_kP(0, 0.2);
+        leftLift.config_kI(0, 0.0);
+        leftLift.config_kD(0, 5.0);
 
-        liftTalon.setNeutralMode(NeutralMode.Coast);
+        leftLift.setNeutralMode(NeutralMode.Coast);
 
         TalonSRXConfiguration liftTalonConfig = new TalonSRXConfiguration();
-        liftTalon.getAllConfigs(liftTalonConfig, 100);
-        System.out.print(liftTalonConfig.toString("Lift Talon 0"));
+        leftLift.getAllConfigs(liftTalonConfig, 100);
+        System.out.print(liftTalonConfig.toString("Lift Talon 7"));
+
+        System.out.println("Initializing VictorSPX follower ID 8");
+
+        rightLift = new VictorSPX(8);
+
+        rightLift.follow(leftLift);
     }
 
     @Override
@@ -153,31 +161,31 @@ public class Lift implements Subsystem {
         //   1. Manipulator uses joystick to manually adjust lift height
         //   2. Lift's current preset position differs from desired one (manipulator presses a lift preset button)
         //   3. Manipulator hasn't finished movement (failover in case manipulator requests to go back to current position)
-        if (manualAdjustmentJoystick.getValue() < -0.05 || manualAdjustmentJoystick.getValue() > 0.05) {
+        if (manualAdjustmentJoystick.getValue() < -joystickDeadband || manualAdjustmentJoystick.getValue() > joystickDeadband) {
             if (lowerLimitSwitch.getValue() == true && manualAdjustmentJoystick.getValue() < 0.0) {
-                liftTalon.set(ControlMode.PercentOutput, 0.0);
+                leftLift.set(ControlMode.PercentOutput, 0.0);
             } else if (upperLimitSwitch.getValue() == true && manualAdjustmentJoystick.getValue() > 0.0) {
-                liftTalon.set(ControlMode.PercentOutput, 0.0);
+                leftLift.set(ControlMode.PercentOutput, 0.0);
             } else {
-                liftTalon.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
+                leftLift.set(ControlMode.PercentOutput, manualAdjustmentJoystick.getValue());
             }
         } else if (currentPosition != desiredPosition || movingToPosition) {
-            if (findMinEncoderTickDiffernece(liftTalon.getSelectedSensorPosition(0)) < encoderTickDifferenceThreshold) {
+            if (findMinEncoderTickDiffernece(leftLift.getSelectedSensorPosition(0)) < encoderTickDifferenceThreshold) {
                 movingToPosition = false;
                 currentPosition = desiredPosition;
-                liftTalon.selectProfileSlot(LiftPID.TRACKING.slot, 0);
+                leftLift.selectProfileSlot(LiftPID.TRACKING.slot, 0);
             } else {
                 movingToPosition = true;
-                liftTalon.selectProfileSlot(LiftPID.HOMING.slot, 0);
+                leftLift.selectProfileSlot(LiftPID.HOMING.slot, 0);
 
                 if (desiredPosition == 1) {
-                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[0]);
+                    leftLift.set(ControlMode.Position, positionEncoderTickLocations[0]);
                 } else if (desiredPosition == 2) {
-                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[1]);
+                    leftLift.set(ControlMode.Position, positionEncoderTickLocations[1]);
                 } else if (desiredPosition == 3) {
-                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[2]);
+                    leftLift.set(ControlMode.Position, positionEncoderTickLocations[2]);
                 } else if (desiredPosition == 4) {
-                    liftTalon.set(ControlMode.Position, positionEncoderTickLocations[3]);
+                    leftLift.set(ControlMode.Position, positionEncoderTickLocations[3]);
                 }
             }
         }
