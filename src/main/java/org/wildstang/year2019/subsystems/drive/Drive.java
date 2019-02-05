@@ -359,6 +359,9 @@ public class Drive implements Subsystem {
         pathFollower = new PathFollower(p_path, masters[LEFT], masters[RIGHT]);
     }
 
+    public PathFollower getPathFollower() {
+        return pathFollower;
+    }
 
     public void startFollowingPath() {
         if (pathFollower == null) {
@@ -371,12 +374,12 @@ public class Drive implements Subsystem {
     }
 
 
-    /** Stop following and clean up path. */
+    /** Stop following and clean up path. FIXED? */
     public void pathCleanup() {
         if (pathFollower != null) {
             pathFollower.stop();
             pathFollower = null;
-            // FIXME fix the next two lines
+            // FIXME fix the next two lines FIXED
             writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
         }
     }
@@ -411,7 +414,9 @@ public class Drive implements Subsystem {
 
     /** Stop following this path. 
      * 
-     * FIXME this is weirdly redundant with pathCleanup --- something is wrong
+     * FIXME this is weirdly redundant with pathCleanup --- something is wrong 
+     * The code IS redundant with pathCleanup, do we remove this whole method or do we remove the
+     * "pathFollower.stop();" from "abortFollowingPath()"?
      */
     public void abortFollowingPath() {
         if (pathFollower != null) {
@@ -419,7 +424,7 @@ public class Drive implements Subsystem {
         }
     }
 
-    // TODO copy in the rest of path functionality
+    // TODO copy in the rest of path functionality Fixed?
 
     /** Switch to cheesy drive. */
     public void setOpenLoopDrive() {
