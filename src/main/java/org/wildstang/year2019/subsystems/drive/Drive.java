@@ -43,7 +43,7 @@ public class Drive implements Subsystem {
      * its sensor status over the CANBus. This constant is in milliseconds. */
     //private static final int STATUS_FRAME_PERIOD = 10;
     //private static final double NEUTRAL_DEADBAND = 0.001;
-    private static final int TIMEOUT = 100; // milliseconds
+    private static final int TIMEOUT = 1000; // milliseconds
 
     // Parameterizing over left and right makes motor setup code DRYer
     private static final int LEFT = 0;
@@ -135,12 +135,9 @@ public class Drive implements Subsystem {
         Core.getStateTracker().addIOInfo("Drive throttle", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Vision distance", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Vision correction", "Drive", "Input", null);
-        try {
-            initMotorControllers();
-        } catch (CoreUtils.CTREException e) {
-            System.out.println("Failed to init drive motor controllers: " + e);
-            // FIXME CRASH
-        }
+
+        
+        initMotorControllers();
 
         initInputs();
 
@@ -560,6 +557,5 @@ public class Drive implements Subsystem {
     private void setMotorSpeeds(DriveSignal speeds) {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
-
     }
 }

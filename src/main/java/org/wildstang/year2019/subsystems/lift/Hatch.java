@@ -37,6 +37,9 @@ public class Hatch implements Subsystem {
                                 // 3 = Deploy
                                 // 4 = Collect
 
+    // Constants
+    private final int solenoidDelayMillis = 500; // TODO Measure delay during testing
+
     @Override
     public void inputUpdate(Input source) {
         if (source == hatchDeploy) {
@@ -88,10 +91,10 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
 
                 deployRestartLastMovementTime = System.currentTimeMillis();
-            } else if (deployRestartLastMovementTime + 500 >= System.currentTimeMillis()) {
+            } else if (deployRestartLastMovementTime + solenoidDelayMillis >= System.currentTimeMillis()) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
-            } else if (deployRestartLastMovementTime + 1000 >= System.currentTimeMillis()) {
+            } else if (deployRestartLastMovementTime + 2 * solenoidDelayMillis >= System.currentTimeMillis()) {
                 deployRestartLastMovementTime = 0;
 
                 currentCommand = 2;
@@ -102,7 +105,7 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
 
                 collectRestartLastMovementTime = System.currentTimeMillis();
-            } else if (collectRestartLastMovementTime + 500 >= System.currentTimeMillis()) {
+            } else if (collectRestartLastMovementTime + solenoidDelayMillis >= System.currentTimeMillis()) {
                 collectRestartLastMovementTime = 0;
 
                 currentCommand = 4;
@@ -113,13 +116,13 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
 
                 deployLastMovementTime = System.currentTimeMillis();
-            } else if (deployLastMovementTime + 500 >= System.currentTimeMillis()) {
+            } else if (deployLastMovementTime + solenoidDelayMillis >= System.currentTimeMillis()) {
                 lockPosition = false;
                 hatchLock.setValue(lockPosition);
-            } else if (deployLastMovementTime + 1000 >= System.currentTimeMillis()) {
+            } else if (deployLastMovementTime + 2 * solenoidDelayMillis >= System.currentTimeMillis()) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
-            } else if (deployLastMovementTime + 1500 >= System.currentTimeMillis()) {
+            } else if (deployLastMovementTime + 3 * solenoidDelayMillis >= System.currentTimeMillis()) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
 
@@ -133,7 +136,7 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
 
                 collectLastMovementTime = System.currentTimeMillis();
-            } else if (collectLastMovementTime + 500 >= System.currentTimeMillis()) {
+            } else if (collectLastMovementTime + solenoidDelayMillis >= System.currentTimeMillis()) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
 
