@@ -1,5 +1,10 @@
 package org.wildstang.year2019.subsystems.drive;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
@@ -7,6 +12,7 @@ import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.logger.StateTracker;
+import org.wildstang.year2017.subsystems.drive.DriveState;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2017.robot.RobotTemplate;
@@ -37,7 +43,7 @@ public class Drive implements Subsystem {
      * its sensor status over the CANBus. This constant is in milliseconds. */
     //private static final int STATUS_FRAME_PERIOD = 10;
     //private static final double NEUTRAL_DEADBAND = 0.001;
-    private static final int TIMEOUT = 100; // milliseconds
+    private static final int TIMEOUT = 1000; // milliseconds
 
     // Parameterizing over left and right makes motor setup code DRYer
     private static final int LEFT = 0;
@@ -48,7 +54,8 @@ public class Drive implements Subsystem {
                                              CANConstants.RIGHT_DRIVE_TALON};
     private static final int[][] FOLLOWER_IDS = {CANConstants.LEFT_DRIVE_VICTORS,
                                                  CANConstants.RIGHT_DRIVE_VICTORS};
-
+    private int pathNum = 1;
+    private static final String DRIVER_STATES_FILENAME = "/home/lvuser/drive_state_";
     /** Left and right Talon master controllers */
     private TalonSRX[] masters = new TalonSRX[2];
     /** Left and right pairs of Victor follower controllers */
@@ -85,6 +92,9 @@ public class Drive implements Subsystem {
     // constant stack allocation.
     // TODO: Determine whether this is premature optimization.
     private DriveSignal driveSignal;
+    
+    /** Drive State */
+    private LinkedList<DriveState> driveStates = new LinkedList<DriveState>();
 
     //////////////////////////////////////////////////////
     // Commanded values
@@ -108,7 +118,7 @@ public class Drive implements Subsystem {
 
     @Override
     public void init() {
-        // TODO: set up logging
+        // TODO: set up logging DONE
         Core.getStateTracker().addIOInfo("Left speed (RPM)", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Right speed (RPM)", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Left output", "Drive", "Input", null);
@@ -125,12 +135,9 @@ public class Drive implements Subsystem {
         Core.getStateTracker().addIOInfo("Drive throttle", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Vision distance", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Vision correction", "Drive", "Input", null);
-        try {
-            initMotorControllers();
-        } catch (CoreUtils.CTREException e) {
-            System.out.println("Failed to init drive motor controllers: " + e);
-            // FIXME CRASH
-        }
+
+        
+        initMotorControllers();
 
         initInputs();
 
@@ -203,7 +210,7 @@ public class Drive implements Subsystem {
     public void update() {
         
         // Update dashboard with statistics on motor performance
-        // TODO: Is this redundant with logging machinery?
+        // TODO: Is this redundant with logging machinery? (Not redundant?)
         if (updateCounter % 10 == 0) {
             for (int side : SIDES) {
                 TalonSRX master = masters[side];
@@ -250,14 +257,14 @@ public class Drive implements Subsystem {
             
             setMotorSpeeds(driveSignal);
 
-            /* FIXME re-enable this 
-            if (Robot.LOG_STATE) {
+            //  FIXME re-enable this (FIXED)
+            if (RobotTemplate.LOG_STATE) {
                 maxSpeedAchieved = Math.max(maxSpeedAchieved,
                         Math.max(Math.abs(masters[LEFT].getSelectedSensorVelocity()),
                                 Math.abs(masters[RIGHT].getSelectedSensorVelocity())));
 
-                SmartDashboard.putNumber("Max Encoder Speed", maxSpeed);
-            }*/
+                SmartDashboard.putNumber("Max Encoder Speed", maxSpeedAchieved);
+            }
         break;
         case FULL_BRAKE:
         break;
@@ -349,20 +356,64 @@ public class Drive implements Subsystem {
         pathFollower = new PathFollower(p_path, masters[LEFT], masters[RIGHT]);
     }
 
-    /** Stop following and clean up path. */
+    public PathFollower getPathFollower() {
+        return pathFollower;
+    }
+
+    public void startFollowingPath() {
+        if (pathFollower == null) {
+            throw new IllegalStateException("No path set");
+        }
+
+        if (pathFollower.isActive()) {
+            throw new IllegalStateException("Path is already active");
+        }
+    }
+
+
+    /** Stop following and clean up path. FIXED? */
     public void pathCleanup() {
         if (pathFollower != null) {
             pathFollower.stop();
             pathFollower = null;
-            // FIXME fix the next two lines
-            //writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
-            //++pathNum;
+            // FIXME fix the next two lines FIXED
+            writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
         }
     }
     
+    public void writeDriveStatesToFile(String fileName) {
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+
+        try {
+            fw = new FileWriter(fileName);
+            bw = new BufferedWriter(fw);
+            for (DriveState ds : driveStates) {
+                bw.write(ds.toString());
+            }
+            System.out.println("Done");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (bw != null) {
+                bw.close();
+            }
+        }
+
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        driveStates.clear();
+
+    }
+
     /** Stop following this path. 
      * 
-     * FIXME this is weirdly redundant with pathCleanup --- something is wrong
+     * FIXME this is weirdly redundant with pathCleanup --- something is wrong 
+     * The code IS redundant with pathCleanup, do we remove this whole method or do we remove the
+     * "pathFollower.stop();" from "abortFollowingPath()"?
      */
     public void abortFollowingPath() {
         if (pathFollower != null) {
@@ -370,7 +421,7 @@ public class Drive implements Subsystem {
         }
     }
 
-    // TODO copy in the rest of path functionality
+    // TODO copy in the rest of path functionality Fixed?
 
     /** Switch to cheesy drive. */
     public void setOpenLoopDrive() {
@@ -506,6 +557,5 @@ public class Drive implements Subsystem {
     private void setMotorSpeeds(DriveSignal speeds) {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
-
     }
 }
