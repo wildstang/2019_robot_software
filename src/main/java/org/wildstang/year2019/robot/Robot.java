@@ -2,6 +2,7 @@ package org.wildstang.year2019.robot;
 
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.InputManager;
+import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.subsystems.drive.Drive;
@@ -67,7 +68,7 @@ public class Robot extends TimedRobot {
         core.executeUpdate();
 
         //FIXME
-        AnalogInput VisionTest = (AnalogInput)Core.getInputManager().getInput(WSInputs.VISION_FRAMES_PROCESSED);
+        RemoteAnalogInput VisionTest = (RemoteAnalogInput)Core.getInputManager().getInput(WSInputs.VISION_FRAMES_PROCESSED);
         SmartDashboard.putNumber("Vision Frames Processed", VisionTest.getValue() );
     }
 
