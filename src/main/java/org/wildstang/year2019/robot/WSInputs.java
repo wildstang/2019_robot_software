@@ -1,6 +1,7 @@
 package org.wildstang.year2019.robot;
 
 import org.wildstang.framework.core.Inputs;
+import org.wildstang.framework.io.inputs.RemoteDigitalInput;
 import org.wildstang.framework.hardware.InputConfig;
 import org.wildstang.framework.hardware.WsRemoteAnalogInputConfig;
 import org.wildstang.framework.io.inputs.InputType;
@@ -14,6 +15,7 @@ import org.wildstang.hardware.crio.inputs.config.WsJSJoystickInputConfig;
 import org.wildstang.hardware.crio.inputs.config.WsMotionProfileConfig;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public enum WSInputs implements Inputs {
     // im.addSensorInput(LIDAR, new WsLIDAR());
@@ -160,10 +162,12 @@ public enum WSInputs implements Inputs {
     // ********************************
     // Others ...
     // ********************************
-    GYRO("Gyro", WSInputType.ANALOG_GYRO, new WsAnalogGyroConfig(0, true), false);
+    GYRO("Gyro", WSInputType.ANALOG_GYRO, new WsAnalogGyroConfig(0, true), false),
     // IMU("IMU", WSInputType.COMPASS, new WsI2CInputConfig(I2C.Port.kMXP, 0x20),
     // true);
 
+    VISION_FRAMES_PROCESSED("nFramesProcessed", WSInputType.REMOTE_ANALOG, new WsRemoteAnalogInputConfig("vision"), false);
+    
     private final String m_name;
     private final InputType m_type;
 
