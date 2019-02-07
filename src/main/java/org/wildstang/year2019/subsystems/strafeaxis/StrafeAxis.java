@@ -50,6 +50,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private TalonSRX motor;
 
+    /** The axis configuration we pass up to the axis initialization */
+    private AxisConfig axisConfig;
+
     /** The axis may be in different modes --- homing while finding limits, tracking while in operation. */
     private enum Mode {
         DISABLED,
@@ -71,11 +74,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     @Override
     public void init() {
         initInputs();
-        try {
-            initMotor();
-        } catch (CoreUtils.CTREException e) {
-            // FIXME crash
-        }
+        initMotor();
+        initAxis(axisConfig);
         resetState();
         mode = Mode.DISABLED;
     }
@@ -116,12 +116,10 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
         linePositionInput.addInputListener(this);
-        AxisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
-        AxisConfig.lowerLimitSwitch.addInputListener(this);
-        AxisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
-        AxisConfig.upperLimitSwitch.addInputListener(this);
-        //fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
-        //fineTuneInput.addInputListener(this);
+        axisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
+        axisConfig.lowerLimitSwitch.addInputListener(this);
+        axisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
+        axisConfig.upperLimitSwitch.addInputListener(this);
     }
 
     private void initMotor() throws CoreUtils.CTREException {

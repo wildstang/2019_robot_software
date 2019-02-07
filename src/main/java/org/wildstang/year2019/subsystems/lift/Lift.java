@@ -63,17 +63,11 @@ public class Lift extends Axis implements Subsystem {
     private DigitalInput position3Button;
     private DigitalInput position4Button;
 
-    // Local outputs
-    private TalonSRX leftLift;
-    private VictorSPX rightLift;
+    private TalonSRX liftTalon;
+
+    private AxisConfig config;
 
     // Logical variables
-
-
-    // Constants
-    private final int[] positionEncoderTickLocations = {0, 0, 0, 0}; // TODO Determine locations
-    private final int encoderTickDifferenceThreshold = 20;
-    private final double joystickDeadband = 0.05;
 
     @Override
     public void inputUpdate(Input source) {
@@ -110,10 +104,10 @@ public class Lift extends Axis implements Subsystem {
         position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_4);
         position4Button.addInputListener(this);
 
-        axisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_LOWER_LIMIT);
-        axisConfig.upperLimitSwitch.addInputListener(this);
-        axisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_UPPER_LIMIT);
-        axisConfig.upperLimitSwitch.addInputListener(this);
+        config.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_LOWER_LIMIT);
+        config.upperLimitSwitch.addInputListener(this);
+        config.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_UPPER_LIMIT);
+        config.upperLimitSwitch.addInputListener(this);
     }
 
     private void initOutputs() throws CTREException {
@@ -124,23 +118,9 @@ public class Lift extends Axis implements Subsystem {
         liftTalon.setSensorPhase(SENSOR_PHASE);
         CoreUtils.checkCTRE(liftTalon.configNominalOutputForward(0, TIMEOUT));
         CoreUtils.checkCTRE(liftTalon.configNominalOutputReverse(0, TIMEOUT));
-        CoreUtils.checkCTRE(liftTalon.configPeakOutputForward(+1.0, TIMEOUT));
-        CoreUtils.checkCTRE(liftTalon.configPeakOutputReverse(-1.0, TIMEOUT));
-
-        // Load all the PID settings.
-        for (LiftPID pid : LiftPID.values()) {
-            master.config_kF(pid.slot, pid.k.f);
-            master.config_kP(pid.slot, pid.k.p);
-            master.config_kI(pid.slot, pid.k.i);
-            master.config_kD(pid.slot, pid.k.d);
-        }
-
+        // Peak output is managed by Axis class
+        // PID settings are managed by Axis class
         liftTalon.setNeutralMode(NeutralMode.Brake);
-
-        // FIXME real logging here
-        TalonSRXConfiguration liftTalonConfig = new TalonSRXConfiguration();
-        liftTalon.getAllConfigs(liftTalonConfig, TIMEOUT);
-        System.out.print(liftTalonConfig.toString("Lift Talon"));
     }
 
     @Override

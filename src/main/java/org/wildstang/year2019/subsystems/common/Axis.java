@@ -2,14 +2,15 @@ package org.wildstang.year2019.subsystems.common;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.io.Input;
+import org.wildstang.framework.io.inputs.AnalogInput;
+import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.framework.timer.WsTimer;
+import org.wildstang.framework.pid.PIDConstants;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * This is a base class for controlled axes. This year it's the base for the lift and the strafe axes.
@@ -27,12 +28,31 @@ public abstract class Axis implements Subsystem {
      */
     private static final double MAX_UPDATE_DT = .01;
 
-    // Local inputs
+    /**
+     * Timeout for configuring Talons DURING INIT ONLY. During run we should set a timeout of -1.
+     */
+    private static final int TIMEOUT = 1000;
+
+    /** The accumulated manual adjustment from the manip oper */
     private double manualAdjustment;
+    /** The rough target specified by the subclass */
     private double roughTarget;
 
     private WsTimer timer;
     private double lastUpdateTime;
+
+    private AxisConfig config;
+    private IMotorController motor;
+    /** True during homing cycle */
+    private boolean isHoming = false;
+    /**
+     * True iff the operator (or a failure condition) has caused us to enter
+     * the overridden state
+     */
+    private boolean isOverridden = false;
+
+    /** The last time (according to timer) that we have been on target */
+    private double lastTimeOnTarget;
 
 
     protected static class AxisConfig {
@@ -41,46 +61,60 @@ public abstract class Axis implements Subsystem {
          * The motor used to control the axis. Subclass must configure the motor and hand it
          * off to us. That includes setting up 
          */
-        private IMotorController motor;
+        public IMotorController motor;
     
         /** The number of motor encoder ticks in one inch of axis travel. */
-        private double ticksPerInch;
+        public double ticksPerInch;
         /** The maximum motor acceleration during run in in/s^2 */
-        private double runAcceleration;
+        public double runAcceleration = 2;
         /** The maximum motor speed during run in in/s*/
-        private double runSpeed;
+        public double runSpeed = 2;
         /** The maximum motor acceleration during homing in in/s^2 */
-        private double homingAcceleration;
+        public double homingAcceleration = 1;
         /** The maximum motor speed during homing in in/s */
-        private double homingSpeed;
+        public double homingSpeed = 1;
 
         /** The maximum speed of the axis in fine-tuning in in/s */
-        private double manualSpeed;
+        public double manualSpeed = 1;
 
         /** The furthest in the negative direction axis may travel in inches */
-        private double minTravel;
+        public double minTravel = 0;
         /** The furthest in the positive direction that the axis may travel in inches */
-        private double maxTravel;
+        public double maxTravel = 0;
 
         /** This input is used by the manipulator controller to fine-tune the axis position. */
-        private AnalogInput manualAdjustmentJoystick;
+        public AnalogInput manualAdjustmentJoystick;
 
         /** The limit switch activated by max travel in negative direction */
-        private DigitalInput lowerLimitSwitch; 
+        public DigitalInput lowerLimitSwitch; 
         /** The limit switch activated by max travel in positive direction */
-        private DigitalInput upperLimitSwitch; 
+        public DigitalInput upperLimitSwitch; 
 
         /** The PID slot to use while moving the axis to a target */
-        private int trackingPIDSlot;
+        public int runSlot = 0;
         /** PID constants to use while moving the axis to a target */
-        private PIDConstants trackingK;
+        public PIDConstants runK;
         /** The PID slot to use while homing the axis */
-        private int homingPIDSlot;
+        public int homingSlot = 1;
         /** PID constants to use while homing the axis */
-        private PIDConstants homingK;
-    }
+        public PIDConstants homingK;
 
-    private AxisConfig axisConfig;
+        /** Maximum motor output during normal operation */
+        public double maxMotorOutput = 0.5;
+        /** Maximum motor output when we've hit a limit switch */
+        public double maxLimitedOutput = 0.1;
+
+        /** Error within which we consider ourselves "on target" (inches). */
+        public double targetWindow = 0.1;
+        /**
+         * If we go this long without making it into the target window,
+         * we assume that we're jammed and go into override (seconds).
+         *
+         * Ideally, this is less than the time it takes to burn a motor out if
+         * we get jammed.
+         */
+        public double maxTimeToTarget = 2;
+    }
 
     public void update() {
         double time = timer.get();
@@ -94,23 +128,72 @@ public abstract class Axis implements Subsystem {
             dT = MAX_UPDATE_DT;
         }
 
-        manualAdjustment += axisConfig.manualAdjustmentJoystick.getValue() * axisConfig.manualSpeed * dT;
-        setTarget(roughTarget + manualAdjustment);
+        if (isOverridden) {
+            motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
+        } else {
+            manualAdjustment += config.manualAdjustmentJoystick.getValue() * config.manualSpeed * dT;
+            setRunTarget(roughTarget + manualAdjustment);
+        }
+
+        if (Math.abs(motor.getClosedLoopError(0)) < config.targetWindow) {
+            lastTimeOnTarget = timer.get();
+        } else {
+            if (timer.get() - lastTimeOnTarget > config.maxTimeToTarget) {
+                setOverride(true);
+            }
+        }
     }
 
     public void inputUpdate(Input source) {
-        if (source == axisConfig.manualAdjustmentJoystick) {
+        if (source == config.manualAdjustmentJoystick) {
             // Handled in update, nothing to do
+        } else if (source == config.lowerLimitSwitch) {
+            if (config.lowerLimitSwitch.get() && isHoming) {
+                finishHoming();
+            } 
+            if (config.lowerLimitSwitch.get() && !isOverridden) {
+                motor.configPeakOutputReverse(-config.maxLimitedOutput, -1);
+            } else {
+                motor.configPeakOutputReverse(-config.maxMotorOutput, -1);
+            }
+        } else if (source == config.upperLimitSwitch) {
+            if (config.upperLimitSwitch.get() && !isOverridden) {
+                motor.configPeakOutputForward(config.maxLimitedOutput, -1);
+            } else {
+                motor.configPeakOutputForward(config.maxMotorOutput, -1);
+            }
         }
     }
 
     public void resetState() {
         manualAdjustment = 0;
+        lastTimeOnTarget = timer.get();
+    }
+
+    /** 
+     * Set the override state of the axis.
+     *
+     * @param doOverride IFF this is true, then we will disable PID and switch
+     *                   to fully-manual open-loop control. IFF this is false,
+     *                   we will re-enable PID and switch to closed-loop
+     *                   control.
+    **/
+    public void setOverride(boolean doOverride) {
+        isOverridden = doOverride;
+    }
+
+    public boolean getOverride() {
+        return isOverridden;
+    }
+
+    public void toggleOverride() {
+        setOverride(!getOverride());
     }
 
     /**
-     * Set the rough position (e.g. preset position, or vision-detected position). Actual axis
-     * position will also take into account the manual adjustment.
+     * Set the rough position (e.g. preset position, or vision-detected
+     * position). Actual axis position will also take into account the manual
+     * adjustment.
      * @param position Position to travel to in inches
      */
     protected void setRoughTarget(double target) {
@@ -121,26 +204,60 @@ public abstract class Axis implements Subsystem {
      * Initialize the axis with relevant settings
      */
     protected void initAxis(AxisConfig config) {
-        this.axisConfig = config;
+        this.config = config;
+        this.motor = config.motor;
         timer.start();
-        setSpeedAndAccel(axisConfig.runSpeed, axisConfig.runAcceleration);
+        CoreUtils.checkCTRE(motor.config_kF(config.runSlot, config.runK.f, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kP(config.runSlot, config.runK.p, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kI(config.runSlot, config.runK.i, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kD(config.runSlot, config.runK.d, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kF(config.homingSlot, config.homingK.f, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kP(config.homingSlot, config.homingK.p, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kI(config.homingSlot, config.homingK.i, TIMEOUT));
+        CoreUtils.checkCTRE(motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT));
+        setSpeedAndAccel(config.runSpeed, config.runAcceleration);
+    }
+
+    /** Begin homing the axis */
+    protected void beginHoming() {
+        isHoming = true;
+        setSpeedAndAccel(config.homingSpeed, config.homingAcceleration);
+        motor.selectProfileSlot(config.homingSlot, 0);
+        // Motion Magic will keep us from going crazy here; it will limit to a
+        // reasonable speed and accel. So set the target to a HUGE negative
+        // value so that we don't have to manage this explicitly. I divided
+        // -MAX_VALUE by a constant in case motor.set does math on it that would
+        // cause overflow otherwise.
+        motor.set(ControlMode.MotionMagic, -Double.MAX_VALUE / 100);
+    }
+
+    /** Triggered when homing switch is triggered */
+    private void finishHoming() {
+        isHoming = false;
+        motor.setSelectedSensorPosition(0, 0, -1);
+        motor.selectProfileSlot(config.runSlot, 0);
+        motor.set(ControlMode.Velocity, 0);
+        setSpeedAndAccel(config.runSpeed, config.runAcceleration);
     }
 
     private void setSpeedAndAccel(double speed, double accel) {
         // Change from inches per second to ticks per decisecond
-        double speedTicks = speed / 10 * axisConfig.ticksPerInch;
+        double speedTicks = speed / 10 * config.ticksPerInch;
         // Change from in/s^2 to ticks/ds/s 
-        double accelTicks = speed / 10 * axisConfig.ticksPerInch;
+        double accelTicks = speed / 10 * config.ticksPerInch;
         
-        axisConfig.motor.configMotionAcceleration((int) accelTicks, -1);
-        axisConfig.motor.configMotionCruiseVelocity((int) speedTicks, -1);
+        motor.configMotionAcceleration((int) accelTicks, -1);
+        motor.configMotionCruiseVelocity((int) speedTicks, -1);
     }
 
     /**
-     * Set the exact target of axis motion in run mode.
+     * Set the exact target of axis motion in run mode. If the axis is homing, 
+     * this does nothing.
      */
-    private void setTarget(double target) {
-        double clampedTarget = Math.max(Math.min(target, axisConfig.maxTravel), axisConfig.minTravel);
-        axisConfig.motor.set(ControlMode.MotionMagic, clampedTarget * axisConfig.ticksPerInch);
+    private void setRunTarget(double target) {
+        if (!isHoming) {
+            double clampedTarget = Math.max(Math.min(target, config.maxTravel), config.minTravel);
+            motor.set(ControlMode.MotionMagic, clampedTarget * config.ticksPerInch);
+        }
     }
 }
