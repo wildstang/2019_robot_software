@@ -44,12 +44,16 @@ Actuators:
 
 */
 public class Ballpath implements Subsystem {
+
+    //Constants
     private static final double ROLLER_SPEED = 1.0;
-    private static final double ROLLER_SPEED_SLOWED = 0.4;//for sensors A and B
-    private static final double ROLLER_SPEED_BRAKE = 0.0;
+    private static final double ROLLER_SPEED_SLOWED_1 = 0.6; //For sensor A
+    private static final double ROLLER_SPEED_SLOWED_2 = 0.4; //For sensor A + B
+    private static final double ROLLER_SPEED_BRAKE = 0.0; //For setting to zero AND sensor B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;//subject to change
 
+    //Inputs
     private DigitalInput carriageRollersInput;
     private DigitalInput intakeInput;
     private DigitalInput fullBallpathInput;
@@ -58,15 +62,17 @@ public class Ballpath implements Subsystem {
     private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
     private DigitalInput Sensor_B_Input;//controlled by sensor values, sensors to be set later
 
+    //Solenoids
     private WsSolenoid hopper_solenoid;
     private WsSolenoid intake_solenoid;
 
+    //Victors
     private VictorSPX intakeVictor;
     private VictorSPX hopperVictor1;
     private VictorSPX hopperVictor2;
     private VictorSPX carriageVictor;
 
-    
+    //Values updated by inputs
     private boolean reverseValue;
     private boolean hopper_position;
     private boolean intake_position;
@@ -75,7 +81,6 @@ public class Ballpath implements Subsystem {
     private boolean isHopper_motor;
     private boolean Sensor_A_Value;
     private boolean Sensor_B_Value;
-    private boolean carriage_slowed;
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -100,7 +105,6 @@ public class Ballpath implements Subsystem {
         isIntake_motor = false;
         isCarriageMotor = false;
         isHopper_motor = false;
-        carriage_slowed=false;
         Sensor_A_Value = false;//assumption is that ball detected = true, no ball detected = false
         Sensor_B_Value = false;
 
@@ -149,15 +153,15 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
                 isHopper_motor = true;
 
-                if(!Sensor_B_Value && Sensor_A_Value)
+               if(source == Sensor_A_Input)
                 {
-                    if (!isCarriageMotor){
-                        carriage_slowed=true;
-                    }
-                    isCarriageMotor=true;
-                } else if (!Sensor_B_Value && !Sensor_A_Value){
-                    isCarriageMotor=true;
+                    Sensor_A_Value = true;
+                } 
+                if (source == Sensor_B_Input)
+                {
+                    Sensor_B_Value = true;
                 }
+                
 
             }//everything
         
@@ -172,7 +176,7 @@ public class Ballpath implements Subsystem {
                 intake_position = true;
             } 
 
-        }
+        } //Reverse Input
 
         /** NOT NEEDED
          * if(source == Sensor_A_Input)
@@ -263,14 +267,26 @@ public class Ballpath implements Subsystem {
         if(isIntake_motor)
         {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
-
-
         }
         if(isCarriageMotor)
         {
-            if (carriage_slowed){
-                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED);
-            } else carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
+            if (Sensor_A_Value)
+            {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
+            } 
+            else if(Sensor_A_Value && Sensor_B_Value)
+            {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_2);
+            }
+            else if(Sensor_B_Value)
+            {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+            }
+            else
+            {
+                carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
+            }
+                
         }
         if(isHopper_motor)
         {
