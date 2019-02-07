@@ -84,7 +84,7 @@ public enum WSInputs implements Inputs {
     // Manipulator Joysticks
     // ---------------------------------
     LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Ballpath
+            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Lift
                                                                                       // Subsystem
     //OPEN JOYSTICK("name", WSInputType.JS_JOYSTICK,
     //        new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_X), true), // OPEN
@@ -126,17 +126,17 @@ public enum WSInputs implements Inputs {
                                                                                                     // Subsystem
     HATCH_DEPLOY("Hatch Deploy", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 5), false), // Strafe
                                                                                                 // Subsystem
-    //OPEN TRIGGER("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // OPEN
-                                                                                           // Subsystem
-    //OPEN TRIGGER("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN
+    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // Ballpath
+                                                                                                        // Subsystem
+    //OPEN TRIGGER("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
                                                                                            // Subsystem
     WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 8), false), // Wedge
                                                                                                          // Subsystem
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
-    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
-                                                                                                   // Subsystem
-    //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
+    //OPEN JOYSTICK BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
+                                                                                                             // Subsystem
+    //OPEN JOYSTICK BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
                                                                                                    // Subsystem
 
     // ********************************

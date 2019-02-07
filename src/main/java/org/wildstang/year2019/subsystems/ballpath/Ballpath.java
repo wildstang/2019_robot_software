@@ -105,7 +105,7 @@ public class Ballpath implements Subsystem {
         isIntake_motor = false;
         isCarriageMotor = false;
         isHopper_motor = false;
-        Sensor_A_Value = false;//assumption is that ball detected = true, no ball detected = false
+        Sensor_A_Value = false; //assumption is that ball detected = true, no ball detected = false
         Sensor_B_Value = false;
 
         hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
