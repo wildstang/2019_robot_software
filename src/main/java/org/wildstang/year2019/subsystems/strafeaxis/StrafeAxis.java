@@ -42,9 +42,6 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
-    //private DigitalInput AxisConfig.lowerLimitSwitch; (replaced with AxisConfig.lowerLimitSwitch)
-    //private DigitalInput AxisConfig.upperLimitSwitch; (replaced with AxisConfig.upperLimitSwitch)
-
     
 
     /* Width of the space we have to play in */
@@ -68,18 +65,6 @@ public class StrafeAxis extends Axis implements Subsystem {
     public void inputUpdate(Input source) {
         if (source == linePositionInput) {
             setRoughTarget(linePositionInput.getValue());
-        } else if (source == AxisConfig.lowerLimitSwitch) {
-            if (mode == Mode.HOMING_LEFT) {
-                homingLeftLimitReached();
-            } else {
-                // TODO
-            }
-        } else if (source == AxisConfig.upperLimitSwitch) {
-            if (mode == Mode.HOMING_RIGHT) {
-                homingRightLimitReached();
-            } else {
-                // TODO
-            }
         }
     }
 

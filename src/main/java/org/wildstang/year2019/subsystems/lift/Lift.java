@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.CoreUtils;
@@ -62,14 +63,17 @@ public class Lift extends Axis implements Subsystem {
     private DigitalInput position3Button;
     private DigitalInput position4Button;
 
-    //private DigitalInput AxisConfig.upperLimitSwitch; (AxisConfig.AxisConfig.upperLimitSwitch)
-    //private DigitalInput AxisConfig.upperLimitSwitch; (AxisConfig.AxisConfig.upperLimitSwitch)
-
     // Local outputs
-    private TalonSRX liftTalon;
+    private TalonSRX leftLift;
+    private VictorSPX rightLift;
 
     // Logical variables
 
+
+    // Constants
+    private final int[] positionEncoderTickLocations = {0, 0, 0, 0}; // TODO Determine locations
+    private final int encoderTickDifferenceThreshold = 20;
+    private final double joystickDeadband = 0.05;
 
     @Override
     public void inputUpdate(Input source) {
@@ -84,24 +88,17 @@ public class Lift extends Axis implements Subsystem {
             setRoughTarget(POSITION_3);
         } else if (source == position4Button) {
             setRoughTarget(POSITION_4);
-        } else if (source == AxisConfig.upperLimitSwitch) {
-            // TODO
-        } else if (source == AxisConfig.upperLimitSwitch) {
-            // TODO
         }
     }
 
     @Override
     public void init() {
-        setRoughTarget(0.0);
-
         initInputs();
-
         initOutputs();
+        resetState();
     }
 
     private void initInputs() {
-        // FIXME Get proper names for each input (temporary position shown)
         manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
         position1Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_1);
@@ -113,50 +110,41 @@ public class Lift extends Axis implements Subsystem {
         position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_4);
         position4Button.addInputListener(this);
 
-        // FIXME ENUM THIS
-        AxisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
-        AxisConfig.upperLimitSwitch.addInputListener(this);
-        AxisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
-        AxisConfig.upperLimitSwitch.addInputListener(this);
-        lowerLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Lower Limit Switch");
-        lowerLimitSwitch.addInputListener(this);
-        upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput("Lift Upper Limit Switch");
-        upperLimitSwitch.addInputListener(this);
+        axisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_LOWER_LIMIT);
+        axisConfig.upperLimitSwitch.addInputListener(this);
+        axisConfig.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_UPPER_LIMIT);
+        axisConfig.upperLimitSwitch.addInputListener(this);
     }
 
     private void initOutputs() throws CTREException {
-        // FIXME Change CAN ID to appropriate one; move to CANConstants
-        System.out.println("Initializing TalonSRX master ID 0");
-
+        System.out.println("Initializing lift Talon ID " + CANConstants.LIFT_TALON);
         liftTalon = new TalonSRX(CANConstants.LIFT_TALON);
-
-        // FIXME Below is a rough copy from Drive; tailoring to Lift's specific requirements may be required
         liftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
         liftTalon.setInverted(INVERTED);
         liftTalon.setSensorPhase(SENSOR_PHASE);
-
         CoreUtils.checkCTRE(liftTalon.configNominalOutputForward(0, TIMEOUT));
         CoreUtils.checkCTRE(liftTalon.configNominalOutputReverse(0, TIMEOUT));
         CoreUtils.checkCTRE(liftTalon.configPeakOutputForward(+1.0, TIMEOUT));
         CoreUtils.checkCTRE(liftTalon.configPeakOutputReverse(-1.0, TIMEOUT));
-        
-        // FIXME Find appropriate PID constants
-        liftTalon.config_kF(0, 0.55);
-        liftTalon.config_kP(0, 0.8);
-        liftTalon.config_kI(0, 0.001);
-        liftTalon.config_kD(0, 10.0);
+
+        // Load all the PID settings.
+        for (LiftPID pid : LiftPID.values()) {
+            master.config_kF(pid.slot, pid.k.f);
+            master.config_kP(pid.slot, pid.k.p);
+            master.config_kI(pid.slot, pid.k.i);
+            master.config_kD(pid.slot, pid.k.d);
+        }
 
         liftTalon.setNeutralMode(NeutralMode.Brake);
 
         // FIXME real logging here
         TalonSRXConfiguration liftTalonConfig = new TalonSRXConfiguration();
         liftTalon.getAllConfigs(liftTalonConfig, TIMEOUT);
-        System.out.print(liftTalonConfig.toString("Lift Talon 0"));
+        System.out.print(liftTalonConfig.toString("Lift Talon"));
     }
 
     @Override
     public void selfTest() {
-        // TODO
     }
 
     @Override
@@ -168,10 +156,7 @@ public class Lift extends Axis implements Subsystem {
     public void resetState() {
         // TODO
         super.resetState();
-
-        currentPosition = 0;
-
-        setRoughTarget(0.0);
+        setRoughTarget(POSITION_1);
     }
 
     @Override

@@ -35,8 +35,6 @@ public abstract class Axis implements Subsystem {
     private double lastUpdateTime;
 
 
-
-
     protected static class AxisConfig {
         // TODO: refactor CAN motors into output so this can just be an output
         /**
@@ -67,9 +65,19 @@ public abstract class Axis implements Subsystem {
         /** This input is used by the manipulator controller to fine-tune the axis position. */
         private AnalogInput manualAdjustmentJoystick;
 
-        public static DigitalInput lowerLimitSwitch; 
+        /** The limit switch activated by max travel in negative direction */
+        private DigitalInput lowerLimitSwitch; 
+        /** The limit switch activated by max travel in positive direction */
+        private DigitalInput upperLimitSwitch; 
 
-        public static DigitalInput upperLimitSwitch; 
+        /** The PID slot to use while moving the axis to a target */
+        private int trackingPIDSlot;
+        /** PID constants to use while moving the axis to a target */
+        private PIDConstants trackingK;
+        /** The PID slot to use while homing the axis */
+        private int homingPIDSlot;
+        /** PID constants to use while homing the axis */
+        private PIDConstants homingK;
     }
 
     private AxisConfig axisConfig;

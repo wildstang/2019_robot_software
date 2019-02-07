@@ -1,6 +1,7 @@
 package org.wildstang.year2019.robot;
 
 import org.wildstang.framework.core.Inputs;
+import org.wildstang.framework.io.inputs.RemoteDigitalInput;
 import org.wildstang.framework.hardware.InputConfig;
 import org.wildstang.framework.hardware.WsRemoteAnalogInputConfig;
 import org.wildstang.framework.io.inputs.InputType;
@@ -14,6 +15,7 @@ import org.wildstang.hardware.crio.inputs.config.WsJSJoystickInputConfig;
 import org.wildstang.hardware.crio.inputs.config.WsMotionProfileConfig;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public enum WSInputs implements Inputs {
     // im.addSensorInput(LIDAR, new WsLIDAR());
@@ -81,14 +83,14 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator Joysticks
     // ---------------------------------
-    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Ballpath
+    LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
+            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Lift
                                                                                       // Subsystem
     //OPEN JOYSTICK("name", WSInputType.JS_JOYSTICK,
     //        new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_X), true), // OPEN
                                                                                       // Subsystem
-    LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
+    //OPEN_JOYSTICK("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
+            //new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
     HATCH_STRAFE("Hatch Strafe", WSInputType.JS_JOYSTICK,
             new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_X), true), // Lift
@@ -124,26 +126,31 @@ public enum WSInputs implements Inputs {
                                                                                                     // Subsystem
     HATCH_DEPLOY("Hatch Deploy", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 5), false), // Strafe
                                                                                                 // Subsystem
-    //OPEN TRIGGER("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // OPEN
-                                                                                           // Subsystem
-    //OPEN TRIGGER("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN
+    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // Ballpath
+                                                                                                        // Subsystem
+    //OPEN TRIGGER("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
                                                                                            // Subsystem
     WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 8), false), // Wedge
                                                                                                          // Subsystem
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
-    //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
-                                                                                                   // Subsystem
-    //OPEN JOYSTICK BUTTON("name", WSInputTyle.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
+    //OPEN JOYSTICK BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
+                                                                                                             // Subsystem
+    //OPEN JOYSTICK BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
                                                                                                    // Subsystem
 
     // ********************************
     // Digital IOs
     // ********************************
     // TODO IDs
-    STRAFE_LEFT_LIMIT("Strafe left limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    STRAFE_LEFT_LIMIT("Strafe left limit", WSInputType.SWITCH, new WsDigitalInputConfig(1, false), false),
     // TODO IDs
-    STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(-1, false), false),
+    STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(2, false), false),
+
+    // TODO IDs
+    LIFT_LOWER_LIMIT("Lift Lower Limit", WSInputType.SWITCH, new WsDigitalInputConfig(3, false), false),
+    // TODO IDs
+    LIFT_UPPER_LIMIT("Lift Upper Limit", WSInputType.SWITCH, new WsDigitalInputConfig(4, false), false),
 
     // -------------------------------
     // Networked sensors
@@ -155,10 +162,12 @@ public enum WSInputs implements Inputs {
     // ********************************
     // Others ...
     // ********************************
-    GYRO("Gyro", WSInputType.ANALOG_GYRO, new WsAnalogGyroConfig(0, true), false);
+    GYRO("Gyro", WSInputType.ANALOG_GYRO, new WsAnalogGyroConfig(0, true), false),
     // IMU("IMU", WSInputType.COMPASS, new WsI2CInputConfig(I2C.Port.kMXP, 0x20),
     // true);
 
+    VISION_FRAMES_PROCESSED("nFramesProcessed", WSInputType.REMOTE_ANALOG, new WsRemoteAnalogInputConfig("vision"), false);
+    
     private final String m_name;
     private final InputType m_type;
 

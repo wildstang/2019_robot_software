@@ -1,11 +1,14 @@
 package org.wildstang.year2019.robot;
 
 import org.wildstang.framework.core.Core;
+import org.wildstang.framework.io.InputManager;
+import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.subsystems.drive.Drive;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -63,6 +66,10 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         core.executeUpdate();
+
+        //FIXME
+        RemoteAnalogInput VisionTest = (RemoteAnalogInput)Core.getInputManager().getInput(WSInputs.VISION_FRAMES_PROCESSED);
+        SmartDashboard.putNumber("Vision Frames Processed", VisionTest.getValue() );
     }
 
     @Override
