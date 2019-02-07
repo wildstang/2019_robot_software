@@ -70,9 +70,6 @@ public class Lift extends Axis implements Subsystem {
 
     // Logical variables
 
-    private int currentPosition;
-    //private int desiredPosition; (replaced by Axis.roughTarget)
-
 
     @Override
     public void inputUpdate(Input source) {
@@ -96,16 +93,11 @@ public class Lift extends Axis implements Subsystem {
 
     @Override
     public void init() {
-        currentPosition = 0;
         setRoughTarget(0.0);
 
         initInputs();
 
-        try {
-            initOutputs();
-        } catch (CTREException e) {
-            System.out.println("Failed to init lift talon: " + e);
-        }
+        initOutputs();
     }
 
     private void initInputs() {

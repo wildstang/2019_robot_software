@@ -87,7 +87,7 @@ public abstract class Axis implements Subsystem {
         }
 
         manualAdjustment += axisConfig.manualAdjustmentJoystick.getValue() * axisConfig.manualSpeed * dT;
-        setRunTarget(roughTarget + manualAdjustment);
+        setTarget(roughTarget + manualAdjustment);
     }
 
     public void inputUpdate(Input source) {
