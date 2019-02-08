@@ -92,7 +92,7 @@ public enum WSInputs implements Inputs {
     //OPEN_JOYSTICK("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
             //new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
-    HATCH_STRAFE("Hatch Strafe", WSInputType.JS_JOYSTICK,
+    STRAFE_MANUAL("Hatch Strafe", WSInputType.JS_JOYSTICK,
             new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_X), true), // Lift
                                                                                        // Subsystem
     // ---------------------------------

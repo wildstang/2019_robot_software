@@ -2,6 +2,7 @@ package org.wildstang.year2019.subsystems.common;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.io.Input;
@@ -9,6 +10,9 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.framework.timer.WsTimer;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.wildstang.framework.pid.PIDConstants;
 
 
@@ -18,6 +22,8 @@ import org.wildstang.framework.pid.PIDConstants;
  * PID-controlled axes like these have some traits in common. They have limit switches and need to react
  * to them. They need a fine-tune input separate from their coarse commanded inputs. This encapsulates that.
  * 
+ * The child class must add itself as a listener to the inputs it passes in via the AxisConfig, and call
+ * super methods everywhere.
  */
 public abstract class Axis implements Subsystem {
 
@@ -26,7 +32,7 @@ public abstract class Axis implements Subsystem {
      * glitch causes a long pause, however, we don't want to suddenly make a huge position update and
      * run off the rails (potentially literally). So we cap that time at some sane value.
      */
-    private static final double MAX_UPDATE_DT = .01;
+    private static final double MAX_UPDATE_DT = .04;
 
     /**
      * Timeout for configuring Talons DURING INIT ONLY. During run we should set a timeout of -1.
@@ -89,6 +95,8 @@ public abstract class Axis implements Subsystem {
         public DigitalInput lowerLimitSwitch; 
         /** The limit switch activated by max travel in positive direction */
         public DigitalInput upperLimitSwitch; 
+        /** The position of the lower limit switch (used in homing) */
+        public double lowerLimitPosition = 0;
 
         /** The PID slot to use while moving the axis to a target */
         public int runSlot = 0;
@@ -100,12 +108,12 @@ public abstract class Axis implements Subsystem {
         public PIDConstants homingK;
 
         /** Maximum motor output during normal operation */
-        public double maxMotorOutput = 0.5;
+        public double maxMotorOutput = 1;
         /** Maximum motor output when we've hit a limit switch */
-        public double maxLimitedOutput = 0.1;
+        public double maxLimitedOutput = 0.05;
 
         /** Error within which we consider ourselves "on target" (inches). */
-        public double targetWindow = 0.1;
+        public double targetWindow = 0.25;
         /**
          * If we go this long without making it into the target window,
          * we assume that we're jammed and go into override (seconds).
@@ -123,7 +131,6 @@ public abstract class Axis implements Subsystem {
         // Clamp the dT to be no more than MAX_UPDATE_DT so that
         // if we glitch and don't update for a while we don't do a big jerk motion
         if (dT > MAX_UPDATE_DT) {
-            // FIXME real logging
             System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
             dT = MAX_UPDATE_DT;
         }
@@ -135,7 +142,7 @@ public abstract class Axis implements Subsystem {
             setRunTarget(roughTarget + manualAdjustment);
         }
 
-        if (Math.abs(motor.getClosedLoopError(0)) < config.targetWindow) {
+        if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
             lastTimeOnTarget = timer.get();
         } else {
             if (timer.get() - lastTimeOnTarget > config.maxTimeToTarget) {
@@ -180,6 +187,7 @@ public abstract class Axis implements Subsystem {
     **/
     public void setOverride(boolean doOverride) {
         isOverridden = doOverride;
+        SmartDashboard.putBoolean(getName() + " Override", isOverridden);
     }
 
     public boolean getOverride() {
@@ -216,25 +224,20 @@ public abstract class Axis implements Subsystem {
         CoreUtils.checkCTRE(motor.config_kI(config.homingSlot, config.homingK.i, TIMEOUT));
         CoreUtils.checkCTRE(motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT));
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);
+        motor.setNeutralMode(NeutralMode.Brake);
     }
 
     /** Begin homing the axis */
     protected void beginHoming() {
         isHoming = true;
-        setSpeedAndAccel(config.homingSpeed, config.homingAcceleration);
         motor.selectProfileSlot(config.homingSlot, 0);
-        // Motion Magic will keep us from going crazy here; it will limit to a
-        // reasonable speed and accel. So set the target to a HUGE negative
-        // value so that we don't have to manage this explicitly. I divided
-        // -MAX_VALUE by a constant in case motor.set does math on it that would
-        // cause overflow otherwise.
-        motor.set(ControlMode.MotionMagic, -Double.MAX_VALUE / 100);
+        motor.set(ControlMode.Velocity, -config.homingSpeed * config.ticksPerInch);
     }
 
     /** Triggered when homing switch is triggered */
     private void finishHoming() {
         isHoming = false;
-        motor.setSelectedSensorPosition(0, 0, -1);
+        motor.setSelectedSensorPosition((int)(config.lowerLimitPosition * config.ticksPerInch), 0, -1);
         motor.selectProfileSlot(config.runSlot, 0);
         motor.set(ControlMode.Velocity, 0);
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);

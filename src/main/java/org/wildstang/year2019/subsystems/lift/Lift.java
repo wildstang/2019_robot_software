@@ -1,53 +1,56 @@
 package org.wildstang.year2019.subsystems.lift;
 
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
-import org.wildstang.framework.io.inputs.AnalogInput;
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.CoreUtils.CTREException;
+import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
-import org.wildstang.framework.io.inputs.DigitalInput;
+import org.wildstang.framework.io.IInputManager;
 import org.wildstang.framework.io.Input;
+import org.wildstang.framework.io.inputs.AnalogInput;
+import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
-
-/** This subsystem goes up and down and puts hatches on holes.
+import org.wildstang.year2019.subsystems.lift.LiftPID;
+/**
+ * This subsystem goes up and down and puts hatches on holes.
  * 
  * Because this year's lift is continuous and not staged, the PID constants do
  * not need to change when the lift moves up and down.
  * 
- * This lift has no brake. There will be springs canceling out the weight of
- * the lift, making PID control alone sufficient.
+ * This lift has no brake. There will be springs canceling out the weight of the
+ * lift, making PID control alone sufficient.
  * 
- * Because the hatch injection mechanism and the lift are somewhat coupled, 
- * this one subsystem is responsible for both. Hatch-specific code goes in 
+ * Because the hatch injection mechanism and the lift are somewhat coupled, this
+ * one subsystem is responsible for both. Hatch-specific code goes in
  * Hatch.java?
  * 
- * Sensors: 
+ * Sensors:
  * <ul>
- * <li> Limit switch(es). TODO: top, bottom or both?
- * <li> Encoder on lift Talon.
- * <li> pneumatic pressure sensor.
+ * <li>Limit switch(es). TODO: top, bottom or both?
+ * <li>Encoder on lift Talon.
+ * <li>pneumatic pressure sensor.
  * </ul>
  * 
  * Actuators:
  * <ul>
- * <li> Talon driving lift.
- * <li> Piston solenoids for hatch mechanism TODO detail here.
+ * <li>Talon driving lift.
+ * <li>Piston solenoids for hatch mechanism TODO detail here.
  * </ul>
  * 
  */
 public class Lift extends Axis implements Subsystem {
 
-    private static boolean INVERTED = false;
-    private static boolean SENSOR_PHASE = false;
-    private static int TIMEOUT = -1;
+    private static final boolean INVERTED = false;
+    private static final boolean SENSOR_PHASE = false;
+
+    /** TODO: remove this */
+    private static final int TIMEOUT = -1;
 
     // All positions in inches above lower limit
     private static double POSITION_1 = 0.5;
@@ -55,25 +58,41 @@ public class Lift extends Axis implements Subsystem {
     private static double POSITION_3 = 24.5;
     private static double POSITION_4 = 36.5;
 
-    /** Joystick used by operator to make fine adjustments. Passed into axis init. */
-    private AnalogInput manualAdjustmentJoystick;
+    /** # of rotations of encoder in one inch of axis travel */
+    private static final double REVS_PER_INCH = 1.5; // FIXME correct value
+    /** Number of encoder ticks in one revolution */
+    private static final double TICKS_PER_REV = 4096; // FIXME correct value
+    /** # of ticks in one inch of axis movement */
+    private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
+
+    /** The maximum speed the operator can command to move in fine-tuning */
+    private static final double MANUAL_SPEED = 2; // in/s
+    private static final double TRACKING_MAX_SPEED = 20; // in/s
+    private static final double TRACKING_MAX_ACCEL = 100; // in/s^2
+    private static final double HOMING_MAX_SPEED = 2; // in/s
+    private static final double HOMING_MAX_ACCEL = 2; // in/s^2
+
+    private static final double BOTTOM_STOP_POS = -.5;
+    private static final double BOTTOM_MAX_TRAVEL = 0;
+    private static final double TOP_MAX_TRAVEL = 40;
 
     private DigitalInput position1Button;
     private DigitalInput position2Button;
     private DigitalInput position3Button;
     private DigitalInput position4Button;
 
-    private TalonSRX liftTalon;
+    private TalonSRX motor;
+    private VictorSPX follower;
 
-    private AxisConfig config;
+    /** The axis configuration we pass up to the axis initialization */
+    private AxisConfig axisConfig;
 
     // Logical variables
 
     @Override
     public void inputUpdate(Input source) {
         super.inputUpdate(source);
-        // TODO
-
+        
         if (source == position1Button) {
             setRoughTarget(POSITION_1);
         } else if (source == position2Button) {
@@ -89,38 +108,8 @@ public class Lift extends Axis implements Subsystem {
     public void init() {
         initInputs();
         initOutputs();
+        initAxis();
         resetState();
-    }
-
-    private void initInputs() {
-        manualAdjustmentJoystick = (AnalogInput) Core.getInputManager().getInput(WSInputs.LIFT_MANUAL);
-        manualAdjustmentJoystick.addInputListener(this);
-        position1Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_1);
-        position1Button.addInputListener(this);
-        position2Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_2);
-        position2Button.addInputListener(this);
-        position3Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_3);
-        position3Button.addInputListener(this);
-        position4Button = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_PRESET_4);
-        position4Button.addInputListener(this);
-
-        config.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_LOWER_LIMIT);
-        config.upperLimitSwitch.addInputListener(this);
-        config.upperLimitSwitch = (DigitalInput) Core.getInputManager().getInput(WSInputs.LIFT_UPPER_LIMIT);
-        config.upperLimitSwitch.addInputListener(this);
-    }
-
-    private void initOutputs() throws CTREException {
-        System.out.println("Initializing lift Talon ID " + CANConstants.LIFT_TALON);
-        liftTalon = new TalonSRX(CANConstants.LIFT_TALON);
-        liftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-        liftTalon.setInverted(INVERTED);
-        liftTalon.setSensorPhase(SENSOR_PHASE);
-        CoreUtils.checkCTRE(liftTalon.configNominalOutputForward(0, TIMEOUT));
-        CoreUtils.checkCTRE(liftTalon.configNominalOutputReverse(0, TIMEOUT));
-        // Peak output is managed by Axis class
-        // PID settings are managed by Axis class
-        liftTalon.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
@@ -142,5 +131,61 @@ public class Lift extends Axis implements Subsystem {
     @Override
     public String getName() {
         return "Lift";
+    }
+
+    ////////////////////////////
+    // Private methods
+    private void initInputs() {
+        IInputManager inputManager = Core.getInputManager();
+        position1Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_1);
+        position1Button.addInputListener(this);
+        position2Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_2);
+        position2Button.addInputListener(this);
+        position3Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_3);
+        position3Button.addInputListener(this);
+        position4Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_4);
+        position4Button.addInputListener(this);
+    }
+
+    private void initOutputs() {
+        System.out.println("Initializing lift Talon ID " + CANConstants.LIFT_TALON);
+        motor = new TalonSRX(CANConstants.LIFT_TALON);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+        motor.setInverted(INVERTED);
+        motor.setSensorPhase(SENSOR_PHASE);
+        CoreUtils.checkCTRE(motor.configNominalOutputForward(0, TIMEOUT));
+        CoreUtils.checkCTRE(motor.configNominalOutputReverse(0, TIMEOUT));
+        // Peak output is managed by Axis class
+        // PID settings are managed by Axis class
+
+        follower = new VictorSPX(CANConstants.LIFT_VICTOR);
+        follower.setInverted(INVERTED);
+        follower.follow(motor);
+        follower.setNeutralMode(NeutralMode.Brake);
+    }
+
+    private void initAxis() {
+        IInputManager inputManager = Core.getInputManager();
+        axisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.LIFT_LOWER_LIMIT);
+        axisConfig.lowerLimitSwitch.addInputListener(this);
+        axisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.LIFT_UPPER_LIMIT);
+        axisConfig.upperLimitSwitch.addInputListener(this);
+        axisConfig.manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.LIFT_MANUAL);
+        axisConfig.manualAdjustmentJoystick.addInputListener(this);
+
+        axisConfig.motor = motor;
+        axisConfig.ticksPerInch = TICKS_PER_INCH;
+        axisConfig.runAcceleration = TRACKING_MAX_ACCEL;
+        axisConfig.runSpeed = TRACKING_MAX_SPEED;
+        axisConfig.homingAcceleration = HOMING_MAX_ACCEL;
+        axisConfig.homingSpeed = HOMING_MAX_SPEED;
+        axisConfig.manualSpeed = MANUAL_SPEED;
+        axisConfig.minTravel = BOTTOM_MAX_TRAVEL;
+        axisConfig.maxTravel = TOP_MAX_TRAVEL;
+        axisConfig.runSlot = LiftPID.TRACKING.slot;
+        axisConfig.runK = LiftPID.TRACKING.k;
+        axisConfig.homingSlot = LiftPID.HOMING.slot;
+        axisConfig.homingK = LiftPID.HOMING.k;
+        axisConfig.lowerLimitPosition = BOTTOM_STOP_POS;
     }
 }
