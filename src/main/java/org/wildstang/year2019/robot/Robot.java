@@ -1,6 +1,7 @@
 package org.wildstang.year2019.robot;
 
 import org.wildstang.framework.core.Core;
+import org.wildstang.framework.timer.WsTimer;
 import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.subsystems.drive.Drive;
@@ -9,6 +10,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.lang.management.ManagementFactory;
+import java.util.List;
+import java.lang.management.GarbageCollectorMXBean;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -62,7 +67,19 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        WsTimer timer = new WsTimer();
+        timer.start();
         core.executeUpdate();
+        timer.stop();
+        double time = timer.get();
+
+        System.out.println(time);
+
+        List<GarbageCollectorMXBean> GCs = ManagementFactory.getGarbageCollectorMXBeans();
+        for (GarbageCollectorMXBean gc : GCs) {
+            System.out.println(gc.getCollectionCount());
+            System.out.println(gc.getCollectionTime());
+        }
     }
 
     @Override
