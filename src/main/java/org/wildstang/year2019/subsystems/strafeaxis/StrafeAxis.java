@@ -13,6 +13,7 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.framework.subsystems.Subsystem;
+import org.wildstang.hardware.FakeTalonSRX;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
@@ -67,7 +68,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
 
-    private TalonSRX motor;
+    private FakeTalonSRX motor;
 
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig;
@@ -144,7 +145,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     }
 
     private void initMotor() {
-        motor = new TalonSRX(CANConstants.STRAFE_TALON);
+        motor = new FakeTalonSRX();
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
         CoreUtils.checkCTRE(motor.configNominalOutputForward(0, TIMEOUT));
         CoreUtils.checkCTRE(motor.configNominalOutputReverse(0, TIMEOUT));

@@ -7,8 +7,8 @@ public final class CANConstants {
     public static final int[] LEFT_DRIVE_VICTORS = {1, 2};
     public static final int[] RIGHT_DRIVE_VICTORS = {4, 5};
 
-    // TODO IDs
-    public static final int STRAFE_TALON = 12;
+    // TODO put in correct IDs
+    public static final int STRAFE_VICTOR = 12;
     public static final int INTAKE_VICTOR = 13;
     public static final int CARRIAGE_VICTOR = 14;
     public static final int HOPPER_VICTOR1 = 15;
