@@ -1,8 +1,12 @@
 package org.wildstang.year2019.robot;
 
+//import com.sun.management.GarbageCollectionNotificationInfo;
+//import com.sun.management.internal.GarbageCollectionNotifInfoCompositeData;
+
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.InputManager;
 import org.wildstang.framework.io.inputs.RemoteAnalogInput;
+import org.wildstang.framework.timer.WsTimer;
 import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.subsystems.drive.Drive;
@@ -12,6 +16,10 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.lang.management.ManagementFactory;
+import java.util.List;
+import java.lang.management.GarbageCollectorMXBean;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -65,11 +73,25 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+
+
         core.executeUpdate();
 
-        //FIXME
-        RemoteAnalogInput VisionTest = (RemoteAnalogInput)Core.getInputManager().getInput(WSInputs.VISION_FRAMES_PROCESSED);
-        SmartDashboard.putNumber("Vision Frames Processed", VisionTest.getValue() );
+        /* This code is used to debug garbage collection. Note that it has its own core.executeUpdate();
+        WsTimer timer = new WsTimer();
+        timer.start();
+        core.executeUpdate();
+        timer.stop();
+        double time = timer.get();
+
+        System.out.println(time);
+
+        List<GarbageCollectorMXBean> GCs = ManagementFactory.getGarbageCollectorMXBeans();
+        for (GarbageCollectorMXBean gc : GCs) {
+            System.out.println(gc.getCollectionCount());
+            System.out.println(gc.getCollectionTime());
+        }
+        */
     }
 
     @Override
