@@ -204,6 +204,8 @@ public class Drive implements Subsystem {
         if (updateCounter % 10 == 0) {
             for (int side : SIDES) {
                 TalonSRX master = masters[side];
+                /*
+                These are commented out in order to debug an issue
                 double output = master.getMotorOutputPercent();
                 SmartDashboard.putNumber(SIDE_NAMES[side] + " output", output);
                 double speed = master.getSelectedSensorVelocity();
@@ -211,7 +213,7 @@ public class Drive implements Subsystem {
                 double error = master.getClosedLoopError();
                 SmartDashboard.putNumber(SIDE_NAMES[side] + " error", error);
                 double target = master.getClosedLoopTarget();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);*/
             }
             
             SmartDashboard.putNumber("commandThrottle", commandThrottle);
