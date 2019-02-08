@@ -31,7 +31,7 @@ public abstract class Axis implements Subsystem {
     /**
      * Timeout for configuring Talons DURING INIT ONLY. During run we should set a timeout of -1.
      */
-    private static final int TIMEOUT = 1000;
+    private static final int TIMEOUT = -1;
 
     /** The accumulated manual adjustment from the manip oper */
     private double manualAdjustment;
@@ -148,16 +148,16 @@ public abstract class Axis implements Subsystem {
         if (source == config.manualAdjustmentJoystick) {
             // Handled in update, nothing to do
         } else if (source == config.lowerLimitSwitch) {
-            if (config.lowerLimitSwitch.get() && isHoming) {
+            if (config.lowerLimitSwitch.getValue() && isHoming) {
                 finishHoming();
             } 
-            if (config.lowerLimitSwitch.get() && !isOverridden) {
+            if (config.lowerLimitSwitch.getValue() && !isOverridden) {
                 motor.configPeakOutputReverse(-config.maxLimitedOutput, -1);
             } else {
                 motor.configPeakOutputReverse(-config.maxMotorOutput, -1);
             }
         } else if (source == config.upperLimitSwitch) {
-            if (config.upperLimitSwitch.get() && !isOverridden) {
+            if (config.upperLimitSwitch.getValue() && !isOverridden) {
                 motor.configPeakOutputForward(config.maxLimitedOutput, -1);
             } else {
                 motor.configPeakOutputForward(config.maxMotorOutput, -1);

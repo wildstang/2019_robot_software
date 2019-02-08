@@ -47,7 +47,7 @@ public class Lift extends Axis implements Subsystem {
 
     private static boolean INVERTED = false;
     private static boolean SENSOR_PHASE = false;
-    private static int TIMEOUT = 100;
+    private static int TIMEOUT = -1;
 
     // All positions in inches above lower limit
     private static double POSITION_1 = 0.5;

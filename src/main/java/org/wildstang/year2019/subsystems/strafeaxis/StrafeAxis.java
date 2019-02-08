@@ -38,7 +38,7 @@ import org.wildstang.year2019.subsystems.common.Axis;
 
 public class StrafeAxis extends Axis implements Subsystem {
 
-    private static int TIMEOUT = 100;
+    private static int TIMEOUT = -1;
 
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
