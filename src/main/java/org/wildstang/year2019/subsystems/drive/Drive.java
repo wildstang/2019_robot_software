@@ -11,11 +11,9 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
-import org.wildstang.framework.logger.StateTracker;
-import org.wildstang.year2017.subsystems.drive.DriveState;
+//import org.wildstang.framework.logger.StateTracker;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
-import org.wildstang.year2017.robot.RobotTemplate;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -35,15 +33,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * TODO: Factor the helper classes into core framework */
 public class Drive implements Subsystem {
 
-    int logCounter1 = 0;
-    int logCounter2 = 0;
-    int logCounter3 = 0;
-
     /** Status frame period controls how frequently the TalonSRX reports back with
      * its sensor status over the CANBus. This constant is in milliseconds. */
     //private static final int STATUS_FRAME_PERIOD = 10;
     //private static final double NEUTRAL_DEADBAND = 0.001;
-    private static final int TIMEOUT = 1000; // milliseconds
+    private static final int TIMEOUT = -1; // milliseconds
 
     // Parameterizing over left and right makes motor setup code DRYer
     private static final int LEFT = 0;
@@ -91,10 +85,8 @@ public class Drive implements Subsystem {
     // While this is really a temporary variable, declared here to prevent
     // constant stack allocation.
     // TODO: Determine whether this is premature optimization.
-    private DriveSignal driveSignal;
-    
-    /** Drive State */
-    private LinkedList<DriveState> driveStates = new LinkedList<DriveState>();
+    private DriveSignal driveSignal;   
+   
 
     //////////////////////////////////////////////////////
     // Commanded values
@@ -165,19 +157,18 @@ public class Drive implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
 
-        if (source == throttleInput) {
-            if (logCounter1 % 1000 == 0)
-                System.out.println("Drive::inputUpdate::throttleInput: " + throttleInput.getValue());
-            logCounter1++;
-            
+        
+        if (source == throttleInput) 
+        {        
             setThrottle(throttleInput.getValue());
-        } else if (source == headingInput) {
-            if (logCounter2 % 1000 == 0)
-                System.out.println("Drive::inputUpdate::headingInput: " + headingInput.getValue());
-            logCounter2++;
-
+        } 
+        else if (source == headingInput) 
+        {          
             setHeading(headingInput.getValue());
         }
+        
+
+
         // TODO: Do we want to make quickturn automatic?
         else if (source == quickTurnInput) {
             commandQuickTurn = quickTurnInput.getValue();
@@ -214,6 +205,8 @@ public class Drive implements Subsystem {
         if (updateCounter % 10 == 0) {
             for (int side : SIDES) {
                 TalonSRX master = masters[side];
+                /*
+                These are commented out in order to debug an issue
                 double output = master.getMotorOutputPercent();
                 SmartDashboard.putNumber(SIDE_NAMES[side] + " output", output);
                 double speed = master.getSelectedSensorVelocity();
@@ -221,7 +214,7 @@ public class Drive implements Subsystem {
                 double error = master.getClosedLoopError();
                 SmartDashboard.putNumber(SIDE_NAMES[side] + " error", error);
                 double target = master.getClosedLoopTarget();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);*/
             }
             
             SmartDashboard.putNumber("commandThrottle", commandThrottle);
@@ -242,13 +235,8 @@ public class Drive implements Subsystem {
             double effectiveThrottle = commandThrottle;
             if (commandAntiTurbo) {
                 effectiveThrottle = commandThrottle * DriveConstants.ANTI_TURBO_FACTOR;
-            }
+            }           
 
-            if (logCounter3 % 1000 == 0) {
-            System.out.println("Drive::update::commandAntiTurbo::effectiveThrottle: " + effectiveThrottle);
-            System.out.println("Drive::update::commandAntiTurbo::commandHeading: " + commandHeading);
-            }
-            logCounter3++;
             SmartDashboard.putBoolean("Quick Turn", commandQuickTurn);
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
@@ -256,15 +244,7 @@ public class Drive implements Subsystem {
             SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
             
             setMotorSpeeds(driveSignal);
-
-            //  FIXME re-enable this (FIXED)
-            if (RobotTemplate.LOG_STATE) {
-                maxSpeedAchieved = Math.max(maxSpeedAchieved,
-                        Math.max(Math.abs(masters[LEFT].getSelectedSensorVelocity()),
-                                Math.abs(masters[RIGHT].getSelectedSensorVelocity())));
-
-                SmartDashboard.putNumber("Max Encoder Speed", maxSpeedAchieved);
-            }
+           
         break;
         case FULL_BRAKE:
         break;
@@ -281,26 +261,6 @@ public class Drive implements Subsystem {
         SensorCollection rightEncoder = masters[RIGHT].getSensorCollection();
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getQuadraturePosition());
 
-        if (RobotTemplate.LOG_STATE) {
-            StateTracker tracker = Core.getStateTracker();
-            tracker.addState("Drive heading", "Drive", commandHeading);
-            tracker.addState("Drive throttle", "Drive", commandThrottle);
-            // tracker.addState("Vision distance", "Drive", m_visionDistance); # enable when vision is done
-            // tracker.addState("Vision correction", "Drive", m_visionXCorrection); # enable when vision is done
-
-            String[] sides = {"Left ", "Right "};
-            for (int i = 0; i < masters.length; i++) {
-                TalonSRX master = masters[i];
-                VictorSPX[] follower = followers[i];
-                String side = sides[i];
-                tracker.addState(side + "output", "Drive", master.getMotorOutputPercent());
-                tracker.addState(side + "speed (RPM)", "Drive", master.getSelectedSensorVelocity());
-                tracker.addState(side + "1 voltage", "Drive", master.getMotorOutputVoltage());
-                //tracker.addState(side + "2 voltage", "Drive", followers.getMotorOutputVoltage());
-                tracker.addState(side + "1 current", "Drive", master.getOutputCurrent());
-                //tracker.addState(side + "2 current", "Drive", followers.getOutputCurrent());
-            }
-        }
         updateCounter += 1;
     }
 
@@ -375,39 +335,11 @@ public class Drive implements Subsystem {
     public void pathCleanup() {
         if (pathFollower != null) {
             pathFollower.stop();
-            pathFollower = null;
-            // FIXME fix the next two lines FIXED
-            writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
+            pathFollower = null;                     
         }
     }
     
-    public void writeDriveStatesToFile(String fileName) {
-        BufferedWriter bw = null;
-        FileWriter fw = null;
-
-        try {
-            fw = new FileWriter(fileName);
-            bw = new BufferedWriter(fw);
-            for (DriveState ds : driveStates) {
-                bw.write(ds.toString());
-            }
-            System.out.println("Done");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (bw != null) {
-                bw.close();
-            }
-        }
-
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        driveStates.clear();
-
-    }
+    
 
     /** Stop following this path. 
      * 
