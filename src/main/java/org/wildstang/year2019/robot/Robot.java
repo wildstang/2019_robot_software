@@ -1,7 +1,7 @@
 package org.wildstang.year2019.robot;
 
-import com.sun.management.GarbageCollectionNotificationInfo;
-import com.sun.management.internal.GarbageCollectionNotifInfoCompositeData;
+//import com.sun.management.GarbageCollectionNotificationInfo;
+//import com.sun.management.internal.GarbageCollectionNotifInfoCompositeData;
 
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.timer.WsTimer;
@@ -70,6 +70,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+
+
+        core.executeUpdate();
+
+        /* This code is used to debug garbage collection. Note that it has its own core.executeUpdate();
         WsTimer timer = new WsTimer();
         timer.start();
         core.executeUpdate();
@@ -83,6 +88,7 @@ public class Robot extends TimedRobot {
             System.out.println(gc.getCollectionCount());
             System.out.println(gc.getCollectionTime());
         }
+        */
     }
 
     @Override
