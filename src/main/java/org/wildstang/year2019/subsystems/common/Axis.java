@@ -117,7 +117,7 @@ public abstract class Axis implements Subsystem {
         /** Maximum motor output during normal operation */
         public double maxMotorOutput = 1;
         /** Maximum motor output when we've hit a limit switch */
-        public double maxLimitedOutput = 0.5;
+        public double maxLimitedOutput = 1;
 
         /** Error within which we consider ourselves "on target" (inches). */
         public double targetWindow = 0.25;
@@ -128,7 +128,7 @@ public abstract class Axis implements Subsystem {
          * Ideally, this is less than the time it takes to burn a motor out if
          * we get jammed.
          */
-        public double maxTimeToTarget = 2;
+        public double maxTimeToTarget = 200;
         
     }
 
@@ -158,12 +158,17 @@ public abstract class Axis implements Subsystem {
                 setOverride(true);
             }
         }
+        SmartDashboard.putNumber("rough target", roughTarget);
+        SmartDashboard.putNumber("adjust", config.manualAdjustmentJoystick.getValue());
+        SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
+        SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
     }
 
     public void inputUpdate(Input source) {
         if (source == config.manualAdjustmentJoystick) {
             // Handled in update, nothing to do
         } else if (source == config.lowerLimitSwitch) {
+            SmartDashboard.putBoolean("lowerLimit", config.lowerLimitSwitch.getValue());
             if (config.lowerLimitSwitch.getValue() && isHoming) {
                 finishHoming();
             } 
@@ -173,6 +178,7 @@ public abstract class Axis implements Subsystem {
                 motor.configPeakOutputReverse(-config.maxMotorOutput, -1);
             }
         } else if (source == config.upperLimitSwitch) {
+            SmartDashboard.putBoolean("upperLimit", config.upperLimitSwitch.getValue());
             if (config.upperLimitSwitch.getValue() && !isOverridden) {
                 motor.configPeakOutputForward(config.maxLimitedOutput, -1);
             } else {
@@ -235,6 +241,7 @@ public abstract class Axis implements Subsystem {
         /*CoreUtils.checkCTRE*/motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT);
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
+        motor.setSelectedSensorPosition(0, 0, -1);
     }
 
     /** Begin homing the axis */
@@ -268,6 +275,7 @@ public abstract class Axis implements Subsystem {
      * this does nothing.
      */
     private void setRunTarget(double target) {
+        SmartDashboard.putNumber("axis target", target);
         if (!isHoming) {
             double clampedTarget = Math.max(Math.min(target, config.maxTravel), config.minTravel);
             motor.set(ControlMode.MotionMagic, clampedTarget * config.ticksPerInch);
