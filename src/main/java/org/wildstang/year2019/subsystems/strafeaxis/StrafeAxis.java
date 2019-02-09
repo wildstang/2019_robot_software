@@ -3,8 +3,7 @@ package org.wildstang.year2019.subsystems.strafeaxis;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import org.wildstang.framework.CoreUtils.CTREException;
+//import org.wildstang.framework.CoreUtils.CTREException;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.IInputManager;
@@ -147,8 +146,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     private void initMotor() {
         motor = new FakeTalonSRX();
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-        CoreUtils.checkCTRE(motor.configNominalOutputForward(0, TIMEOUT));
-        CoreUtils.checkCTRE(motor.configNominalOutputReverse(0, TIMEOUT));
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);

@@ -407,7 +407,7 @@ public class Drive implements Subsystem {
     }
 
     /** Initialize all drive base motor controllers. */
-    private void initMotorControllers() throws CoreUtils.CTREException {
+    private void initMotorControllers() /*throws CoreUtils.CTREException*/ {
         for (int side : SIDES) {
             masters[side] = new TalonSRX(MASTER_IDS[side]);
 
@@ -427,7 +427,7 @@ public class Drive implements Subsystem {
      *
      * @param side Which side (LEFT or RIGHT) this is master for
      * @param master The WSTalonSRX object to set up */
-    private void initMaster(int side, TalonSRX master) throws CoreUtils.CTREException {
+    private void initMaster(int side, TalonSRX master) /*throws CoreUtils.CTREException*/ {
         System.out.println("Initializing TalonSRX master ID " + MASTER_IDS[side]);
 
         // The Talon SRX should be directly connected to an encoder
@@ -442,10 +442,10 @@ public class Drive implements Subsystem {
         }
 
         // Configure output to range from full-forward to full-reverse.
-        CoreUtils.checkCTRE(master.configNominalOutputForward(0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configNominalOutputReverse(0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configPeakOutputForward(+1.0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configPeakOutputReverse(-1.0, TIMEOUT));
+        /*CoreUtils.checkCTRE*/master.configNominalOutputForward(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.configNominalOutputReverse(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.configPeakOutputForward(+1.0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.configPeakOutputReverse(-1.0, TIMEOUT);
 
         // Load all the PID settings.
         for (DrivePID pid : DrivePID.values()) {
@@ -456,8 +456,8 @@ public class Drive implements Subsystem {
         }
         
         // Special case for base lock: we widen the deadband
-        CoreUtils.checkCTRE(master.configAllowableClosedloopError(DrivePID.BASE_LOCK.slot,
-                DriveConstants.BRAKE_MODE_ALLOWABLE_ERROR));
+        /*CoreUtils.checkCTRE*/master.configAllowableClosedloopError(DrivePID.BASE_LOCK.slot,
+                DriveConstants.BRAKE_MODE_ALLOWABLE_ERROR);
         
         // Coast is a reasonable default neutral mode. TODO: is it really?
         master.setNeutralMode(NeutralMode.Coast);
@@ -489,5 +489,19 @@ public class Drive implements Subsystem {
     private void setMotorSpeeds(DriveSignal speeds) {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
+    }
+    public void setAutonStraightDrive() {
+        stopPathFollowing();
+
+        driveMode = DriveType.CHEESY;
+
+        setBrakeMode(false);
+
+        for (TalonSRX master : masters) {
+            master.set(ControlMode.PercentOutput, 1);
+        }
+    }
+    public double getRightSensorValue(){
+        return masters[RIGHT].getSensorCollection().getQuadraturePosition();
     }
 }

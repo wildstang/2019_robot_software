@@ -11,7 +11,7 @@ public class CoreUtils {
 
     /** This class wraps CTRE ErrorCodes as exceptions for programming
      * convenience */
-    public static class CTREException extends RuntimeException {
+    /*public static class CTREException extends RuntimeException {
         static final long serialVersionUID = 1L;
         ErrorCode error;
 
@@ -29,5 +29,5 @@ public class CoreUtils {
         if (error != ErrorCode.OK) {
             throw new CTREException(error);
         }
-    }
+    }*/
 }
