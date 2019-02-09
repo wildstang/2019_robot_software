@@ -117,7 +117,7 @@ public abstract class Axis implements Subsystem {
         /** Maximum motor output during normal operation */
         public double maxMotorOutput = 1;
         /** Maximum motor output when we've hit a limit switch */
-        public double maxLimitedOutput = 0.05;
+        public double maxLimitedOutput = 0.5;
 
         /** Error within which we consider ourselves "on target" (inches). */
         public double targetWindow = 0.25;
