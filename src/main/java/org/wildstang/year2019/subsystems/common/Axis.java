@@ -219,14 +219,14 @@ public abstract class Axis implements Subsystem {
         this.config = config;
         this.motor = config.motor;
         timer.start();
-        CoreUtils.checkCTRE(motor.config_kF(config.runSlot, config.runK.f, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kP(config.runSlot, config.runK.p, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kI(config.runSlot, config.runK.i, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kD(config.runSlot, config.runK.d, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kF(config.homingSlot, config.homingK.f, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kP(config.homingSlot, config.homingK.p, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kI(config.homingSlot, config.homingK.i, TIMEOUT));
-        CoreUtils.checkCTRE(motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT));
+        /*CoreUtils.checkCTRE*/motor.config_kF(config.runSlot, config.runK.f, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kP(config.runSlot, config.runK.p, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kI(config.runSlot, config.runK.i, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kD(config.runSlot, config.runK.d, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kF(config.homingSlot, config.homingK.f, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kP(config.homingSlot, config.homingK.p, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kI(config.homingSlot, config.homingK.i, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT);
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
     }

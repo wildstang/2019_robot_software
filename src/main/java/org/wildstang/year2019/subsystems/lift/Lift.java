@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import org.wildstang.framework.CoreUtils.CTREException;
+//import org.wildstang.framework.CoreUtils.CTREException;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.IInputManager;
@@ -153,8 +153,8 @@ public class Lift extends Axis implements Subsystem {
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
-        CoreUtils.checkCTRE(motor.configNominalOutputForward(0, TIMEOUT));
-        CoreUtils.checkCTRE(motor.configNominalOutputReverse(0, TIMEOUT));
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
         // Peak output is managed by Axis class
         // PID settings are managed by Axis class
 

@@ -71,13 +71,13 @@ public class Drive implements Subsystem {
         /* Nothing to do in constructor. */
     }
 
-    @Override
+
     public void init() {
-        try {
+        /*try {
             initControllers();
-        } catch (CoreUtils.CTREException e) {
+        } catch () {
             System.out.println("Failed to init drive motor controllers: " + e);
-        }
+        }*/
 
         // Set and subscribe to inputs
         headingInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_HEADING);
@@ -92,7 +92,7 @@ public class Drive implements Subsystem {
     }
 
     /** Initialize all drive base motor controllers. */
-    private void initControllers() throws CoreUtils.CTREException {
+    private void initControllers() /*throws CoreUtils.CTREException*/ {
         for (int side : SIDES) {
             masters[side] = new TalonSRX(MASTER_IDS[side]);
 
@@ -112,7 +112,7 @@ public class Drive implements Subsystem {
      *
      * @param side Which side (LEFT or RIGHT) this is master for
      * @param master The WSTalonSRX object to set up */
-    private void initMaster(int side, TalonSRX master) throws CoreUtils.CTREException {
+    private void initMaster(int side, TalonSRX master) /*throws CoreUtils.CTREException*/ {
         System.out.println("Initializing TalonSRX master ID " + MASTER_IDS[side]);
 
         // The Talon SRX should be directly connected to an encoder
@@ -137,16 +137,16 @@ public class Drive implements Subsystem {
         CoreUtils.checkCTRE(master.configNeutralDeadband(NEUTRAL_DEADBAND, TIMEOUT));*/
 
         // Configure output to range from full-forward to full-reverse.
-        CoreUtils.checkCTRE(master.configNominalOutputForward(0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configNominalOutputReverse(0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configPeakOutputForward(+1.0, TIMEOUT));
-        CoreUtils.checkCTRE(master.configPeakOutputReverse(-1.0, TIMEOUT));
+        /*CoreUtils.checkCTRE*/master.configNominalOutputForward(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.configNominalOutputReverse(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.configPeakOutputForward(+1.0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.configPeakOutputReverse(-1.0, TIMEOUT);
 
         // Put in sane default PID constants.
-        CoreUtils.checkCTRE(master.config_kP(0, MANUAL_DRIVE_PID_CONSTANTS.p, TIMEOUT));
-        CoreUtils.checkCTRE(master.config_kI(0, MANUAL_DRIVE_PID_CONSTANTS.i, TIMEOUT));
-        CoreUtils.checkCTRE(master.config_kD(0, MANUAL_DRIVE_PID_CONSTANTS.d, TIMEOUT));
-        CoreUtils.checkCTRE(master.config_kF(0, MANUAL_DRIVE_PID_CONSTANTS.f, TIMEOUT));
+        /*CoreUtils.checkCTRE*/master.config_kP(0, MANUAL_DRIVE_PID_CONSTANTS.p, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.config_kI(0, MANUAL_DRIVE_PID_CONSTANTS.i, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.config_kD(0, MANUAL_DRIVE_PID_CONSTANTS.d, TIMEOUT);
+        /*CoreUtils.checkCTRE*/master.config_kF(0, MANUAL_DRIVE_PID_CONSTANTS.f, TIMEOUT);
 
         master.setNeutralMode(NeutralMode.Coast);
 
@@ -155,7 +155,7 @@ public class Drive implements Subsystem {
         // CoreUtils.checkCTRE(master.configSetParameter(
         //         ParamEnum.ePIDLoopPeriod, PID_PERIOD, 0 /*Subvalue, ignored */, 1, TIMEOUT));
 
-        CoreUtils.checkCTRE(master.getSensorCollection().setQuadraturePosition(0, TIMEOUT));
+        /*CoreUtils.checkCTRE*/master.getSensorCollection().setQuadraturePosition(0, TIMEOUT);
 
         TalonSRXConfiguration read_talon = new TalonSRXConfiguration();
         master.getAllConfigs(read_talon, TIMEOUT);
