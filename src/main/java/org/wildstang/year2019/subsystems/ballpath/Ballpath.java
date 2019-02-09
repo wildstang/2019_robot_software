@@ -52,6 +52,7 @@ public class Ballpath implements Subsystem {
     private static final double ROLLER_SPEED_BRAKE = 0.0; //For setting to zero AND sensor B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;//subject to change
+    private static final double PHYSICAL_DIR_CHANGE = -1;
 
     //Inputs
     private DigitalInput carriageRollersInput;
@@ -59,8 +60,10 @@ public class Ballpath implements Subsystem {
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
     private DigitalInput hopperInput;
-    private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
-    private DigitalInput Sensor_B_Input;//controlled by sensor values, sensors to be set later
+
+    //TODO code for sensors
+    //private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
+    //private DigitalInput Sensor_B_Input;//controlled by sensor values, sensors to be set later
 
     //Solenoids
     private WsSolenoid hopper_solenoid;
@@ -105,6 +108,7 @@ public class Ballpath implements Subsystem {
         isIntake_motor = false;
         isCarriageMotor = false;
         isHopper_motor = false;
+        reverseValue=false;
         Sensor_A_Value = false; //assumption is that ball detected = true, no ball detected = false
         Sensor_B_Value = false;
 
@@ -153,14 +157,16 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
                 isHopper_motor = true;
 
-               if(source == Sensor_A_Input)
-                {
-                    Sensor_A_Value = true;
-                } 
-                if (source == Sensor_B_Input)
-                {
-                    Sensor_B_Value = true;
-                }
+                //TODO once sensors in code, should just be able to uncomment
+                //until then, carriage doesn't move with everything
+            //    if(source == Sensor_A_Input)
+            //     {
+            //         Sensor_A_Value = true;
+            //     } 
+            //     if (source == Sensor_B_Input)
+            //     {
+            //         Sensor_B_Value = true;
+            //     }
                 
 
             }//everything
@@ -223,6 +229,8 @@ public class Ballpath implements Subsystem {
         fullBallpathInput.addInputListener(this);
         hopperInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.HOPPER_SOLENOID.getName());
         hopperInput.addInputListener(this);
+        reverseInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.REVERSE_BUTTON.getName());
+        reverseInput.addInputListener(this);
 
         //Solenoids
         hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
@@ -266,7 +274,7 @@ public class Ballpath implements Subsystem {
         intake_solenoid.setValue(intake_position);
         if(isIntake_motor)
         {
-            intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
+            intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE*ROLLER_SPEED);
         }
         if(isCarriageMotor)
         {
@@ -291,15 +299,15 @@ public class Ballpath implements Subsystem {
         if(isHopper_motor)
         {
             hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED);
-            hopperVictor2.set(ControlMode.PercentOutput, ROLLER_SPEED);
+            hopperVictor2.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE*ROLLER_SPEED);
 
         }
         if(reverseValue)
         {
             hopperVictor1.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
-            hopperVictor2.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
+            hopperVictor2.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE*BACKWARDS_ROLLER_SPEED);
             carriageVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
-            intakeVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
+            intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE*BACKWARDS_ROLLER_SPEED);
 
         }
     
