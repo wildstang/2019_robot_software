@@ -62,6 +62,10 @@ public abstract class Axis implements Subsystem {
 
 
     protected static class AxisConfig {
+        public AxisConfig() {
+            // Configuration is done by writing members
+        }
+
         // TODO: refactor CAN motors into output so this can just be an output
         /**
          * The motor used to control the axis. Subclass must configure the motor and hand it

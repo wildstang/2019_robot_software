@@ -85,7 +85,7 @@ public class Lift extends Axis implements Subsystem {
     private VictorSPX follower;
 
     /** The axis configuration we pass up to the axis initialization */
-    private AxisConfig axisConfig;
+    private AxisConfig axisConfig = new AxisConfig();
 
     // Logical variables
 

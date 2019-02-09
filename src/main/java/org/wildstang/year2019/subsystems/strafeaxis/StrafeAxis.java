@@ -71,7 +71,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private FakeTalonSRX motor;
 
     /** The axis configuration we pass up to the axis initialization */
-    private AxisConfig axisConfig;
+    private AxisConfig axisConfig = new AxisConfig();
 
     @Override
     public void inputUpdate(Input source) {
