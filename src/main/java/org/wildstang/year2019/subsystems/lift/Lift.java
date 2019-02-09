@@ -96,6 +96,7 @@ public class Lift extends Axis implements Subsystem {
         if (source == position1Button) {
             if (position1Button.getValue()){
                 setRoughTarget(POSITION_1);
+            }
         } else if (source == position2Button) {
             if (position2Button.getValue()){
                 setRoughTarget(POSITION_2);
