@@ -325,6 +325,9 @@ public class Ballpath implements Subsystem {
         //Set desired positions for solenoids
     }
 
+    public void runCarriage(){
+        carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
+    }
     @Override
     public String getName() {
         return "Ballpath";
