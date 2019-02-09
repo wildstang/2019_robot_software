@@ -94,13 +94,20 @@ public class Lift extends Axis implements Subsystem {
         super.inputUpdate(source);
         
         if (source == position1Button) {
-            setRoughTarget(POSITION_1);
+            if (position1Button.getValue()){
+                setRoughTarget(POSITION_1);
         } else if (source == position2Button) {
-            setRoughTarget(POSITION_2);
+            if (position2Button.getValue()){
+                setRoughTarget(POSITION_2);
+            }
         } else if (source == position3Button) {
-            setRoughTarget(POSITION_3);
+            if (position3Button.getValue()){
+                setRoughTarget(POSITION_3);
+            }
         } else if (source == position4Button) {
-            setRoughTarget(POSITION_4);
+            if (position4Button.getValue()){
+                setRoughTarget(POSITION_4);
+            }
         }
     }
 
