@@ -91,6 +91,18 @@ public class Ballpath implements Subsystem {
      * 
      */
 
+
+    public void enableIntake(boolean enable) {
+        isIntake_motor = enable;
+        intake_position = enable;
+    }
+
+    public void enableWholePath(boolean enable) {
+        isIntake_motor = enable;
+        isCarriageMotor = enable;
+        isHopper_motor = enable;
+    }
+
     @Override
     public void inputUpdate(Input source) {
         //Set up 4 buttons
