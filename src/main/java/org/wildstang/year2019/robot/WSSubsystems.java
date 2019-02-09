@@ -6,6 +6,7 @@ import org.wildstang.year2019.subsystems.climbwedge.ClimbWedge;
 import org.wildstang.year2019.subsystems.lift.Lift;
 import org.wildstang.year2019.subsystems.strafeaxis.StrafeAxis;
 import org.wildstang.year2019.subsystems.Claw_Example;
+import org.wildstang.year2019.subsystems.lift.Hatch;
 import org.wildstang.framework.core.Subsystems;
 
 /**
@@ -18,7 +19,8 @@ public enum WSSubsystems implements Subsystems {
     BALLPATH("Ballpath", Ballpath.class),
     CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
     LIFT("Lift", Lift.class),
-    //STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
+    STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
+    HATCH("Hatch",Hatch.class),
     ;
 
     private String name;

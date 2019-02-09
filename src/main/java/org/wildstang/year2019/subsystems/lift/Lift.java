@@ -187,5 +187,7 @@ public class Lift extends Axis implements Subsystem {
         axisConfig.homingSlot = LiftPID.HOMING.slot;
         axisConfig.homingK = LiftPID.HOMING.k;
         axisConfig.lowerLimitPosition = BOTTOM_STOP_POS;
+
+        initAxis(axisConfig);
     }
 }

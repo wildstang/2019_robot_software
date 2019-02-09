@@ -490,4 +490,18 @@ public class Drive implements Subsystem {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
     }
+    public void setAutonStraightDrive() {
+        stopPathFollowing();
+
+        driveMode = DriveType.CHEESY;
+
+        setBrakeMode(false);
+
+        for (TalonSRX master : masters) {
+            master.set(ControlMode.PercentOutput, 1);
+        }
+    }
+    public double getRightSensorValue(){
+        return masters[RIGHT].getSensorCollection().getQuadraturePosition();
+    }
 }

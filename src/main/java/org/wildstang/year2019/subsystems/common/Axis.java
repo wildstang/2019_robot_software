@@ -9,7 +9,8 @@ import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
-import org.wildstang.framework.timer.WsTimer;
+//import org.wildstang.framework.timer.WsTimer;
+import org.wildstang.framework.timer.StopWatch;//timertesting
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -44,10 +45,12 @@ public abstract class Axis implements Subsystem {
     /** The rough target specified by the subclass */
     private double roughTarget;
 
-    private WsTimer timer;
+    
+    //private WsTimer timer;
+    private StopWatch timer = new StopWatch();//timertesting
     private double lastUpdateTime;
 
-    private AxisConfig config;
+    private AxisConfig config = new AxisConfig();
     private IMotorController motor;
     /** True during homing cycle */
     private boolean isHoming = false;
@@ -126,10 +129,12 @@ public abstract class Axis implements Subsystem {
          * we get jammed.
          */
         public double maxTimeToTarget = 2;
+        
     }
 
     public void update() {
-        double time = timer.get();
+        //double time = timer.get();
+        double time = timer.GetTimeInSec();//timertesting
         double dT = time - lastUpdateTime;
         lastUpdateTime = time;
         // Clamp the dT to be no more than MAX_UPDATE_DT so that
@@ -147,9 +152,9 @@ public abstract class Axis implements Subsystem {
         }
 
         if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
-            lastTimeOnTarget = timer.get();
+            lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was timer.get
         } else {
-            if (timer.get() - lastTimeOnTarget > config.maxTimeToTarget) {
+            if (timer.GetTimeInSec() - lastTimeOnTarget > config.maxTimeToTarget) {//timertesting
                 setOverride(true);
             }
         }
@@ -178,7 +183,7 @@ public abstract class Axis implements Subsystem {
 
     public void resetState() {
         manualAdjustment = 0;
-        lastTimeOnTarget = timer.get();
+        lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was .get
     }
 
     /** 
@@ -216,9 +221,10 @@ public abstract class Axis implements Subsystem {
      * Initialize the axis with relevant settings
      */
     protected void initAxis(AxisConfig config) {
+        
         this.config = config;
         this.motor = config.motor;
-        timer.start();
+        timer.Start();//timertesting old was .start
         /*CoreUtils.checkCTRE*/motor.config_kF(config.runSlot, config.runK.f, TIMEOUT);
         /*CoreUtils.checkCTRE*/motor.config_kP(config.runSlot, config.runK.p, TIMEOUT);
         /*CoreUtils.checkCTRE*/motor.config_kI(config.runSlot, config.runK.i, TIMEOUT);
