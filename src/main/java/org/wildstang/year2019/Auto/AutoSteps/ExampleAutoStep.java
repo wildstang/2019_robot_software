@@ -4,19 +4,20 @@ import org.wildstang.framework.auto.steps.AutoStep;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSSubsystems;
 
-import org.wildstang.year2019.subsystems.drive.Drive;
+import org.wildstang.year2019.subsystems.ballpath.Ballpath;
 
 
 //this example is for Drive, you can also modify it to use ballpath, climbwedge, hatch, lift, strafeaxis
 
 public class ExampleAutoStep extends AutoStep{
 
-    private Drive drive;
+    private Ballpath ballpath;
 
     public void update(){
         //call what you want the subsystem to do during this step
         // control the drive with drive. whatever you want
 
+        ballpath.runCarriage();
 
         setFinished(true);
     }
@@ -26,7 +27,7 @@ public class ExampleAutoStep extends AutoStep{
     }
     public void initialize(){
 
-        drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
+        ballpath = (Ballpath) Core.getSubsystemManager().getSubsystem(WSSubsystems.BALLPATH.getName());
 
     }
 
