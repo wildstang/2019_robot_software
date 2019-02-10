@@ -29,12 +29,12 @@ difference between speeds, but we may not have time to deal with it.
 Some additional notes:
 
 - You're going to need the CTRE documentation.
-    * [Download CTRE documentation](https://files.slack.com/files-pri/T1YAPTLL8-FG3UDAL1M/download/ctre_docs.zip)
-    * [Alternate download link](https://wildstang.slack.com/archives/C1YB757BL/p1549760786255900))
-    * [Online Phoenix high-level documentation](https://phoenix-documentation.readthedocs.io/en/latest/index.html)
-    * [Online Javadoc low-level API documentation](http://www.ctr-electronics.com/downloads/api/java/html/annotated.html)
 These docs should tell you what you need to know to use the Talon and Victor
 motor controllers.
+    * [Download CTRE documentation](https://files.slack.com/files-pri/T1YAPTLL8-FG3UDAL1M/download/ctre_docs.zip)
+    * [Alternate download link](https://wildstang.slack.com/archives/C1YB757BL/p1549760786255900)
+    * [Online Phoenix high-level documentation](https://phoenix-documentation.readthedocs.io/en/latest/index.html)
+    * [Online Javadoc low-level API documentation](http://www.ctr-electronics.com/downloads/api/java/html/annotated.html)
 - The drive should expose an interface expressed in inches or mm of travel
 and degrees or radians of left-right rotation. If the interface exposes the
 raw encoder values on the motor controller, or uses wheel rotations, then
