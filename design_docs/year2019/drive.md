@@ -5,8 +5,8 @@
 Next person to work on drive autonomous code: *before you write code*, grab a
 mentor and work with them to design the relationship between the drive and the
 autos. You should work out with them the answers to these questions. Once you
-have made these decisions, write them down here so that you and others can
-adhere to them.
+have made these decisions, write them down here, in this document, so that you
+and others can adhere to them.
 
 You need to *decide*:
 
