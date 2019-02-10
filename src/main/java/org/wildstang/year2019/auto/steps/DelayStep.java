@@ -1,11 +1,7 @@
-package org.wildstang.year2019.Auto.AutoSteps;
+package org.wildstang.year2019.auto.steps;
 
 import org.wildstang.framework.auto.steps.AutoStep;
-import org.wildstang.framework.core.Core;
 import org.wildstang.framework.timer.WsTimer;
-import org.wildstang.year2019.robot.WSSubsystems;
-
-import org.wildstang.year2019.subsystems.ballpath.Ballpath;
 
 
 //this example is for Drive, you can also modify it to use ballpath, climbwedge, hatch, lift, strafeaxis

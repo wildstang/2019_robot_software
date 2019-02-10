@@ -25,29 +25,30 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** This subsystem controls the drive wheels so that the robot can move
- * around.
+/**
+ * This subsystem controls the drive wheels so that the robot can move around.
  * 
  * TODO: factor input management and drive logic into separate classes somehow.
  * 
- * TODO: Factor the helper classes into core framework */
+ * TODO: Factor the helper classes into core framework
+ */
 public class Drive implements Subsystem {
 
-    /** Status frame period controls how frequently the TalonSRX reports back with
-     * its sensor status over the CANBus. This constant is in milliseconds. */
-    //private static final int STATUS_FRAME_PERIOD = 10;
-    //private static final double NEUTRAL_DEADBAND = 0.001;
+    /**
+     * Status frame period controls how frequently the TalonSRX reports back with
+     * its sensor status over the CANBus. This constant is in milliseconds.
+     */
+    // private static final int STATUS_FRAME_PERIOD = 10;
+    // private static final double NEUTRAL_DEADBAND = 0.001;
     private static final int TIMEOUT = -1; // milliseconds
 
     // Parameterizing over left and right makes motor setup code DRYer
     private static final int LEFT = 0;
     private static final int RIGHT = 1;
-    private static final int[] SIDES = {LEFT, RIGHT};
-    private static final String[] SIDE_NAMES = {"left", "right"};
-    private static final int[] MASTER_IDS = {CANConstants.LEFT_DRIVE_TALON,
-                                             CANConstants.RIGHT_DRIVE_TALON};
-    private static final int[][] FOLLOWER_IDS = {CANConstants.LEFT_DRIVE_VICTORS,
-                                                 CANConstants.RIGHT_DRIVE_VICTORS};
+    private static final int[] SIDES = { LEFT, RIGHT };
+    private static final String[] SIDE_NAMES = { "left", "right" };
+    private static final int[] MASTER_IDS = { CANConstants.LEFT_DRIVE_TALON, CANConstants.RIGHT_DRIVE_TALON };
+    private static final int[][] FOLLOWER_IDS = { CANConstants.LEFT_DRIVE_VICTORS, CANConstants.RIGHT_DRIVE_VICTORS };
     private int pathNum = 1;
     private static final String DRIVER_STATES_FILENAME = "/home/lvuser/drive_state_";
     /** Left and right Talon master controllers */
@@ -59,7 +60,7 @@ public class Drive implements Subsystem {
     private AnalogInput headingInput;
     /** Input to control forward-backward movement */
     private AnalogInput throttleInput;
-    
+
     /** Button to control base lock mode */
     private DigitalInput baseLockInput;
     /** Button to control quick turn mode */
@@ -67,7 +68,10 @@ public class Drive implements Subsystem {
     /** Button to control anti-turbo mode */
     private DigitalInput antiTurboInput;
 
-    /** Keeps track of what kind of drive we're doing (e.g. cheesy drive vs path vs magic) */
+    /**
+     * Keeps track of what kind of drive we're doing (e.g. cheesy drive vs path vs
+     * magic)
+     */
     private DriveType driveMode;
 
     /** Counter used to space out updates in update() method */
@@ -76,7 +80,9 @@ public class Drive implements Subsystem {
     /** The highest speed either side of the drive has achieved */
     private double maxSpeedAchieved;
 
-    /** This PathFollower helper activates when we're in path mode to follow paths */
+    /**
+     * This PathFollower helper activates when we're in path mode to follow paths
+     */
     private PathFollower pathFollower;
 
     /** The Cheesy helper calculates the cheesy drive strategy */
@@ -85,8 +91,7 @@ public class Drive implements Subsystem {
     // While this is really a temporary variable, declared here to prevent
     // constant stack allocation.
     // TODO: Determine whether this is premature optimization.
-    private DriveSignal driveSignal;   
-   
+    private DriveSignal driveSignal;
 
     //////////////////////////////////////////////////////
     // Commanded values
@@ -128,7 +133,6 @@ public class Drive implements Subsystem {
         Core.getStateTracker().addIOInfo("Vision distance", "Drive", "Input", null);
         Core.getStateTracker().addIOInfo("Vision correction", "Drive", "Input", null);
 
-        
         initMotorControllers();
 
         initInputs();
@@ -146,7 +150,7 @@ public class Drive implements Subsystem {
         // We start at no throttle or steering.
         setThrottle(0);
         setHeading(0);
-        
+
         // All features start disabled.
         commandQuickTurn = false;
         commandRawMode = false;
@@ -154,20 +158,15 @@ public class Drive implements Subsystem {
 
         maxSpeedAchieved = 0;
     }
+
     @Override
     public void inputUpdate(Input source) {
 
-        
-        if (source == throttleInput) 
-        {        
+        if (source == throttleInput) {
             setThrottle(throttleInput.getValue());
-        } 
-        else if (source == headingInput) 
-        {          
+        } else if (source == headingInput) {
             setHeading(headingInput.getValue());
         }
-        
-
 
         // TODO: Do we want to make quickturn automatic?
         else if (source == quickTurnInput) {
@@ -199,62 +198,59 @@ public class Drive implements Subsystem {
 
     @Override
     public void update() {
-        
+
         // Update dashboard with statistics on motor performance
         // TODO: Is this redundant with logging machinery? (Not redundant?)
         if (updateCounter % 10 == 0) {
             for (int side : SIDES) {
                 TalonSRX master = masters[side];
                 /*
-                These are commented out in order to debug an issue
-                double output = master.getMotorOutputPercent();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " output", output);
-                double speed = master.getSelectedSensorVelocity();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " speed", speed);
-                double error = master.getClosedLoopError();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " error", error);
-                double target = master.getClosedLoopTarget();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);*/
+                 * These are commented out in order to debug an issue double output =
+                 * master.getMotorOutputPercent(); SmartDashboard.putNumber(SIDE_NAMES[side] +
+                 * " output", output); double speed = master.getSelectedSensorVelocity();
+                 * SmartDashboard.putNumber(SIDE_NAMES[side] + " speed", speed); double error =
+                 * master.getClosedLoopError(); SmartDashboard.putNumber(SIDE_NAMES[side] +
+                 * " error", error); double target = master.getClosedLoopTarget();
+                 * SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);
+                 */
             }
-            
+
             SmartDashboard.putNumber("commandThrottle", commandThrottle);
             SmartDashboard.putNumber("commandHeading", commandHeading);
             SmartDashboard.putString("Drive mode", driveMode.name());
         }
 
-
-
         switch (driveMode) {
         case PATH:
-            /* FIXME re-enable this
-            collectDriveState(); */
-        break;
+            /*
+             * FIXME re-enable this collectDriveState();
+             */
+            break;
 
-        
         case CHEESY:
             double effectiveThrottle = commandThrottle;
             if (commandAntiTurbo) {
                 effectiveThrottle = commandThrottle * DriveConstants.ANTI_TURBO_FACTOR;
-            }           
+            }
 
             SmartDashboard.putBoolean("Quick Turn", commandQuickTurn);
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
             SmartDashboard.putNumber("driveSignal.left", driveSignal.leftMotor);
             SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
-            
+
             setMotorSpeeds(driveSignal);
-           
-        break;
+
+            break;
         case FULL_BRAKE:
-        break;
+            break;
         case MAGIC:
-        break;
+            break;
         case RAW:
         default:
             // Raw is default
             driveSignal = new DriveSignal(commandThrottle, commandThrottle);
-        break;
+            break;
         }
         SensorCollection leftEncoder = masters[LEFT].getSensorCollection();
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getQuadraturePosition());
@@ -272,14 +268,16 @@ public class Drive implements Subsystem {
     /** Reset drive encoders back to zero */
     public void resetEncoders() {
         for (TalonSRX master : masters) {
-            // FIXME CHECK ERROR CODE
             master.getSensorCollection().setQuadraturePosition(0, 10);
         }
     }
 
-    /** Set brake mode when in neutral for all drive motors: true to brake, false to coast */
+    /**
+     * Set brake mode when in neutral for all drive motors: true to brake, false to
+     * coast
+     */
     public void setBrakeMode(boolean brake) {
-        NeutralMode mode = brake? NeutralMode.Brake : NeutralMode.Coast;
+        NeutralMode mode = brake ? NeutralMode.Brake : NeutralMode.Coast;
         for (int side : SIDES) {
             masters[side].setNeutralMode(mode);
             for (VictorSPX follower : followers[side]) {
@@ -287,7 +285,7 @@ public class Drive implements Subsystem {
             }
         }
     }
-    
+
     /** Active stop --- stop drive motion immediately. */
     public void setFullBrakeMode() {
         stopPathFollowing();
@@ -330,22 +328,20 @@ public class Drive implements Subsystem {
         }
     }
 
-
     /** Stop following and clean up path. FIXED? */
     public void pathCleanup() {
         if (pathFollower != null) {
             pathFollower.stop();
-            pathFollower = null;                     
+            pathFollower = null;
         }
     }
-    
-    
 
-    /** Stop following this path. 
+    /**
+     * Stop following this path.
      * 
-     * FIXME this is weirdly redundant with pathCleanup --- something is wrong 
-     * The code IS redundant with pathCleanup, do we remove this whole method or do we remove the
-     * "pathFollower.stop();" from "abortFollowingPath()"?
+     * FIXME this is weirdly redundant with pathCleanup --- something is wrong The
+     * code IS redundant with pathCleanup, do we remove this whole method or do we
+     * remove the "pathFollower.stop();" from "abortFollowingPath()"?
      */
     public void abortFollowingPath() {
         if (pathFollower != null) {
@@ -380,7 +376,35 @@ public class Drive implements Subsystem {
     public void setQuickTurn(boolean quickTurn) {
         this.commandQuickTurn = false;
     }
-    
+
+    /**
+     * TODO: description of what this method should do goes here
+     */
+    public void setAutonStraightDrive() {
+        stopPathFollowing();
+
+        driveMode = DriveType.CHEESY;
+
+        setBrakeMode(false);
+
+        for (TalonSRX master : masters) {
+            master.set(ControlMode.PercentOutput, 1);
+        }
+    }
+
+    /**
+     * TODO: Description of what this method should do goes here
+     */
+    public double getRightSensorValue() {
+        /*
+         * We should not allow classes outside of Drive to find out about the
+         * implementation details of Drive. If we change the encoders, for example, we
+         * should be able to cope with that by changing constants in Drive. If we let
+         * autos use the raw encoder ticks, we'll break all the autos if we change our
+         * encoders.
+         */
+        return masters[RIGHT].getSensorCollection().getQuadraturePosition();
+    }
 
     /////////////////////////////////////////////////////////
     // PRIVATE METHODS
@@ -392,22 +416,19 @@ public class Drive implements Subsystem {
         headingInput.addInputListener(this);
         throttleInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_THROTTLE);
         throttleInput.addInputListener(this);
-        
-        quickTurnInput = (DigitalInput) Core.getInputManager()
-                .getInput(WSInputs.QUICK_TURN.getName());
+
+        quickTurnInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.QUICK_TURN.getName());
         quickTurnInput.addInputListener(this);
 
-        antiTurboInput = (DigitalInput) Core.getInputManager()
-                .getInput(WSInputs.ANTITURBO.getName());
+        antiTurboInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
         antiTurboInput.addInputListener(this);
 
-        baseLockInput = (DigitalInput) Core.getInputManager()
-                .getInput(WSInputs.BASE_LOCK.getName());
+        baseLockInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.BASE_LOCK.getName());
         baseLockInput.addInputListener(this);
     }
 
     /** Initialize all drive base motor controllers. */
-    private void initMotorControllers() /*throws CoreUtils.CTREException*/ {
+    private void initMotorControllers() /* throws CoreUtils.CTREException */ {
         for (int side : SIDES) {
             masters[side] = new TalonSRX(MASTER_IDS[side]);
 
@@ -420,14 +441,17 @@ public class Drive implements Subsystem {
         }
     }
 
-    /** Initialize this master controller.
+    /**
+     * Initialize this master controller.
      *
-     * <p>See https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/ for
+     * <p>
+     * See https://github.com/CrossTheRoadElec/Phoenix-Examples-Languages/ for
      * examples on how to set up a Talon.
      *
-     * @param side Which side (LEFT or RIGHT) this is master for
-     * @param master The WSTalonSRX object to set up */
-    private void initMaster(int side, TalonSRX master) /*throws CoreUtils.CTREException*/ {
+     * @param side   Which side (LEFT or RIGHT) this is master for
+     * @param master The WSTalonSRX object to set up
+     */
+    private void initMaster(int side, TalonSRX master) /* throws CoreUtils.CTREException */ {
         System.out.println("Initializing TalonSRX master ID " + MASTER_IDS[side]);
 
         // The Talon SRX should be directly connected to an encoder
@@ -442,10 +466,10 @@ public class Drive implements Subsystem {
         }
 
         // Configure output to range from full-forward to full-reverse.
-        /*CoreUtils.checkCTRE*/master.configNominalOutputForward(0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/master.configNominalOutputReverse(0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/master.configPeakOutputForward(+1.0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/master.configPeakOutputReverse(-1.0, TIMEOUT);
+        /* CoreUtils.checkCTRE */master.configNominalOutputForward(0, TIMEOUT);
+        /* CoreUtils.checkCTRE */master.configNominalOutputReverse(0, TIMEOUT);
+        /* CoreUtils.checkCTRE */master.configPeakOutputForward(+1.0, TIMEOUT);
+        /* CoreUtils.checkCTRE */master.configPeakOutputReverse(-1.0, TIMEOUT);
 
         // Load all the PID settings.
         for (DrivePID pid : DrivePID.values()) {
@@ -454,11 +478,11 @@ public class Drive implements Subsystem {
             master.config_kI(pid.slot, pid.k.i);
             master.config_kD(pid.slot, pid.k.d);
         }
-        
+
         // Special case for base lock: we widen the deadband
-        /*CoreUtils.checkCTRE*/master.configAllowableClosedloopError(DrivePID.BASE_LOCK.slot,
+        /* CoreUtils.checkCTRE */master.configAllowableClosedloopError(DrivePID.BASE_LOCK.slot,
                 DriveConstants.BRAKE_MODE_ALLOWABLE_ERROR);
-        
+
         // Coast is a reasonable default neutral mode. TODO: is it really?
         master.setNeutralMode(NeutralMode.Coast);
 
@@ -489,19 +513,5 @@ public class Drive implements Subsystem {
     private void setMotorSpeeds(DriveSignal speeds) {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
-    }
-    public void setAutonStraightDrive() {
-        stopPathFollowing();
-
-        driveMode = DriveType.CHEESY;
-
-        setBrakeMode(false);
-
-        for (TalonSRX master : masters) {
-            master.set(ControlMode.PercentOutput, 1);
-        }
-    }
-    public double getRightSensorValue(){
-        return masters[RIGHT].getSensorCollection().getQuadraturePosition();
     }
 }

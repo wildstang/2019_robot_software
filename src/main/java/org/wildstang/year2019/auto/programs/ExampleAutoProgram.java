@@ -1,7 +1,7 @@
-package org.wildstang.year2019.Auto.AutoPrograms;
+package org.wildstang.year2019.auto.programs;
 
 import org.wildstang.framework.auto.AutoProgram;
-import org.wildstang.year2019.Auto.AutoSteps.ExampleAutoStep;
+import org.wildstang.year2019.auto.steps.ExampleAutoStep;
 
 public class ExampleAutoProgram extends AutoProgram {
 

@@ -1,4 +1,4 @@
-package org.wildstang.year2019.Auto.AutoSteps;
+package org.wildstang.year2019.auto.steps;
 
 import org.wildstang.framework.auto.steps.AutoStep;
 import org.wildstang.framework.core.Core;
@@ -9,29 +9,27 @@ import org.wildstang.year2019.subsystems.ballpath.Ballpath;
 
 //this example is for Drive, you can also modify it to use ballpath, climbwedge, hatch, lift, strafeaxis
 
-public class EnableWholePathStep extends AutoStep {
+public class ExampleAutoStep extends AutoStep{
 
     private Ballpath ballpath;
-    /** True IFF we should turn on; false IFF we should turn off. */
-    private boolean enable;
 
-    public EnableWholePathStep(boolean enable) {
-        this.enable = enable;
-    }
+    public void update(){
+        //call what you want the subsystem to do during this step
+        // control the drive with drive. whatever you want
 
-    public void update() {
-        ballpath.enableWholePath(enable);
+        ballpath.runCarriage();
+
         setFinished(true);
     }
-
     public String toString(){
-        return "EnableWholePathStep";
+        //put a reasonable name for this step inside the string
+        return "";
     }
-
     public void initialize(){
 
         ballpath = (Ballpath) Core.getSubsystemManager().getSubsystem(WSSubsystems.BALLPATH.getName());
 
     }
+
 
 }
