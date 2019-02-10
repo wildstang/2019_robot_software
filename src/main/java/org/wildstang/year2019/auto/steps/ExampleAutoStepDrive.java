@@ -6,8 +6,13 @@ import org.wildstang.year2019.robot.WSSubsystems;
 
 import org.wildstang.year2019.subsystems.drive.Drive;
 
-//this example is for Drive, you can also modify it to use ballpath, climbwedge, hatch, lift, strafeaxis
-
+/**
+ * TODO: Description of this class goes here
+ *
+ * XXX TODO: grab a mentor and go over                                   
+ * https://github.com/wildstang/2019_robot_software/blob/master/design_docs/year2019/drive.md
+ * before using or adding to this class.
+ */
 public class ExampleAutoStepDrive extends AutoStep {
 
     private Drive drive;

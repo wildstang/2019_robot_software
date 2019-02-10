@@ -381,6 +381,9 @@ public class Drive implements Subsystem {
      * TODO: description of what this method should do goes here
      */
     public void setAutonStraightDrive() {
+        // XXX TODO: grab a mentor and go over
+        // https://github.com/wildstang/2019_robot_software/blob/master/design_docs/year2019/drive.md
+        // before using or adding to this method.
         stopPathFollowing();
 
         driveMode = DriveType.CHEESY;
@@ -396,13 +399,9 @@ public class Drive implements Subsystem {
      * TODO: Description of what this method should do goes here
      */
     public double getRightSensorValue() {
-        /*
-         * We should not allow classes outside of Drive to find out about the
-         * implementation details of Drive. If we change the encoders, for example, we
-         * should be able to cope with that by changing constants in Drive. If we let
-         * autos use the raw encoder ticks, we'll break all the autos if we change our
-         * encoders.
-         */
+        // XXX TODO: grab a mentor and go over
+        // https://github.com/wildstang/2019_robot_software/blob/master/design_docs/year2019/drive.md
+        // before using or adding to this method.
         return masters[RIGHT].getSensorCollection().getQuadraturePosition();
     }
 

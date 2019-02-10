@@ -16,6 +16,9 @@ import org.wildstang.year2019.subsystems.drive.Drive;
  * What are the differences between the two and do we need to implement some
  * 'Magic' into steps as well?
  * 
+ * XXX TODO: grab a mentor and go over                                   
+ * https://github.com/wildstang/2019_robot_software/blob/master/design_docs/year2019/drive.md
+ * before using or adding to this class.
  */
 public class TurnNDegreesStepDrive extends AutoStep {
 

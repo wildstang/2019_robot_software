@@ -2,12 +2,13 @@
 
 ## Interaction between auto and drivebase
 
-Next person to work on drive autonomous code, grab a mentor and sit with
-them to design the relationship between the drive and the autos. You should
-work out with them the answers to these questions. Once you have made these
-decisions, write them down here so that you and others can adhere to them.
+Next person to work on drive autonomous code: *before you write code*, grab a
+mentor and work with them to design the relationship between the drive and the
+autos. You should work out with them the answers to these questions. Once you
+have made these decisions, write them down here so that you and others can
+adhere to them.
 
-You need to decide:
+You need to *decide*:
 
 - What is the right way for the auto to
 communicate a motion target to the drivebase?
@@ -15,16 +16,21 @@ Auto motions should probably happen under PID control, maybe Motion Magic.
 Motion Magic is a mode in the Talon motor controllers where you can tell it
 to go to a target value and it will plan a smooth acceleration, cruise and
 deceleration motion profile for you. 
-- How does an auto step find out when the drive is *done* going where it
-needs to go?
+- How does an auto step find out when the drive is done going where it
+needs to go? Does the drive keep track of that? Does the drive just expose its
+position and let the auto decide completion? For motion magic, is there a motion
+magic way of doing this?
 - What is the right way to coordinate the left and right drive Talons? Would
 it be appropriate to run a manual secondary pid overlaid on the hardware PID
 by using the arbitrary feed-forward term in the [set() method](http://www.ctr-electronics.com/downloads/api/java/html/interfacecom_1_1ctre_1_1phoenix_1_1motorcontrol_1_1_i_motor_controller.html#ad34ab6c4fc37886a0e62a1dcb44e4645)?
 We really ought to be controlling not only the speed on each side but the
-difference between speeds.
+difference between speeds, but we may not have time to deal with it.
 
 Some additional notes:
 
+- You're going to need the [CTRE documentation](https://files.slack.com/files-pri/T1YAPTLL8-FG3UDAL1M/download/ctre_docs.zip).
+These docs should tell you what you need to know to use the Talon and Victor
+motor controllers.
 - The drive should expose an interface expressed in inches or mm of travel
 and degrees or radians of left-right rotation. If the interface exposes the
 raw encoder values on the motor controller, or uses wheel rotations, then
@@ -44,4 +50,4 @@ doing is informing the drive that it needs to drive forward a certain distance
 and then waiting for this to occur.
 
 This is more complicated than I first realized it would be when I set this as
-a task. - Zack
+a task.... - Zack
