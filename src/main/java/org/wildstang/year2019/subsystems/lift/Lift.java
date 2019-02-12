@@ -47,7 +47,7 @@ import org.wildstang.year2019.subsystems.lift.LiftPID;
 public class Lift extends Axis implements Subsystem {
 
     private static final boolean INVERTED = false;
-    private static final boolean SENSOR_PHASE = false;
+    private static final boolean SENSOR_PHASE = true;
 
     /** TODO: remove this */
     private static final int TIMEOUT = -1;
@@ -59,7 +59,7 @@ public class Lift extends Axis implements Subsystem {
     private static double POSITION_4 = 36.5;
 
     /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 1.5; // FIXME correct value
+    private static final double REVS_PER_INCH = 1; // FIXME correct value
     /** Number of encoder ticks in one revolution */
     private static final double TICKS_PER_REV = 4096; // FIXME correct value
     /** # of ticks in one inch of axis movement */
@@ -67,10 +67,10 @@ public class Lift extends Axis implements Subsystem {
 
     /** The maximum speed the operator can command to move in fine-tuning */
     private static final double MANUAL_SPEED = 2; // in/s
-    private static final double TRACKING_MAX_SPEED = 20; // in/s
-    private static final double TRACKING_MAX_ACCEL = 100; // in/s^2
-    private static final double HOMING_MAX_SPEED = 2; // in/s
-    private static final double HOMING_MAX_ACCEL = 2; // in/s^2
+    private static final double TRACKING_MAX_SPEED = 1; // in/s
+    private static final double TRACKING_MAX_ACCEL = 1; // in/s^2
+    private static final double HOMING_MAX_SPEED = 1; // in/s
+    private static final double HOMING_MAX_ACCEL = 1; // in/s^2
 
     private static final double BOTTOM_STOP_POS = -.5;
     private static final double BOTTOM_MAX_TRAVEL = 0;
@@ -94,13 +94,21 @@ public class Lift extends Axis implements Subsystem {
         super.inputUpdate(source);
         
         if (source == position1Button) {
-            setRoughTarget(POSITION_1);
+            if (position1Button.getValue()){
+                setRoughTarget(POSITION_1);
+            }
         } else if (source == position2Button) {
-            setRoughTarget(POSITION_2);
+            if (position2Button.getValue()){
+                setRoughTarget(POSITION_2);
+            }
         } else if (source == position3Button) {
-            setRoughTarget(POSITION_3);
+            if (position3Button.getValue()){
+                setRoughTarget(POSITION_3);
+            }
         } else if (source == position4Button) {
-            setRoughTarget(POSITION_4);
+            if (position4Button.getValue()){
+                setRoughTarget(POSITION_4);
+            }
         }
     }
 
