@@ -60,6 +60,7 @@ public class Ballpath implements Subsystem {
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
     private DigitalInput hopperInput;
+    private DigitalInput safetyInput;
 
     //TODO code for sensors
     //private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
@@ -153,7 +154,7 @@ public class Ballpath implements Subsystem {
 
         if(source == carriageRollersInput)
         {
-            if(carriageRollersInput.getValue())
+            if(!safetyInput.getValue() && carriageRollersInput.getValue())
             {
                 isCarriageMotor = true;
             }
@@ -244,6 +245,10 @@ public class Ballpath implements Subsystem {
         reverseInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.REVERSE_BUTTON.getName());
         reverseInput.addInputListener(this);
 
+        //Button to not run carriage motors while lift limit override
+        safetyInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
+        safetyInput.addInputListener(this);
+
         //Solenoids
         hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
         intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
@@ -333,7 +338,7 @@ public class Ballpath implements Subsystem {
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);
         hopperVictor2.set(ControlMode.PercentOutput, 0.0);
-
+        
         //Set desired positions for solenoids
     }
 
