@@ -148,9 +148,12 @@ public enum WSInputs implements Inputs {
     STRAFE_RIGHT_LIMIT("Strafe right limit", WSInputType.SWITCH, new WsDigitalInputConfig(2, false), false),
 
     // TODO IDs
-    LIFT_LOWER_LIMIT("Lift Lower Limit", WSInputType.SWITCH, new WsDigitalInputConfig(3, false), false),
+    LIFT_LOWER_LIMIT("Lift Lower Limit", WSInputType.SWITCH, new WsDigitalInputConfig(3, true), false),
     // TODO IDs
-    LIFT_UPPER_LIMIT("Lift Upper Limit", WSInputType.SWITCH, new WsDigitalInputConfig(4, false), false),
+    LIFT_UPPER_LIMIT("Lift Upper Limit", WSInputType.SWITCH, new WsDigitalInputConfig(4, true), false),
+
+    CARRIAGE_SENSOR_A("Carriage Sensor A",WSInputType.REMOTE_DIGITAL, new WsDigitalInputConfig(5,true),false),
+    CARRIAGE_SENSOR_B("Carriage Sensor B",WSInputType.REMOTE_DIGITAL, new WsDigitalInputConfig(6,true),false),
 
     // -------------------------------
     // Networked sensors
