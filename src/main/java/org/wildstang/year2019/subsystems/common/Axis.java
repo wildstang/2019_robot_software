@@ -60,6 +60,10 @@ public abstract class Axis implements Subsystem {
      */
     private boolean isOverridden = false;
 
+    private boolean prevStrafeOverride;
+    private boolean currentStrafeOverride;
+    private boolean isStrafeOverride;
+
     /** The last time (according to timer) that we have been on target */
     private double lastTimeOnTarget;
 
@@ -98,6 +102,9 @@ public abstract class Axis implements Subsystem {
         /** This input is used by the manipulator controller to fine-tune the axis position. */
         public AnalogInput manualAdjustmentJoystick;
 
+        /** The override of the strafe axis to be fully controlled by the manipulator */
+        public DigitalInput safetyButton1;
+        public DigitalInput safetyButton2;
         /** The limit switch activated by max travel in negative direction */
         public DigitalInput lowerLimitSwitch; 
         /** The limit switch activated by max travel in positive direction */
@@ -143,22 +150,27 @@ public abstract class Axis implements Subsystem {
             System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
             dT = MAX_UPDATE_DT;
         }
-
-        if (isOverridden) {
+        if(isStrafeOverride)
+        {
             motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
-        } else {
-            manualAdjustment += config.manualAdjustmentJoystick.getValue() * config.manualSpeed * dT;
-            setRunTarget(roughTarget + manualAdjustment);
         }
-
-        if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
-            lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was timer.get
-        } else {
-            if (timer.GetTimeInSec() - lastTimeOnTarget > config.maxTimeToTarget) {//timertesting
-                setOverride(true);
+        else {
+            if (isOverridden) {
+                motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
+            } else {
+                manualAdjustment += config.manualAdjustmentJoystick.getValue() * config.manualSpeed * dT;
+                setRunTarget(roughTarget + manualAdjustment);
             }
-        }
-    }
+
+            if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
+                lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was timer.get
+            } else {
+                if (timer.GetTimeInSec() - lastTimeOnTarget > config.maxTimeToTarget) {//timertesting
+                    setOverride(true);
+                    }
+                }
+            }
+        }// isStrafeOverride if statement
 
     public void inputUpdate(Input source) {
         if (source == config.manualAdjustmentJoystick) {
@@ -178,12 +190,27 @@ public abstract class Axis implements Subsystem {
             } else {
                 motor.configPeakOutputForward(config.maxMotorOutput, -1);
             }
+        } else if (source == config.safetyButton1)
+        {
+            if(source == config.safetyButton2)
+            {
+                currentStrafeOverride = config.safetyButton1.getValue();
+                if(currentStrafeOverride && !prevStrafeOverride)
+                {
+                    isStrafeOverride = !isStrafeOverride;
+                }
+                prevStrafeOverride = currentStrafeOverride;
+            }
         }
+
     }
 
     public void resetState() {
         manualAdjustment = 0;
         lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was .get
+        prevStrafeOverride = false;
+        currentStrafeOverride = false;
+        isStrafeOverride = false;
     }
 
     /** 
