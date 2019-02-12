@@ -44,32 +44,43 @@ Actuators:
 
 */
 public class Ballpath implements Subsystem {
+
+    //Constants
     private static final double ROLLER_SPEED = 1.0;
+    private static final double ROLLER_SPEED_SLOWED_1 = 0.6; //For sensor A
+    private static final double ROLLER_SPEED_SLOWED_2 = 0.4; //For sensor A + B
+    private static final double ROLLER_SPEED_BRAKE = 0.0; //For setting to zero AND sensor B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
+    private static final double CARRIAGE_ROLLER_SPEED = 1.0;//subject to change
 
-
-    private AnalogInput carriageRollersInput;
+    //Inputs
+    private DigitalInput carriageRollersInput;
     private DigitalInput intakeInput;
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
     private DigitalInput hopperInput;
+    private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
+    private DigitalInput Sensor_B_Input;//controlled by sensor values, sensors to be set later
 
+    //Solenoids
     private WsSolenoid hopper_solenoid;
     private WsSolenoid intake_solenoid;
 
+    //Victors
     private VictorSPX intakeVictor;
     private VictorSPX hopperVictor1;
     private VictorSPX hopperVictor2;
     private VictorSPX carriageVictor;
 
-    
+    //Values updated by inputs
     private boolean reverseValue;
     private boolean hopper_position;
     private boolean intake_position;
     private boolean isIntake_motor;
     private boolean isCarriageMotor;
     private boolean isHopper_motor;
-    private double CarriageValue;
+    private boolean Sensor_A_Value;
+    private boolean Sensor_B_Value;
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -82,27 +93,28 @@ public class Ballpath implements Subsystem {
         //Set up 4 buttons
         /**
          * 1 button (INTAKE) to deploy the hopper intake and run the motors (HOLD)
-         * 1 button(HOPPER_SOLENOID) to actuate the hopper rollers (HOLD)
+         * 1 button (HOPPER_SOLENOID) to actuate the hopper rollers (HOLD)
          * 1 button (CARRIAGE_ROLLERS) to run carriage rollers (JOYSTICK)
          * 1 button (FULL_BALLPATH) to deploy the hopper intake, run the intake motors, run the hopper rollers, 
          * and the carriage rollers (HOLD)
          * 
          * Update local variables
          */
+        hopper_position = false;
+        intake_position = false;
+        isIntake_motor = false;
+        isCarriageMotor = false;
+        isHopper_motor = false;
+        Sensor_A_Value = false; //assumption is that ball detected = true, no ball detected = false
+        Sensor_B_Value = false;
 
-        if(source == hopperInput)
-        {
-            if(hopperInput.getValue())
-            {
-                hopper_position = true;
-            }
-            
-            else
-            {
-                hopper_position = false;
-            }
+        hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+        hopperVictor2.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+        carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+        intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
 
-        }//hopper
+        //TODO
+        //UPDATE Sesor_A_Value and Sensor_B_Value
 
         if(source == intakeInput)
         {
@@ -111,69 +123,91 @@ public class Ballpath implements Subsystem {
                 intake_position = true;
                 isIntake_motor = true;
             }
-
-            else
-            {
-                intake_position = false;
-                isIntake_motor = false;
-            }
  
         }//intake
 
+        if(source == hopperInput)
+        {
+            if(hopperInput.getValue())
+            {
+                hopper_position = true;
+            }
+
+        }//hopper
+
         if(source == carriageRollersInput)
         {
-            if(intakeInput.getValue())
+            if(carriageRollersInput.getValue())
             {
                 isCarriageMotor = true;
-                CarriageValue = carriageRollersInput.getValue();
             }
             
-            else
-            {
-                isCarriageMotor = false;
-                CarriageValue = 0.0; 
-            } 
         }//carriage rollers
 
         if(source == fullBallpathInput)
         {
-            if(intakeInput.getValue())
+            if(fullBallpathInput.getValue())
             {
                 hopper_position = true;
                 intake_position = true;
                 isIntake_motor = true;
-                isCarriageMotor = true;
                 isHopper_motor = true;
-                CarriageValue = carriageRollersInput.getValue();
-            }
 
-            else
-            {
-                hopper_position = false;
-                intake_position = false;
-                isIntake_motor = false;
-                isCarriageMotor = false;
-                isHopper_motor = false;
-                CarriageValue = 0.0;
+               if(source == Sensor_A_Input)
+                {
+                    Sensor_A_Value = true;
+                } 
+                if (source == Sensor_B_Input)
+                {
+                    Sensor_B_Value = true;
+                }
+                
+
             }//everything
         
         }
 
         if(source == reverseInput)
         {
-            if(intakeInput.getValue())
+            
+            if(reverseInput.getValue() && !(isIntake_motor || isCarriageMotor || isHopper_motor))
             {
                 reverseValue = true;
                 intake_position = true;
-            }
+            } 
 
-            else
-            {
-                reverseValue = false;
-                intake_position = false;
-            }
-        }
+        } //Reverse Input
 
+        /** NOT NEEDED
+         * if(source == Sensor_A_Input)
+         * {
+         *     if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
+         *     {
+         *         Sensor_A_Value = true;
+         *         Sensor_B_Value = true;
+         *
+         *         ROLLER_SPEED_Value = true;
+         *
+         *     }
+         *
+         *     if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
+         *     {
+         *         Sensor_A_Value = false;
+         *         Sensor_B_Value = true;
+         *
+         *         ROLLER_SPEED_SLOWED = 0.4;
+         *
+         *     }
+         *
+         *     if(Sensor_B_Input.getValue())
+         *     {
+         *         Sensor_B_Value = false;
+         *         ROLLER_SPEED_BRAKE = true;
+         *     }
+         *
+         * }//sensors A and B
+         */
+        
 
     }
 
@@ -183,7 +217,7 @@ public class Ballpath implements Subsystem {
         //Input listeners
         intakeInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.INTAKE.getName());
         intakeInput.addInputListener(this);
-        carriageRollersInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
+        carriageRollersInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
         carriageRollersInput.addInputListener(this);
         fullBallpathInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.FULL_BALLPATH.getName());
         fullBallpathInput.addInputListener(this);
@@ -233,12 +267,26 @@ public class Ballpath implements Subsystem {
         if(isIntake_motor)
         {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
-
-
         }
         if(isCarriageMotor)
         {
-            carriageVictor.set(ControlMode.PercentOutput, CarriageValue);
+            if (Sensor_A_Value)
+            {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
+            } 
+            else if(Sensor_A_Value && Sensor_B_Value)
+            {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_2);
+            }
+            else if(Sensor_B_Value)
+            {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
+            }
+            else
+            {
+                carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
+            }
+                
         }
         if(isHopper_motor)
         {

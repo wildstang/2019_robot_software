@@ -1,12 +1,11 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.CoreUtils.CTREException;
+import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.IInputManager;
 import org.wildstang.framework.io.Input;
@@ -17,99 +16,93 @@ import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
+import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
 
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.*;
 /** This subsystem is responsible for lining up hatch panels left-to-right.
+=======
+/**
+ * This subsystem is responsible for lining up hatch panels left-to-right.
+>>>>>>> 7b69d100135ed1e9c2042777904267ff1893ee75
  * 
  * There should probably be a PID loop controlling the position of this axis.
  * 
- * Sensors: 
+ * Sensors:
  * <ul>
- * <li> Line detection photocells (handled by LineDetector.java? or RasPi?)
- * <li> Limit switch(es). TODO: left, right or both?
- * <li> Encoder on lead screw Talon.
+ * <li>Line detection photocells (handled by LineDetector.java? or RasPi?)
+ * <li>Limit switch(es). TODO: left, right or both?
+ * <li>Encoder on lead screw Talon.
  * </ul>
  * 
  * Actuators:
  * <ul>
- * <li> Talon controlling lead screw motor.
+ * <li>Talon controlling lead screw motor.
  * </ul>
  * 
  */
 
 public class StrafeAxis extends Axis implements Subsystem {
 
-    private static int TIMEOUT = 100;
+    private static final boolean INVERTED = false;
+    private static final boolean SENSOR_PHASE = false;
+
+    /** TODO: remove this */
+    private static final int TIMEOUT = -1;
+
+<<<<<<< HEAD
+    //Ardiuno setups
+    private SerialPort arduino;
+=======
+>>>>>>> 7b69d100135ed1e9c2042777904267ff1893ee75
+
+    /** # of rotations of encoder in one inch of axis travel */
+    private static final double REVS_PER_INCH = 1.5; // FIXME correct value
+    /** Number of encoder ticks in one revolution */
+    private static final double TICKS_PER_REV = 1024; // FIXME correct value
+    /** # of ticks in one inch of axis movement */
+    private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
+
+    /** The maximum speed the operator can command to move in fine-tuning */
+    private static final double MANUAL_SPEED = 2; // in/s
+    private static final double TRACKING_MAX_SPEED = 20; // in/s
+    private static final double TRACKING_MAX_ACCEL = 100; // in/s^2
+    private static final double HOMING_MAX_SPEED = 2; // in/s
+    private static final double HOMING_MAX_ACCEL = 2; // in/s^2
+
+    private static final double LEFT_STOP_POS = -6;
+    private static final double LEFT_MAX_TRAVEL = -5;
+    private static final double RIGHT_MAX_TRAVEL = 5;
 
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
-    //private DigitalInput AxisConfig.lowerLimitSwitch; (replaced with AxisConfig.lowerLimitSwitch)
-    //private DigitalInput AxisConfig.upperLimitSwitch; (replaced with AxisConfig.upperLimitSwitch)
-
-    //Ardiuno setups
-    private SerialPort arduino;
-
-    /* Width of the space we have to play in */
-    private int leftMaxTravel;
-    private int rightMaxTravel;
 
     private TalonSRX motor;
 
-    /** The axis may be in different modes --- homing while finding limits, tracking while in operation. */
-    private enum Mode {
-        DISABLED,
-        HOMING_LEFT,
-        HOMING_RIGHT,
-        TRACKING;
-        // TODO Overridden state
-    }
-
-    private Mode mode;
+    /** The axis configuration we pass up to the axis initialization */
+    private AxisConfig axisConfig;
 
     @Override
     public void inputUpdate(Input source) {
         if (source == linePositionInput) {
-<<<<<<< HEAD
-            // Nothing to do; we handle this in update()
-        } else if (source == AxisConfig.lowerLimitSwitch) {
-=======
             setRoughTarget(linePositionInput.getValue());
-        } else if (source == leftLimitSwitch) {
->>>>>>> f7c1120e485d9c5a8ad079ee4e7896f8d2145cd1
-            if (mode == Mode.HOMING_LEFT) {
-                homingLeftLimitReached();
-            } else {
-                // TODO
-            }
-        } else if (source == AxisConfig.upperLimitSwitch) {
-            if (mode == Mode.HOMING_RIGHT) {
-                homingRightLimitReached();
-            } else {
-                // TODO
-            }
-<<<<<<< HEAD
-        //} else if (source == fineTuneInput) {
-            // Nothing to do; we handle this in update()
-        //}
-=======
         }
->>>>>>> f7c1120e485d9c5a8ad079ee4e7896f8d2145cd1
     }
 
     @Override
     public void init() {
+        initMotor();
         initInputs();
-        try {
-            initMotor();
-        } catch (CoreUtils.CTREException e) {
-            // FIXME crash
-        }
+        initAxis();
         resetState();
+<<<<<<< HEAD
         mode = Mode.DISABLED;
 
         arduino = new SerialPort(9600, SerialPort.Port.kUSB);
         //arduino.write(new byte[] {0x12}, 1);
         
+=======
+>>>>>>> 7b69d100135ed1e9c2042777904267ff1893ee75
     }
 
     @Override
@@ -132,15 +125,6 @@ public class StrafeAxis extends Axis implements Subsystem {
         return "StrafeAxis";
     }
 
-    /** Initiate re-homing the axis. Home left then right. */
-    public void beginHomeCycle() {
-        mode = Mode.HOMING_LEFT;
-        motor.selectProfileSlot(StrafePID.HOMING.slot, 0);
-        motor.configMotionAcceleration(StrafeConstants.HOMING_MAX_ACCEL);
-        motor.configMotionCruiseVelocity(StrafeConstants.HOMING_MAX_SPEED);
-        motor.set(ControlMode.MotionMagic, Double.NEGATIVE_INFINITY);
-    }
-
     ////////////////////////////////////////
     // Private methods
 
@@ -148,86 +132,52 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
         linePositionInput.addInputListener(this);
+<<<<<<< HEAD
         AxisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
         AxisConfig.lowerLimitSwitch.addInputListener(this);
         AxisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
         AxisConfig.upperLimitSwitch.addInputListener(this);
         //fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
         //fineTuneInput.addInputListener(this);
+=======
+>>>>>>> 7b69d100135ed1e9c2042777904267ff1893ee75
     }
 
-    private void initMotor() throws CoreUtils.CTREException {
-        // FIXME duplicates setup code in drivebase --- factor this out
+    private void initAxis() {
+        IInputManager inputManager = Core.getInputManager();
+        axisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
+        axisConfig.lowerLimitSwitch.addInputListener(this);
+        axisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
+        axisConfig.upperLimitSwitch.addInputListener(this);
+        axisConfig.manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.STRAFE_MANUAL);
+        axisConfig.manualAdjustmentJoystick.addInputListener(this);
+
+        axisConfig.motor = motor;
+        axisConfig.ticksPerInch = TICKS_PER_INCH;
+        axisConfig.runAcceleration = TRACKING_MAX_ACCEL;
+        axisConfig.runSpeed = TRACKING_MAX_SPEED;
+        axisConfig.homingAcceleration = HOMING_MAX_ACCEL;
+        axisConfig.homingSpeed = HOMING_MAX_SPEED;
+        axisConfig.manualSpeed = MANUAL_SPEED;
+        axisConfig.minTravel = LEFT_MAX_TRAVEL;
+        axisConfig.maxTravel = RIGHT_MAX_TRAVEL;
+        axisConfig.runSlot = StrafePID.TRACKING.slot;
+        axisConfig.runK = StrafePID.TRACKING.k;
+        axisConfig.homingSlot = StrafePID.HOMING.slot;
+        axisConfig.homingK = StrafePID.HOMING.k;
+        axisConfig.lowerLimitPosition = LEFT_STOP_POS;
+
+        initAxis(axisConfig);
+    }
+
+    private void initMotor() {
         motor = new TalonSRX(CANConstants.STRAFE_TALON);
-
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-
-        for (StrafePID pid : StrafePID.values()) {
-            motor.config_kF(pid.slot, pid.k.f);
-            motor.config_kP(pid.slot, pid.k.p);
-            motor.config_kI(pid.slot, pid.k.i);
-            motor.config_kD(pid.slot, pid.k.d);
-        }
-
-        // Configure output to range from full-forward to full-reverse.
         CoreUtils.checkCTRE(motor.configNominalOutputForward(0, TIMEOUT));
         CoreUtils.checkCTRE(motor.configNominalOutputReverse(0, TIMEOUT));
-        CoreUtils.checkCTRE(motor.configPeakOutputForward(+1.0, TIMEOUT));
-        CoreUtils.checkCTRE(motor.configPeakOutputReverse(-1.0, TIMEOUT));
-
-        CoreUtils.checkCTRE(motor.configMotionAcceleration(StrafeConstants.HOMING_MAX_ACCEL, TIMEOUT));
-        CoreUtils.checkCTRE(motor.configMotionCruiseVelocity(StrafeConstants.HOMING_MAX_SPEED, TIMEOUT));
-
-        motor.setNeutralMode(NeutralMode.Brake);
-        motor.setInverted(StrafeConstants.INVERTED);
-        motor.setSensorPhase(StrafeConstants.SENSOR_PHASE);
-
-        motor.selectProfileSlot(StrafePID.HOMING.slot, 0);
-    }
-
-    /** Called when the homing cycle hits left limit switch. */
-    private void homingLeftLimitReached() {
-        leftMaxTravel = motor.getSelectedSensorPosition();
-        motor.set(ControlMode.MotionMagic, Double.POSITIVE_INFINITY);
-    }
-
-    /** Called when the homing cycle hits right limit switch. */
-    private void homingRightLimitReached() {
-        rightMaxTravel = motor.getSelectedSensorPosition();
-        double center = (leftMaxTravel + rightMaxTravel) / 2;
-        leftMaxTravel -= center;
-        rightMaxTravel -= center;
-        motor.setSelectedSensorPosition(rightMaxTravel);
-
-        leftMaxTravel += StrafeConstants.TRAVEL_PADDING_TICKS;
-        rightMaxTravel -= StrafeConstants.TRAVEL_PADDING_TICKS;
-
-        mode = Mode.TRACKING;
-        motor.selectProfileSlot(StrafePID.TRACKING.slot, 0);
-        motor.configMotionAcceleration(StrafeConstants.TRACKING_MAX_ACCEL);
-        motor.configMotionCruiseVelocity(StrafeConstants.TRACKING_MAX_SPEED);
-
-        motor.set(ControlMode.MotionMagic, 0);
-    }
-
-    /**
-     * Set the target position for the strafe axis. Only has an effect when in TRACKING
-     * mode --- when we are homing or disabled this does nothing.
-     * @param position Inches right of center
-     */
-    private void setTarget(double position) {
-        if (mode == Mode.TRACKING) {
-            double targetTicks = position * StrafeConstants.TICKS_PER_INCH;
-            double clampedTarget = Math.min(rightMaxTravel, Math.max(targetTicks, leftMaxTravel));
-            motor.set(ControlMode.MotionMagic, clampedTarget);
-        }
-    }
-
-    /**
-     * Disable subsystem.
-     */
-    private void disable() {
-        motor.set(ControlMode.PercentOutput, 0);
-        mode = Mode.DISABLED;
+        // peak output managed by axis
+        // speed and accel managed by axis
+        motor.setInverted(INVERTED);
+        motor.setSensorPhase(SENSOR_PHASE);
     }
 }

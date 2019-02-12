@@ -14,11 +14,12 @@ import org.wildstang.framework.core.Subsystems;
  **/
 public enum WSSubsystems implements Subsystems {
     DRIVEBASE("Drive Base", Drive.class),
-    CLAW_EXAMPLE("CLAW_EXAMPLE",Claw_Example.class),
-    BALLPATH("Ballpath", Ballpath.class),
-    CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
-    LIFT("Lift", Lift.class),
-    STRAFE_AXIS("Strafe Axis", StrafeAxis.class);
+    // CLAW_EXAMPLE("CLAW_EXAMPLE",Claw_Example.class),
+    //BALLPATH("Ballpath", Ballpath.class),
+    //CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
+    //LIFT("Lift", Lift.class),
+    //STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
+    ;
 
     private String name;
 

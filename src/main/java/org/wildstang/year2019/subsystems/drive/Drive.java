@@ -1,11 +1,17 @@
 package org.wildstang.year2019.subsystems.drive;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
+//import org.wildstang.framework.logger.StateTracker;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 
@@ -27,15 +33,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * TODO: Factor the helper classes into core framework */
 public class Drive implements Subsystem {
 
-    int logCounter1 = 0;
-    int logCounter2 = 0;
-    int logCounter3 = 0;
-
     /** Status frame period controls how frequently the TalonSRX reports back with
      * its sensor status over the CANBus. This constant is in milliseconds. */
     //private static final int STATUS_FRAME_PERIOD = 10;
     //private static final double NEUTRAL_DEADBAND = 0.001;
-    private static final int TIMEOUT = 100; // milliseconds
+    private static final int TIMEOUT = -1; // milliseconds
 
     // Parameterizing over left and right makes motor setup code DRYer
     private static final int LEFT = 0;
@@ -46,7 +48,8 @@ public class Drive implements Subsystem {
                                              CANConstants.RIGHT_DRIVE_TALON};
     private static final int[][] FOLLOWER_IDS = {CANConstants.LEFT_DRIVE_VICTORS,
                                                  CANConstants.RIGHT_DRIVE_VICTORS};
-
+    private int pathNum = 1;
+    private static final String DRIVER_STATES_FILENAME = "/home/lvuser/drive_state_";
     /** Left and right Talon master controllers */
     private TalonSRX[] masters = new TalonSRX[2];
     /** Left and right pairs of Victor follower controllers */
@@ -82,7 +85,8 @@ public class Drive implements Subsystem {
     // While this is really a temporary variable, declared here to prevent
     // constant stack allocation.
     // TODO: Determine whether this is premature optimization.
-    private DriveSignal driveSignal;
+    private DriveSignal driveSignal;   
+   
 
     //////////////////////////////////////////////////////
     // Commanded values
@@ -106,14 +110,26 @@ public class Drive implements Subsystem {
 
     @Override
     public void init() {
-        // TODO: set up logging
+        // TODO: set up logging DONE
+        Core.getStateTracker().addIOInfo("Left speed (RPM)", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right speed (RPM)", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left output", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right output", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 1 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 2 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 1 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 2 current", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 1 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Left 2 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 1 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Right 2 voltage", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Drive heading", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Drive throttle", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Vision distance", "Drive", "Input", null);
+        Core.getStateTracker().addIOInfo("Vision correction", "Drive", "Input", null);
 
-        try {
-            initMotorControllers();
-        } catch (CoreUtils.CTREException e) {
-            System.out.println("Failed to init drive motor controllers: " + e);
-            // FIXME CRASH
-        }
+        
+        initMotorControllers();
 
         initInputs();
 
@@ -141,19 +157,18 @@ public class Drive implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
 
-        if (source == throttleInput) {
-            if (logCounter1 % 1000 == 0)
-                System.out.println("Drive::inputUpdate::throttleInput: " + throttleInput.getValue());
-            logCounter1++;
-            
+        
+        if (source == throttleInput) 
+        {        
             setThrottle(throttleInput.getValue());
-        } else if (source == headingInput) {
-            if (logCounter2 % 1000 == 0)
-                System.out.println("Drive::inputUpdate::headingInput: " + headingInput.getValue());
-            logCounter2++;
-
+        } 
+        else if (source == headingInput) 
+        {          
             setHeading(headingInput.getValue());
         }
+        
+
+
         // TODO: Do we want to make quickturn automatic?
         else if (source == quickTurnInput) {
             commandQuickTurn = quickTurnInput.getValue();
@@ -186,10 +201,12 @@ public class Drive implements Subsystem {
     public void update() {
         
         // Update dashboard with statistics on motor performance
-        // TODO: Is this redundant with logging machinery?
+        // TODO: Is this redundant with logging machinery? (Not redundant?)
         if (updateCounter % 10 == 0) {
             for (int side : SIDES) {
                 TalonSRX master = masters[side];
+                /*
+                These are commented out in order to debug an issue
                 double output = master.getMotorOutputPercent();
                 SmartDashboard.putNumber(SIDE_NAMES[side] + " output", output);
                 double speed = master.getSelectedSensorVelocity();
@@ -197,7 +214,7 @@ public class Drive implements Subsystem {
                 double error = master.getClosedLoopError();
                 SmartDashboard.putNumber(SIDE_NAMES[side] + " error", error);
                 double target = master.getClosedLoopTarget();
-                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);
+                SmartDashboard.putNumber(SIDE_NAMES[side] + " target", target);*/
             }
             
             SmartDashboard.putNumber("commandThrottle", commandThrottle);
@@ -218,13 +235,8 @@ public class Drive implements Subsystem {
             double effectiveThrottle = commandThrottle;
             if (commandAntiTurbo) {
                 effectiveThrottle = commandThrottle * DriveConstants.ANTI_TURBO_FACTOR;
-            }
+            }           
 
-            if (logCounter3 % 1000 == 0) {
-            System.out.println("Drive::update::commandAntiTurbo::effectiveThrottle: " + effectiveThrottle);
-            System.out.println("Drive::update::commandAntiTurbo::commandHeading: " + commandHeading);
-            }
-            logCounter3++;
             SmartDashboard.putBoolean("Quick Turn", commandQuickTurn);
             driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
 
@@ -232,15 +244,7 @@ public class Drive implements Subsystem {
             SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
             
             setMotorSpeeds(driveSignal);
-
-            /* FIXME re-enable this 
-            if (Robot.LOG_STATE) {
-                maxSpeedAchieved = Math.max(maxSpeedAchieved,
-                        Math.max(Math.abs(masters[LEFT].getSelectedSensorVelocity()),
-                                Math.abs(masters[RIGHT].getSelectedSensorVelocity())));
-
-                SmartDashboard.putNumber("Max Encoder Speed", maxSpeed);
-            }*/
+           
         break;
         case FULL_BRAKE:
         break;
@@ -252,33 +256,10 @@ public class Drive implements Subsystem {
             driveSignal = new DriveSignal(commandThrottle, commandThrottle);
         break;
         }
-
         SensorCollection leftEncoder = masters[LEFT].getSensorCollection();
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getQuadraturePosition());
         SensorCollection rightEncoder = masters[RIGHT].getSensorCollection();
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getQuadraturePosition());
-
-        /* FIXME re-enable this
-        if (Robot.LOG_STATE) {
-            StateTracker tracker = Core.getStateTracker();
-            tracker.addState("Drive heading", "Drive", commandHeading);
-            tracker.addState("Drive throttle", "Drive", commandThrottle);
-            tracker.addState("Vision distance", "Drive", m_visionDistance);
-            tracker.addState("Vision correction", "Drive", m_visionXCorrection);
-
-            String[] sides = {"Left ", "Right "};
-            for (int i = 0; i < m_masters.length; ++i) {
-                TalonSRX master = m_masters[i];
-                TalonSRX follower = m_followers[i];
-                String side = sides[i];
-                tracker.addState(side + "output", "Drive", master.getMotorOutputPercent());
-                tracker.addState(side + "speed (RPM)", "Drive", master.getSelectedSensorVelocity());
-                tracker.addState(side + "1 voltage", "Drive", master.getMotorOutputVoltage());
-                tracker.addState(side + "2 voltage", "Drive", follower.getMotorOutputVoltage());
-                tracker.addState(side + "1 current", "Drive", master.getOutputCurrent());
-                tracker.addState(side + "2 current", "Drive", follower.getOutputCurrent());
-            }
-        }*/
 
         updateCounter += 1;
     }
@@ -335,20 +316,36 @@ public class Drive implements Subsystem {
         pathFollower = new PathFollower(p_path, masters[LEFT], masters[RIGHT]);
     }
 
-    /** Stop following and clean up path. */
+    public PathFollower getPathFollower() {
+        return pathFollower;
+    }
+
+    public void startFollowingPath() {
+        if (pathFollower == null) {
+            throw new IllegalStateException("No path set");
+        }
+
+        if (pathFollower.isActive()) {
+            throw new IllegalStateException("Path is already active");
+        }
+    }
+
+
+    /** Stop following and clean up path. FIXED? */
     public void pathCleanup() {
         if (pathFollower != null) {
             pathFollower.stop();
-            pathFollower = null;
-            // FIXME fix the next two lines
-            //writeDriveStatesToFile(DRIVER_STATES_FILENAME + pathNum + ".txt");
-            //++pathNum;
+            pathFollower = null;                     
         }
     }
     
+    
+
     /** Stop following this path. 
      * 
-     * FIXME this is weirdly redundant with pathCleanup --- something is wrong
+     * FIXME this is weirdly redundant with pathCleanup --- something is wrong 
+     * The code IS redundant with pathCleanup, do we remove this whole method or do we remove the
+     * "pathFollower.stop();" from "abortFollowingPath()"?
      */
     public void abortFollowingPath() {
         if (pathFollower != null) {
@@ -356,7 +353,7 @@ public class Drive implements Subsystem {
         }
     }
 
-    // TODO copy in the rest of path functionality
+    // TODO copy in the rest of path functionality Fixed?
 
     /** Switch to cheesy drive. */
     public void setOpenLoopDrive() {
@@ -492,6 +489,5 @@ public class Drive implements Subsystem {
     private void setMotorSpeeds(DriveSignal speeds) {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
-
     }
 }

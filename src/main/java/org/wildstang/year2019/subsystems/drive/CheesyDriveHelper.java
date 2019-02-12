@@ -9,8 +9,8 @@ package org.wildstang.year2019.subsystems.drive;
  */
 public class CheesyDriveHelper {
 
-    int logCounter = 0;
-    int logCounter2 = 0;
+    //int logCounter = 0;
+    //int logCounter2 = 0;
 
     double mQuickStopAccumulator;
     public static final double kThrottleDeadband = 0.02;
@@ -22,13 +22,6 @@ public class CheesyDriveHelper {
 
         wheel = handleDeadband(wheel, kWheelDeadband);
         throttle = handleDeadband(throttle, kThrottleDeadband);
-
-        if (logCounter % 1000 == 0) {
-
-        System.out.println("CheesyDriveHelper::cheesyDrive::handleDeadband::wheel: " + wheel);
-        System.out.println("CheesyDriveHelper::cheesyDrive::handleDeadband::throttle: " + throttle);
-        }
-        logCounter++;
 
         double overPower;
 
@@ -71,13 +64,6 @@ public class CheesyDriveHelper {
         }
         mSignal.rightMotor = rightPwm;
         mSignal.leftMotor = leftPwm;
-
-
-        if (logCounter2 % 1000 == 0) {
-        System.out.println("CheesyDriveHelper::cheesyDrive::mSignal::rightMotor: " + mSignal.rightMotor);
-        System.out.println("CheesyDriveHelper::cheesyDrive::mSignal::leftMotor: " + mSignal.leftMotor);
-        }
-        logCounter2++;
 
         return mSignal;
     }
