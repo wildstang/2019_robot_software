@@ -3,6 +3,7 @@ package org.wildstang.year2019.subsystems.strafeaxis;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 //import org.wildstang.framework.CoreUtils.CTREException;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
@@ -67,7 +68,9 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
 
-    private FakeTalonSRX motor;
+    //testing
+    //private FakeTalonSRX motor;
+    private TalonSRX motor;
 
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
@@ -81,7 +84,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void init() {
-        initMotor();
+        initOutputs();
         initInputs();
         initAxis();
         resetState();
@@ -116,6 +119,15 @@ public class StrafeAxis extends Axis implements Subsystem {
         linePositionInput.addInputListener(this);
     }
 
+    private void initOutputs(){
+        motor = new TalonSRX(CANConstants.STRAFE_VICTOR);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,TIMEOUT);
+        motor.setInverted(INVERTED);
+        motor.setSensorPhase(SENSOR_PHASE);
+        motor.configNominalOutputForward(0,TIMEOUT);
+        motor.configNominalOutputReverse(0,TIMEOUT);
+    }
+
     private void initAxis() {
         IInputManager inputManager = Core.getInputManager();
         axisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
@@ -143,14 +155,14 @@ public class StrafeAxis extends Axis implements Subsystem {
         initAxis(axisConfig);
     }
 
-    private void initMotor() {
-        motor = new FakeTalonSRX();
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
-        // peak output managed by axis
-        // speed and accel managed by axis
-        motor.setInverted(INVERTED);
-        motor.setSensorPhase(SENSOR_PHASE);
-    }
+    // private void initMotor() {
+    //     motor = new FakeTalonSRX();
+    //     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+    //     /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
+    //     /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
+    //     // peak output managed by axis
+    //     // speed and accel managed by axis
+    //     motor.setInverted(INVERTED);
+    //     motor.setSensorPhase(SENSOR_PHASE);
+    // }
 }
