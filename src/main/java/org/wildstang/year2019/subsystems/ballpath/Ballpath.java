@@ -60,8 +60,9 @@ public class Ballpath implements Subsystem {
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
     private DigitalInput hopperInput;
+    private DigitalInput override;
 
-    //TODO code for sensors
+    //UPDATE code for sensors
     //private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to be set later
     //private DigitalInput Sensor_B_Input;//controlled by sensor values, sensors to be set later
 
@@ -84,6 +85,7 @@ public class Ballpath implements Subsystem {
     private boolean isHopper_motor;
     private boolean Sensor_A_Value;
     private boolean Sensor_B_Value;
+    private boolean carriage_slowed;
 
     /** 
      * TODO: Names set up for each Victor that we are going to need
@@ -107,6 +109,7 @@ public class Ballpath implements Subsystem {
         intake_position = false;
         isIntake_motor = false;
         isCarriageMotor = false;
+        carriage_slowed=false;
         isHopper_motor = false;
         reverseValue=false;
         Sensor_A_Value = false; //assumption is that ball detected = true, no ball detected = false
@@ -117,9 +120,12 @@ public class Ballpath implements Subsystem {
         carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
         intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
 
-        //TODO
-        //UPDATE Sesor_A_Value and Sensor_B_Value
+        
+        //UPDATE when sensors are live
+        //Sensor_A_Value = Sensor_A_Input.getValue();
+        //Sensor_B_Value = Sensor_B_Input.getValue();
 
+        
         if(source == intakeInput)
         {
             if(intakeInput.getValue())
@@ -157,16 +163,15 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = true;
                 isHopper_motor = true;
 
-                //TODO once sensors in code, should just be able to uncomment
-                //until then, carriage doesn't move with everything
-            //    if(source == Sensor_A_Input)
-            //     {
-            //         Sensor_A_Value = true;
-            //     } 
-            //     if (source == Sensor_B_Input)
-            //     {
-            //         Sensor_B_Value = true;
-            //     }
+                if (Sensor_B_Value || Sensor_A_Value){
+                    if (!isCarriageMotor){
+                        carriage_slowed=true;
+                    }
+                    isCarriageMotor=true;
+                } else if (Sensor_B_Value && !Sensor_A_Value){
+                    isCarriageMotor=false;
+                }
+               
                 
 
             }//everything
@@ -183,36 +188,6 @@ public class Ballpath implements Subsystem {
             } 
 
         } //Reverse Input
-
-        /** NOT NEEDED
-         * if(source == Sensor_A_Input)
-         * {
-         *     if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
-         *     {
-         *         Sensor_A_Value = true;
-         *         Sensor_B_Value = true;
-         *
-         *         ROLLER_SPEED_Value = true;
-         *
-         *     }
-         *
-         *     if(Sensor_A_Input.getValue() && Sensor_B_Input.getValue())
-         *     {
-         *         Sensor_A_Value = false;
-         *         Sensor_B_Value = true;
-         *
-         *         ROLLER_SPEED_SLOWED = 0.4;
-         *
-         *     }
-         *
-         *     if(Sensor_B_Input.getValue())
-         *     {
-         *         Sensor_B_Value = false;
-         *         ROLLER_SPEED_BRAKE = true;
-         *     }
-         *
-         * }//sensors A and B
-         */
         
 
     }
@@ -231,6 +206,11 @@ public class Ballpath implements Subsystem {
         hopperInput.addInputListener(this);
         reverseInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.REVERSE_BUTTON.getName());
         reverseInput.addInputListener(this);
+        //Sensor_A_Input = (DigitalInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_SENSOR_A.getName());
+        //Sensor_A_Input.addInputListener(this);
+        //Sensor_B_Input = (DigitalInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_SENSOR_B.getName());
+        //Sensor_B_Input.addInputListener(this);
+        //uncomment when sensors are live
 
         //Solenoids
         hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
@@ -278,22 +258,11 @@ public class Ballpath implements Subsystem {
         }
         if(isCarriageMotor)
         {
-            if (Sensor_A_Value)
-            {
+            if (carriage_slowed && Sensor_A_Value){
                 carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
-            } 
-            else if(Sensor_A_Value && Sensor_B_Value)
-            {
+            }else if (carriage_slowed && Sensor_B_Value){
                 carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_2);
-            }
-            else if(Sensor_B_Value)
-            {
-                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
-            }
-            else
-            {
-                carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
-            }
+            }else carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
                 
         }
         if(isHopper_motor)
