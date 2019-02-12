@@ -18,6 +18,7 @@ import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
 
+import edu.wpi.first.wpilibj.*;
 /** This subsystem is responsible for lining up hatch panels left-to-right.
  * 
  * There should probably be a PID loop controlling the position of this axis.
@@ -45,7 +46,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     //private DigitalInput AxisConfig.lowerLimitSwitch; (replaced with AxisConfig.lowerLimitSwitch)
     //private DigitalInput AxisConfig.upperLimitSwitch; (replaced with AxisConfig.upperLimitSwitch)
 
-    
+    //Ardiuno setups
+    private SerialPort arduino;
 
     /* Width of the space we have to play in */
     private int leftMaxTravel;
@@ -104,6 +106,10 @@ public class StrafeAxis extends Axis implements Subsystem {
         }
         resetState();
         mode = Mode.DISABLED;
+
+        arduino = new SerialPort(9600, SerialPort.Port.kUSB);
+        //arduino.write(new byte[] {0x12}, 1);
+        
     }
 
     @Override
@@ -118,7 +124,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void resetState() {
-        super.resetState();
+        super.resetState(); 
     }
 
     @Override
@@ -142,19 +148,12 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
         linePositionInput.addInputListener(this);
-<<<<<<< HEAD
         AxisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
         AxisConfig.lowerLimitSwitch.addInputListener(this);
         AxisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
         AxisConfig.upperLimitSwitch.addInputListener(this);
         //fineTuneInput = (AnalogInput) inputManager.getInput(WSInputs.HATCH_STRAFE);
         //fineTuneInput.addInputListener(this);
-=======
-        leftLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
-        leftLimitSwitch.addInputListener(this);
-        rightLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
-        rightLimitSwitch.addInputListener(this);
->>>>>>> f7c1120e485d9c5a8ad079ee4e7896f8d2145cd1
     }
 
     private void initMotor() throws CoreUtils.CTREException {
