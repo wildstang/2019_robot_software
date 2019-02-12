@@ -84,8 +84,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void init() {
-        initOutputs();
+        
         initInputs();
+        initOutputs();
         initAxis();
         resetState();
     }
@@ -138,7 +139,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.STRAFE_MANUAL);
         axisConfig.manualAdjustmentJoystick.addInputListener(this);
         axisConfig.safetyButton1 = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
-        axisConfig.safetyButton2.addInputListener(this);
+        axisConfig.safetyButton1.addInputListener(this);
         axisConfig.safetyButton2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.STRAFE_OVERRIDE.getName());
         axisConfig.safetyButton2.addInputListener(this);
 
