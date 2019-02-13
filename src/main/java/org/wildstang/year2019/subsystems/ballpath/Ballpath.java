@@ -121,20 +121,6 @@ public class Ballpath implements Subsystem {
          * Update local variables
          */
 
-        /*
-         * hopper_position = false; intake_position = false; isIntake_motor = false;
-         * isCarriageMotor = false; carriage_slowed=false; isHopper_motor = false;
-         * reverseValue=false; Sensor_A_Value = false; //assumption is that ball
-         * detected = true, no ball detected = false Sensor_B_Value = false;
-         */
-
-        /*
-         * hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
-         * hopperVictor2.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
-         * carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
-         * intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_BRAKE);
-         */
-
         // UPDATE when sensors are live
         // Sensor_A_Value = Sensor_A_Input.getValue();
         // Sensor_B_Value = Sensor_B_Input.getValue();
@@ -147,6 +133,19 @@ public class Ballpath implements Subsystem {
             reverseValue = false;
         }
 
+        if (hopperInput.getValue()) {
+            hopper_position = true;
+        } else {
+            hopper_position = false;
+        }
+
+        if (!safetyInput.getValue() && carriageRollersInput.getValue()) {
+            isCarriageMotor = true;
+            carriage_slowed = false;
+        } else {
+            isCarriageMotor = false;
+        }
+
         // check if everything should be activated
         if (fullBallpathInput.getValue()) {
             hopper_position = true;
@@ -154,13 +153,18 @@ public class Ballpath implements Subsystem {
             isIntake_motor = true;
             isHopper_motor = true;
 
-            if (Sensor_B_Value || Sensor_A_Value) {
-                if (!isCarriageMotor) {
+            // If carriage motor is already running because of the carriage input, that
+            // should override our logic in this branch
+            if (isCarriageMotor == false) {
+                if (Sensor_B_Value || Sensor_A_Value) {
                     carriage_slowed = true;
+                    isCarriageMotor = true;
+                } else if (Sensor_B_Value && !Sensor_A_Value) {
+                    isCarriageMotor = false;
+                } else { // neither sensor pressed
+                    carriage_slowed = false;
+                    isCarriageMotor = true;
                 }
-                isCarriageMotor = true;
-            } else if (Sensor_B_Value && !Sensor_A_Value) {
-                isCarriageMotor = false;
             }
         }
         // Everything is not activated so we check each indivigual button!
@@ -172,58 +176,7 @@ public class Ballpath implements Subsystem {
                 intake_position = false;
                 isIntake_motor = false;
             }
-
-            if (hopperInput.getValue()) {
-                hopper_position = true;
-            } else {
-                hopper_position = false;
-            }
-
-            if (!safetyInput.getValue() && carriageRollersInput.getValue()) {
-                isCarriageMotor = true;
-            } else {
-                isCarriageMotor = false;
-            }
         }
-
-        /*
-         * if(source == intakeInput) { if(intakeInput.getValue()) { intake_position =
-         * true; isIntake_motor = true; }
-         * 
-         * }//intake
-         * 
-         * if(source == hopperInput) { if(hopperInput.getValue()) { hopper_position =
-         * true; }
-         * 
-         * }//hopper
-         * 
-         * if(source == carriageRollersInput) { if(!safetyInput.getValue() &&
-         * carriageRollersInput.getValue()) { isCarriageMotor = true; }
-         * 
-         * }//carriage rollers
-         * 
-         * if(source == fullBallpathInput) { if(fullBallpathInput.getValue()) {
-         * hopper_position = true; intake_position = true; isIntake_motor = true;
-         * isHopper_motor = true;
-         * 
-         * if (Sensor_B_Value || Sensor_A_Value){ if (!isCarriageMotor){
-         * carriage_slowed=true; } isCarriageMotor=true; } else if (Sensor_B_Value &&
-         * !Sensor_A_Value){ isCarriageMotor=false; }
-         * 
-         * 
-         * 
-         * }//everything
-         * 
-         * }
-         * 
-         * if(source == reverseInput) {
-         * 
-         * if(reverseInput.getValue() && !(isIntake_motor || isCarriageMotor ||
-         * isHopper_motor)) { reverseValue = true; intake_position = true; }
-         * 
-         * } //Reverse Input
-         */
-
     }
 
     @Override
@@ -292,7 +245,10 @@ public class Ballpath implements Subsystem {
         intake_solenoid.setValue(intake_position);
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
+        } else {
+            intakeVictor.set(ControlMode.PercentOutput, 0);
         }
+
         if (isCarriageMotor) {
             if (carriage_slowed && Sensor_A_Value) {
                 carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
@@ -301,18 +257,24 @@ public class Ballpath implements Subsystem {
             } else
                 carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
 
+        } else {
+            carriageVictor.set(ControlMode.PercentOutput, 0);
         }
+
         if (isHopper_motor) {
             hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED);
             hopperVictor2.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
 
+        } else {
+            hopperVictor1.set(ControlMode.PercentOutput, 0);
+            hopperVictor2.set(ControlMode.PercentOutput, 0);
         }
+
         if (reverseValue) {
             hopperVictor1.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
             hopperVictor2.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
             carriageVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
             intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
-
         }
 
     }
