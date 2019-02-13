@@ -13,7 +13,6 @@ import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.framework.subsystems.Subsystem;
-import org.wildstang.hardware.FakeTalonSRX;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
@@ -41,16 +40,15 @@ import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
 public class StrafeAxis extends Axis implements Subsystem {
 
     private static final boolean INVERTED = false;
-    private static final boolean SENSOR_PHASE = false;
+    private static final boolean SENSOR_PHASE = true;
 
     /** TODO: remove this */
     private static final int TIMEOUT = -1;
 
-
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 1.5; // FIXME correct value
     /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 1024; // FIXME correct value
+    private static final double TICKS_PER_REV = 4096; // FIXME correct value
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
 
@@ -68,8 +66,6 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
 
-    //testing
-    //private FakeTalonSRX motor;
     private TalonSRX motor;
 
     /** The axis configuration we pass up to the axis initialization */
@@ -121,13 +117,15 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     }
 
-    private void initOutputs(){
-        motor = new TalonSRX(CANConstants.STRAFE_VICTOR);
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,0,TIMEOUT);
+    private void initOutputs() {
+        motor = new TalonSRX(CANConstants.STRAFE_TALON);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+        motor.configNominalOutputForward(0, TIMEOUT);
+        motor.configNominalOutputReverse(0, TIMEOUT);
+        // peak output managed by axis
+        // speed and accel managed by axis
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
-        motor.configNominalOutputForward(0,TIMEOUT);
-        motor.configNominalOutputReverse(0,TIMEOUT);
     }
 
     private void initAxis() {
@@ -161,14 +159,6 @@ public class StrafeAxis extends Axis implements Subsystem {
         initAxis(axisConfig);
     }
 
-    // private void initMotor() {
-    //     motor = new FakeTalonSRX();
-    //     motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-    //     /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
-    //     /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
-    //     // peak output managed by axis
-    //     // speed and accel managed by axis
-    //     motor.setInverted(INVERTED);
-    //     motor.setSensorPhase(SENSOR_PHASE);
-    // }
+    private void initMotor() {
+    }
 }
