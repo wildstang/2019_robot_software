@@ -41,7 +41,7 @@ public class Hatch implements Subsystem {
                                 // 4 = Collect
 
     // Constants
-    private final int solenoidDelayMillis = 500; // TODO Measure delay during testing
+    private final double solenoidDelay = 0.5; // TODO Measure delay during testing
 
     @Override
     public void inputUpdate(Input source) {
@@ -60,7 +60,7 @@ public class Hatch implements Subsystem {
             //     currentCommand = 2;
             // }
 
-            if (currentCommand == 0 && hatchDeploy.getValue() == true) {
+            if (currentCommand == 0 && hatchCollect.getValue() == true) {
                 currentCommand = 4;
             }
         }
@@ -122,14 +122,14 @@ public class Hatch implements Subsystem {
 
                 timer.reset();
                 deployLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(0.5) && !timer.hasPeriodPassed(1)) {
+            } else if (timer.hasPeriodPassed(solenoidDelay) && !timer.hasPeriodPassed(2*solenoidDelay)) {
                 lockPosition = false;
                 hatchLock.setValue(lockPosition);
 
-            } else if (timer.hasPeriodPassed(1) && !timer.hasPeriodPassed(1.5)) {
+            } else if (timer.hasPeriodPassed(2*solenoidDelay) && !timer.hasPeriodPassed(3*solenoidDelay)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
-            } else if (timer.hasPeriodPassed(1.5)) {
+            } else if (timer.hasPeriodPassed(3*solenoidDelay)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
 
@@ -146,7 +146,7 @@ public class Hatch implements Subsystem {
 
                 timer.reset();
                 collectLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(0.5)) {
+            } else if (timer.hasPeriodPassed(solenoidDelay)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
                 working = false;
