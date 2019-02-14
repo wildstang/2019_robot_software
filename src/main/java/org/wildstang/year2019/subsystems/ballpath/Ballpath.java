@@ -172,6 +172,7 @@ public class Ballpath implements Subsystem {
             if (intakeInput.getValue()) {
                 intake_position = true;
                 isIntake_motor = true;
+                isHopper_motor = false;
             } else {
                 intake_position = false;
                 isIntake_motor = false;
