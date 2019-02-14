@@ -34,6 +34,7 @@ public class Hatch implements Subsystem {
     private long collectRestartLastMovementTime;
     private long collectLastMovementTime;
 
+    // FIXME make this an enum for readability
     private int currentCommand; // 0 = Idle
                                 // 1 = Deploy restart
                                 // 2 = Collect restart
