@@ -175,6 +175,7 @@ public class Ballpath implements Subsystem {
             } else {
                 intake_position = false;
                 isIntake_motor = false;
+                isHopper_motor = false;
             }
         }
     }
