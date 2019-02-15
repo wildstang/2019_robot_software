@@ -252,10 +252,10 @@ public class Ballpath implements Subsystem {
         }
 
         if (isCarriageMotor) {
-            if (carriage_slowed && Sensor_A_Value) {
-                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
-            } else if (carriage_slowed && Sensor_B_Value) {
+            if (carriage_slowed && Sensor_B_Value) {
                 carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_2);
+            } else if (carriage_slowed) {
+                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
             } else
                 carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
 
