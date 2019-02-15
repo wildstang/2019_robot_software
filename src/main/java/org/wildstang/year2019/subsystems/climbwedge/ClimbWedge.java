@@ -54,7 +54,7 @@ public class ClimbWedge implements Subsystem {
                 if (timer.hasPeriodPassed(solenoidDelay)) {
                     deployWedgeStatus = true;
                 }
-            } else (!timerStatus) {
+            } else if (!timerStatus) {
                 timer.reset();
                 timer.start();
                 timerStatus = true;
