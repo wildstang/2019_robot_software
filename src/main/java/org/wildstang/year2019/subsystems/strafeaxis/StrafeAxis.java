@@ -46,9 +46,9 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final int TIMEOUT = -1;
 
     /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 1.5; // FIXME correct value
+    private static final double REVS_PER_INCH = 10; 
     /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 4096; // FIXME correct value
+    private static final double TICKS_PER_REV = 1024; 
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
 
