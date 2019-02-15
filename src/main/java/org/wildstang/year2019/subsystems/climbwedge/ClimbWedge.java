@@ -26,6 +26,7 @@ public class ClimbWedge implements Subsystem {
     private boolean wedgeButton1Status;
     private boolean wedgeButton2Status;
     private boolean deployWedgeStatus;
+    private boolean timerStatus;
     
     private DigitalInput wedgeButton1;
     private DigitalInput wedgeButton2;
@@ -49,13 +50,18 @@ public class ClimbWedge implements Subsystem {
 
         //Checks if both buttons assigned to wedge have been pressed down
         if (wedgeButton1Status && wedgeButton2Status) {
-            timer.reset();
-            timer.start();
-            if (timer.hasPeriodPassed(solenoidDelay)) {
-                deployWedgeStatus = true;
+            if (timerStatus) {
+                if (timer.hasPeriodPassed(solenoidDelay)) {
+                    deployWedgeStatus = true;
+                }
+            } else (!timerStatus) {
+                timer.reset();
+                timer.start();
+                timerStatus = true;
             }
         } else {
             timer.stop();
+            timerStatus = false;
         }
     }
 
