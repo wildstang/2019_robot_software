@@ -31,11 +31,13 @@ public class Hatch implements Subsystem {
                                   //                      fit back through opening)
                                   // false = Retracted (mechanism can freely move in any direction through hatch panel opening)
     private boolean working;
-    private long deployRestartLastMovementTime;
-    private long deployLastMovementTime;
+
+    //No Longer using
+    // private long deployRestartLastMovementTime;
+    // private long deployLastMovementTime;
     
-    private long collectRestartLastMovementTime;
-    private long collectLastMovementTime;
+    // private long collectRestartLastMovementTime;
+    // private long collectLastMovementTime;
 
 
     enum commands {
@@ -119,38 +121,38 @@ public class Hatch implements Subsystem {
 
         //         currentCommand = 4;
         //     }}
-        if (currentCommand == commands.COLLECT.ordinal()) {
+        if (currentCommand == commands.DEPLOY.ordinal()) {
             if (!working) {
                 working = true;
                 outPosition = true;
                 hatchOut.setValue(outPosition);
 
                 timer.reset();
-                deployLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(LOCK_WAIT) && !timer.hasPeriodPassed(2*LOCK_WAIT)) {
+                //deployLastMovementTime = System.currentTimeMillis();
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT)) {
                 lockPosition = false;
                 hatchLock.setValue(lockPosition);
 
-            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT) && !timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
+            } else if (timer.hasPeriodPassed(2*LOCK_WAIT) && !timer.hasPeriodPassed(3*LOCK_WAIT)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
-            } else if (timer.hasPeriodPassed(3*LOCK_WAIT)) {
+            } else if (timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
 
                 working = false;
-                deployLastMovementTime = 0;
+                //deployLastMovementTime = 0;
 
                 currentCommand = commands.IDLE.ordinal();
             }
-        } else if (currentCommand == commands.DEPLOY.ordinal()) {
+        } else if (currentCommand == commands.COLLECT.ordinal()) {
             if (!working) {
                 working = true;
                 outPosition = true;
                 hatchOut.setValue(outPosition);
 
                 timer.reset();
-                collectLastMovementTime = System.currentTimeMillis();
+                //collectLastMovementTime = System.currentTimeMillis();
             } else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
@@ -171,11 +173,11 @@ public class Hatch implements Subsystem {
 
         working = false;
 
-        deployRestartLastMovementTime = 0;
-        deployLastMovementTime = 0;
+        // deployRestartLastMovementTime = 0;
+        // deployLastMovementTime = 0;
 
-        collectRestartLastMovementTime = 0;
-        collectLastMovementTime = 0;
+        // collectRestartLastMovementTime = 0;
+        // collectLastMovementTime = 0;
 
         currentCommand = commands.IDLE.ordinal();
     }
