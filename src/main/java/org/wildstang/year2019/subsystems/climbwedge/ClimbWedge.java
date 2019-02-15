@@ -49,20 +49,7 @@ public class ClimbWedge implements Subsystem {
         }
 
         //Checks if both buttons assigned to wedge have been pressed down
-        if (wedgeButton1Status && wedgeButton2Status) {
-            if (timerStatus) {
-                if (timer.hasPeriodPassed(solenoidDelay)) {
-                    deployWedgeStatus = true;
-                }
-            } else if (!timerStatus) {
-                timer.reset();
-                timer.start();
-                timerStatus = true;
-            }
-        } else {
-            timer.stop();
-            timerStatus = false;
-        }
+        
     }
 
     @Override
@@ -85,6 +72,20 @@ public class ClimbWedge implements Subsystem {
 
     @Override
     public void update() {
+        if (wedgeButton1Status && wedgeButton2Status) {
+            if (timerStatus) {
+                if (timer.hasPeriodPassed(solenoidDelay)) {
+                    deployWedgeStatus = true;
+                }
+            } else if (!timerStatus) {
+                timer.reset();
+                timer.start();
+                timerStatus = true;
+            }
+        } else {
+            timer.stop();
+            timerStatus = false;
+        }
         deployWedge.setValue(deployWedgeStatus);
     }
 
