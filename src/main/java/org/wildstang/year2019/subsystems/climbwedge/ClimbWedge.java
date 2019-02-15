@@ -8,6 +8,7 @@ import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
+import org.wildstang.framework.timer.WsTimer;
 
 /** This subsystem controls the wedge that will allow us to climb at game end. *
 
@@ -31,6 +32,10 @@ public class ClimbWedge implements Subsystem {
 
     private WsSolenoid deployWedge;
 
+    private WsTimer timer = new WsTimer();
+    
+    private final double solenoidDelay = 3; //Constant stores delay length in seconds
+
     @Override
     public void inputUpdate(Input source) {
         //Stores the status of wedge buttons into local variables
@@ -44,7 +49,13 @@ public class ClimbWedge implements Subsystem {
 
         //Checks if both buttons assigned to wedge have been pressed down
         if (wedgeButton1Status && wedgeButton2Status) {
-            deployWedgeStatus = true;
+            timer.reset();
+            timer.start();
+            if (timer.hasPeriodPassed(solenoidDelay)) {
+                deployWedgeStatus = true;
+            }
+        } else {
+            timer.stop();
         }
     }
 
