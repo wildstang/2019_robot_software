@@ -12,6 +12,9 @@ import org.wildstang.framework.timer.WsTimer;
 
 public class Hatch implements Subsystem {
 
+    //Timer constants TODO: Measure time during testing
+    private static final double DEPLOY_WAIT = 0.5;
+    private static final double LOCK_WAIT = 0.5;
     // Local inputs
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;
@@ -34,15 +37,15 @@ public class Hatch implements Subsystem {
     private long collectRestartLastMovementTime;
     private long collectLastMovementTime;
 
-    // FIXME make this an enum for readability
+
+    enum commands {
+        IDLE, DEPLOY_RESTART, COLLECT_RESTART, DEPLOY, COLLECT;
+    }
     private int currentCommand; // 0 = Idle
                                 // 1 = Deploy restart
                                 // 2 = Collect restart
                                 // 3 = Deploy
                                 // 4 = Collect
-
-    // Constants
-    private final double solenoidDelay = 0.5; // TODO Measure delay during testing
 
     @Override
     public void inputUpdate(Input source) {
@@ -51,8 +54,9 @@ public class Hatch implements Subsystem {
             //     currentCommand = 1;
             // }
 
-            if (currentCommand == 0 && hatchDeploy.getValue() == true) {
-                currentCommand = 3;
+            if (currentCommand == commands.IDLE.ordinal()  && hatchDeploy.getValue() == true) {
+                currentCommand = commands.DEPLOY.ordinal();
+                
             }
         }
         
@@ -61,8 +65,8 @@ public class Hatch implements Subsystem {
             //     currentCommand = 2;
             // }
 
-            if (currentCommand == 0 && hatchCollect.getValue() == true) {
-                currentCommand = 4;
+            if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true) {
+                currentCommand = commands.COLLECT.ordinal();
             }
         }
     }
@@ -115,7 +119,7 @@ public class Hatch implements Subsystem {
 
         //         currentCommand = 4;
         //     }}
-        if (currentCommand == 3) {
+        if (currentCommand == commands.COLLECT.ordinal()) {
             if (!working) {
                 working = true;
                 outPosition = true;
@@ -123,23 +127,23 @@ public class Hatch implements Subsystem {
 
                 timer.reset();
                 deployLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(solenoidDelay) && !timer.hasPeriodPassed(2*solenoidDelay)) {
+            } else if (timer.hasPeriodPassed(LOCK_WAIT) && !timer.hasPeriodPassed(2*LOCK_WAIT)) {
                 lockPosition = false;
                 hatchLock.setValue(lockPosition);
 
-            } else if (timer.hasPeriodPassed(2*solenoidDelay) && !timer.hasPeriodPassed(3*solenoidDelay)) {
+            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT) && !timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
-            } else if (timer.hasPeriodPassed(3*solenoidDelay)) {
+            } else if (timer.hasPeriodPassed(3*LOCK_WAIT)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
 
                 working = false;
                 deployLastMovementTime = 0;
 
-                currentCommand = 0;
+                currentCommand = commands.IDLE.ordinal();
             }
-        } else if (currentCommand == 4) {
+        } else if (currentCommand == commands.DEPLOY.ordinal()) {
             if (!working) {
                 working = true;
                 outPosition = true;
@@ -147,12 +151,12 @@ public class Hatch implements Subsystem {
 
                 timer.reset();
                 collectLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(solenoidDelay)) {
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
                 working = false;
 
-                currentCommand = 0;
+                currentCommand = commands.IDLE.ordinal();
             }
         }
     }
@@ -173,7 +177,7 @@ public class Hatch implements Subsystem {
         collectRestartLastMovementTime = 0;
         collectLastMovementTime = 0;
 
-        currentCommand = 0;
+        currentCommand = commands.IDLE.ordinal();
     }
 
     @Override
