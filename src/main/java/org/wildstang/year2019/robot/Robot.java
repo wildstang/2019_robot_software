@@ -54,6 +54,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("Engaging autonomous mode.");
+        Core.getSubsystemManager().resetState();
+        Drive driveBase = ((Drive) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.setOpenLoopDrive();
+        driveBase.setBrakeMode(false);
     }
 
     @Override
@@ -102,6 +107,24 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        try {
+
+            // Update all inputs, outputs and subsystems
+            
+            long start = System.currentTimeMillis();
+            core.executeUpdate();
+            long end = System.currentTimeMillis();
+
+            
+            SmartDashboard.putNumber("Cycle Time", (end - start));
+        } catch (Throwable e) {
+            SmartDashboard.putString("Last error", "Exception thrown during teleopPeriodic");
+            SmartDashboard.putString("Exception thrown", e.toString());
+            //exceptionThrown = true;
+            throw e;
+        } finally {
+            SmartDashboard.putBoolean("ExceptionThrown",true);
+        }
     }
 
     @Override
