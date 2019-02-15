@@ -180,6 +180,12 @@ public class Lift extends Axis implements Subsystem {
         axisConfig.upperLimitSwitch.addInputListener(this);
         axisConfig.manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.LIFT_MANUAL);
         axisConfig.manualAdjustmentJoystick.addInputListener(this);
+        axisConfig.overrideButtonModifier = (DigitalInput) inputManager.getInput(WSInputs.WEDGE_SAFETY_2);
+        axisConfig.overrideButtonModifier.addInputListener(this);
+        axisConfig.pidOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.HATCH_COLLECT);
+        axisConfig.pidOverrideButton.addInputListener(this);
+        axisConfig.limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.LIFT_LIMIT_SWITCH_OVERRIDE);
+        axisConfig.limitSwitchOverrideButton.addInputListener(this);
 
         axisConfig.motor = motor;
         axisConfig.ticksPerInch = TICKS_PER_INCH;

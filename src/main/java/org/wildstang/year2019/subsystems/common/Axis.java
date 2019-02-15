@@ -60,9 +60,8 @@ public abstract class Axis implements Subsystem {
      */
     private boolean isOverridden = false;
 
-    private boolean prevStrafeOverride;
-    private boolean currentStrafeOverride;
-    private boolean isStrafeOverride;
+    private boolean isLimitSwitchOverridden;
+    private boolean isPIDOverridden;
 
     /** The last time (according to timer) that we have been on target */
     private double lastTimeOnTarget;
@@ -102,9 +101,12 @@ public abstract class Axis implements Subsystem {
         /** This input is used by the manipulator controller to fine-tune the axis position. */
         public AnalogInput manualAdjustmentJoystick;
 
-        /** The override of the strafe axis to be fully controlled by the manipulator */
-        public DigitalInput safetyButton1;
-        public DigitalInput safetyButton2;
+        /** General button references for Lift and StrafeAxis to use for overrides */
+        public DigitalInput overrideButtonModifier;
+        public DigitalInput limitSwitchOverrideButton;
+        public DigitalInput pidOverrideButton;
+        /** Locally stored Value of the modifier button required to initiate overrides */
+        public boolean overrideButtonValue;
         /** The limit switch activated by max travel in negative direction */
         public DigitalInput lowerLimitSwitch; 
         /** The limit switch activated by max travel in positive direction */
@@ -150,7 +152,7 @@ public abstract class Axis implements Subsystem {
             System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
             dT = MAX_UPDATE_DT;
         }
-        if(isStrafeOverride)
+        if(isPIDOverridden)
         {
             motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
         }
@@ -185,28 +187,31 @@ public abstract class Axis implements Subsystem {
             if (config.lowerLimitSwitch.getValue() && isHoming) {
                 finishHoming();
             } 
-            if (config.lowerLimitSwitch.getValue() && !isOverridden) {
+            if (config.lowerLimitSwitch.getValue() && !isLimitSwitchOverridden) {
                 motor.configPeakOutputReverse(-config.maxLimitedOutput, -1);
             } else {
                 motor.configPeakOutputReverse(-config.maxMotorOutput, -1);
             }
         } else if (source == config.upperLimitSwitch) {
             SmartDashboard.putBoolean("upperLimit", config.upperLimitSwitch.getValue());
-            if (config.upperLimitSwitch.getValue() && !isOverridden) {
+            if (config.upperLimitSwitch.getValue() && !isLimitSwitchOverridden) {
                 motor.configPeakOutputForward(config.maxLimitedOutput, -1);
             } else {
                 motor.configPeakOutputForward(config.maxMotorOutput, -1);
             }
-        } else if (source == config.safetyButton1)
-        {
-            if(source == config.safetyButton2)
-            {
-                currentStrafeOverride = config.safetyButton1.getValue();
-                if(currentStrafeOverride && !prevStrafeOverride)
-                {
-                    isStrafeOverride = !isStrafeOverride;
-                }
-                prevStrafeOverride = currentStrafeOverride;
+        } else if (source == config.overrideButtonModifier) {
+            if (config.overrideButtonModifier.getValue() == true) {
+                config.overrideButtonValue = true;
+            } else {
+                config.overrideButtonValue = false;
+            }
+        } else if (source == config.pidOverrideButton) {
+            if (config.pidOverrideButton.getValue() == true && config.overrideButtonValue == true) {
+                isPIDOverridden = !isPIDOverridden;
+            }
+        } else if (source == config.limitSwitchOverrideButton) {
+            if (config.limitSwitchOverrideButton.getValue() == true && config.overrideButtonValue == true) {
+                isLimitSwitchOverridden = !isLimitSwitchOverridden;
             }
         }
 
@@ -215,9 +220,8 @@ public abstract class Axis implements Subsystem {
     public void resetState() {
         manualAdjustment = 0;
         lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was .get
-        prevStrafeOverride = false;
-        currentStrafeOverride = false;
-        isStrafeOverride = false;
+        isLimitSwitchOverridden = false;
+        isPIDOverridden = false;
     }
 
     /** 

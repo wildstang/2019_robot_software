@@ -136,10 +136,12 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.upperLimitSwitch.addInputListener(this);
         axisConfig.manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.STRAFE_MANUAL);
         axisConfig.manualAdjustmentJoystick.addInputListener(this);
-        axisConfig.safetyButton1 = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
-        axisConfig.safetyButton1.addInputListener(this);
-        axisConfig.safetyButton2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.STRAFE_OVERRIDE.getName());
-        axisConfig.safetyButton2.addInputListener(this);
+        axisConfig.overrideButtonModifier = (DigitalInput) inputManager.getInput(WSInputs.WEDGE_SAFETY_1);
+        axisConfig.overrideButtonModifier.addInputListener(this);
+        axisConfig.limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LIMIT_SWITCH_OVERRIDE);
+        axisConfig.limitSwitchOverrideButton.addInputListener(this);
+        axisConfig.pidOverrideButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.STRAFE_OVERRIDE);
+        axisConfig.pidOverrideButton.addInputListener(this);
 
         axisConfig.motor = motor;
         axisConfig.ticksPerInch = TICKS_PER_INCH;

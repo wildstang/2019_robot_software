@@ -134,10 +134,10 @@ public enum WSInputs implements Inputs {
                                                                                                          // Subsystem
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
-    //OPEN JOYSTICK BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // OPEN
-                                                                                                             // Subsystem
-    //OPEN JOYSTICK BUTTON("name", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // OPEN
-                                                                                                   // Subsystem
+    LIFT_LIMIT_SWITCH_OVERRIDE("Lift Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // Lift
+                                                                                                                              // Subsystem
+    STRAFE_LIMIT_SWITCH_OVERRIDE("Strafe Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // Lift
+                                                                                                                                  // Subsystem
 
     // ********************************
     // Digital IOs
