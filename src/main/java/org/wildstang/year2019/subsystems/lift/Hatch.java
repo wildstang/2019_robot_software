@@ -138,8 +138,8 @@ public class Hatch implements Subsystem {
 
             } else if (timer.hasPeriodPassed(2*LOCK_WAIT) && !timer.hasPeriodPassed(3*LOCK_WAIT)) {
                 outPosition = false;
-                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+                else hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
             } else if (timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
