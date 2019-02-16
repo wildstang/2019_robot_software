@@ -11,6 +11,8 @@ import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoid;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 
 import javax.lang.model.util.ElementScanner6;
 
@@ -71,8 +73,8 @@ public class Ballpath implements Subsystem {
     // be set later
 
     // Solenoids
-    private WsSolenoid hopper_solenoid;
-    private WsSolenoid intake_solenoid;
+    private WsDoubleSolenoid hopper_solenoid;
+    private WsDoubleSolenoid intake_solenoid;
 
     // Victors
     private VictorSPX intakeVictor;
@@ -208,8 +210,8 @@ public class Ballpath implements Subsystem {
         safetyInput.addInputListener(this);
 
         // Solenoids
-        hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
-        intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
+        hopper_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
+        intake_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
 
         // WsVictors
         intakeVictor = new VictorSPX(CANConstants.INTAKE_VICTOR);
@@ -243,8 +245,10 @@ public class Ballpath implements Subsystem {
          * carriage and hopper rollers
          * 
          */
-        hopper_solenoid.setValue(hopper_position);
-        intake_solenoid.setValue(intake_position);
+        if (hopper_position) hopper_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        else hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        if (intake_position) intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        else intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
         } else {
@@ -283,8 +287,8 @@ public class Ballpath implements Subsystem {
 
     @Override
     public void resetState() {
-        hopper_solenoid.setValue(false);
-        intake_solenoid.setValue(false);
+        hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
         intakeVictor.set(ControlMode.PercentOutput, 0.0);
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);

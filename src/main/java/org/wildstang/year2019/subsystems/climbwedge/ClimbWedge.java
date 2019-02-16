@@ -8,6 +8,8 @@ import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoid;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 import org.wildstang.framework.timer.WsTimer;
 
 /** This subsystem controls the wedge that will allow us to climb at game end. *
@@ -31,11 +33,11 @@ public class ClimbWedge implements Subsystem {
     private DigitalInput wedgeButton1;
     private DigitalInput wedgeButton2;
 
-    private WsSolenoid deployWedge;
+    private WsDoubleSolenoid deployWedge;
 
     private WsTimer timer = new WsTimer();
     
-    private final double solenoidDelay = 3; //Constant stores delay length in seconds
+    private final double solenoidDelay = 0.5; //Constant stores delay length in seconds
 
     @Override
     public void inputUpdate(Input source) {
@@ -61,7 +63,7 @@ public class ClimbWedge implements Subsystem {
         wedgeButton2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
         wedgeButton2.addInputListener(this);
 
-        deployWedge = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.WEDGE_SOLENOID.getName());
+        deployWedge = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.WEDGE_SOLENOID.getName());
 
         resetState();
     }
@@ -86,7 +88,7 @@ public class ClimbWedge implements Subsystem {
             timer.stop();
             timerStatus = false;
         }
-        deployWedge.setValue(deployWedgeStatus);
+        if (deployWedgeStatus) deployWedge.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
     }
 
     @Override
