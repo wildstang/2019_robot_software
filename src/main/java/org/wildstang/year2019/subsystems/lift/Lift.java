@@ -53,15 +53,17 @@ public class Lift extends Axis implements Subsystem {
     private static final int TIMEOUT = -1;
 
     // All positions in inches above lower limit
-    private static double POSITION_1 = 0.5;
-    private static double POSITION_2 = 16.5;
-    private static double POSITION_3 = 24.5;
-    private static double POSITION_4 = 36.5;
+    //position_1+28=position_3
+    //position_3+28=position_4
+    private static double POSITION_1 = 0.0;//low goal
+    private static double POSITION_2 = 8.0;//cargo goal - cargo only
+    private static double POSITION_3 = 28.0;//mid goal
+    private static double POSITION_4 = 56.0;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 1; // FIXME correct value
+    private static final double REVS_PER_INCH = 5.092;                                                   
     /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 4096; // FIXME correct value
+    private static final double TICKS_PER_REV = 1024; 
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
 

@@ -7,21 +7,23 @@ import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoid;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 
 import org.wildstang.framework.timer.WsTimer;
 
 public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
-    private static final double DEPLOY_WAIT = 0.5;
-    private static final double LOCK_WAIT = 0.5;
+    private static final double DEPLOY_WAIT = 0.25;
+    private static final double LOCK_WAIT = 0.15;
     // Local inputs
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;
     private WsTimer timer = new WsTimer();
 
     // Local outputs
-    private WsSolenoid hatchOut;
+    private WsDoubleSolenoid hatchOut;
     private WsSolenoid hatchLock;
 
     // Logical variables
@@ -82,7 +84,7 @@ public class Hatch implements Subsystem {
         hatchCollect = (DigitalInput) Core.getInputManager().getInput(WSInputs.HATCH_COLLECT.getName());
         hatchCollect.addInputListener(this);
 
-        hatchOut = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
+        hatchOut = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
         hatchLock = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_LOCK_SOLENOID.getName());
 
         timer.start();
@@ -125,7 +127,8 @@ public class Hatch implements Subsystem {
             if (!working) {
                 working = true;
                 outPosition = true;
-                hatchOut.setValue(outPosition);
+                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
 
                 timer.reset();
                 //deployLastMovementTime = System.currentTimeMillis();
@@ -135,7 +138,8 @@ public class Hatch implements Subsystem {
 
             } else if (timer.hasPeriodPassed(2*LOCK_WAIT) && !timer.hasPeriodPassed(3*LOCK_WAIT)) {
                 outPosition = false;
-                hatchOut.setValue(outPosition);
+                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
             } else if (timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
@@ -149,13 +153,15 @@ public class Hatch implements Subsystem {
             if (!working) {
                 working = true;
                 outPosition = true;
-                hatchOut.setValue(outPosition);
+                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
 
                 timer.reset();
                 //collectLastMovementTime = System.currentTimeMillis();
             } else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
                 outPosition = false;
-                hatchOut.setValue(outPosition);
+                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
                 working = false;
 
                 currentCommand = commands.IDLE.ordinal();
@@ -168,7 +174,8 @@ public class Hatch implements Subsystem {
         // Reset local variables back to default state
         outPosition = false;
         lockPosition = true;
-        hatchOut.setValue(outPosition);
+        if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
         hatchLock.setValue(lockPosition);
 
         working = false;
