@@ -68,11 +68,19 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private TalonSRX motor;
 
+    public LineDetector arduino = new LineDetector();
+
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
 
     @Override
     public void inputUpdate(Input source) {
+        if (axisConfig.pidOverrideButton.getValue()) {
+            beginHoming(arduino.getLinePosition());
+        }
+        if (isHoming && !axisConfig.pidOverrideButton.getValue()) {
+            finishHoming();
+        }
         if (source == linePositionInput) {
             setRoughTarget(linePositionInput.getValue());
         }

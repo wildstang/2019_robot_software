@@ -53,7 +53,7 @@ public abstract class Axis implements Subsystem {
     private AxisConfig config = new AxisConfig();
     private IMotorController motor;
     /** True during homing cycle */
-    private boolean isHoming = false;
+    public boolean isHoming = false;
     /**
      * True iff the operator (or a failure condition) has caused us to enter
      * the overridden state
@@ -160,8 +160,11 @@ public abstract class Axis implements Subsystem {
             if (isOverridden) {
                 motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
             } else {
-                manualAdjustment += config.manualAdjustmentJoystick.getValue() * config.manualSpeed * dT;
-                setRunTarget(roughTarget + manualAdjustment);
+                
+                    manualAdjustment += config.manualAdjustmentJoystick.getValue() * config.manualSpeed * dT;
+                    setRunTarget(roughTarget + manualAdjustment);
+                }
+                
             }
 
             if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
@@ -177,7 +180,7 @@ public abstract class Axis implements Subsystem {
         SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
         SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
         }// isStrafeOverride if statement
-        
+    
 
     public void inputUpdate(Input source) {
         if (source == config.manualAdjustmentJoystick) {
@@ -277,19 +280,27 @@ public abstract class Axis implements Subsystem {
     }
 
     /** Begin homing the axis */
-    protected void beginHoming() {
+    public void beginHoming(double target) {    
         isHoming = true;
         motor.selectProfileSlot(config.homingSlot, 0);
-        motor.set(ControlMode.Velocity, -config.homingSpeed * config.ticksPerInch);
+        if(target < motor.getSelectedSensorPosition(0)) {   
+            motor.set(ControlMode.Velocity, -config.homingSpeed * config.ticksPerInch);
+        }
+        else {
+            motor.set(ControlMode.Velocity, config.homingSpeed * config.ticksPerInch);
+        }
+        
+        System.out.println("begin homing");
     }
 
     /** Triggered when homing switch is triggered */
-    private void finishHoming() {
+    public void finishHoming() {
         isHoming = false;
         motor.setSelectedSensorPosition((int)(config.lowerLimitPosition * config.ticksPerInch), 0, -1);
         motor.selectProfileSlot(config.runSlot, 0);
         motor.set(ControlMode.Velocity, 0);
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);
+        System.out.println("endHoming");
     }
 
     private void setSpeedAndAccel(double speed, double accel) {
@@ -310,7 +321,7 @@ public abstract class Axis implements Subsystem {
         SmartDashboard.putNumber("axis target", target);
         if (!isHoming) {
             double clampedTarget = Math.max(Math.min(target, config.maxTravel), config.minTravel);
-            motor.set(ControlMode.MotionMagic, clampedTarget * config.ticksPerInch);
+            motor.set(ControlMode.MotionMagic, clampedTarget * config.ticksPerInch);    
         }
     }
 }
