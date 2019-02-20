@@ -45,7 +45,7 @@ public enum WSOutputs implements Outputs {
 
     HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0,0, 1, WsDoubleSolenoidState.REVERSE), false),//1,0&1
     //HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
-    INTAKE_SOLENOID("Intake Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0, 4,5, WsDoubleSolenoidState.FORWARD), false),//1,4&5
+    INTAKE_SOLENOID("Intake Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0, 4,5, WsDoubleSolenoidState.REVERSE), false),//1,4&5
     //INTAKE_SOLENOID("Intake Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
     // TODO IDs
     HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(1,1,false),false),//0,1&2
