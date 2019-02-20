@@ -245,31 +245,31 @@ public class Ballpath implements Subsystem {
          * carriage and hopper rollers
          * 
          */
-        if (hopper_position) hopper_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        else hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        if (intake_position) intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        else intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        if (hopper_position) hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        else hopper_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        if (intake_position) intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        else intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
         if (isIntake_motor) {
-            intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
+            intakeVictor.set(ControlMode.PercentOutput, -PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
         } else {
             intakeVictor.set(ControlMode.PercentOutput, 0);
         }
 
         if (isCarriageMotor) {
             if (carriage_slowed && Sensor_B_Value) {
-                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_2);
+                carriageVictor.set(ControlMode.PercentOutput, -ROLLER_SPEED_SLOWED_2);
             } else if (carriage_slowed) {
-                carriageVictor.set(ControlMode.PercentOutput, ROLLER_SPEED_SLOWED_1);
+                carriageVictor.set(ControlMode.PercentOutput, -ROLLER_SPEED_SLOWED_1);
             } else
-                carriageVictor.set(ControlMode.PercentOutput, CARRIAGE_ROLLER_SPEED);
+                carriageVictor.set(ControlMode.PercentOutput, -CARRIAGE_ROLLER_SPEED);
 
         } else {
             carriageVictor.set(ControlMode.PercentOutput, 0);
         }
 
         if (isHopper_motor) {
-            hopperVictor1.set(ControlMode.PercentOutput, ROLLER_SPEED);
-            hopperVictor2.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
+            hopperVictor1.set(ControlMode.PercentOutput, -ROLLER_SPEED);
+            hopperVictor2.set(ControlMode.PercentOutput, -PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
 
         } else {
             hopperVictor1.set(ControlMode.PercentOutput, 0);
@@ -277,10 +277,10 @@ public class Ballpath implements Subsystem {
         }
 
         if (reverseValue) {
-            hopperVictor1.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
-            hopperVictor2.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
-            carriageVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
-            intakeVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
+            hopperVictor1.set(ControlMode.PercentOutput, -BACKWARDS_ROLLER_SPEED);
+            hopperVictor2.set(ControlMode.PercentOutput, -PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
+            carriageVictor.set(ControlMode.PercentOutput, -BACKWARDS_ROLLER_SPEED);
+            intakeVictor.set(ControlMode.PercentOutput, -PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
         }
 
     }
@@ -288,7 +288,7 @@ public class Ballpath implements Subsystem {
     @Override
     public void resetState() {
         hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
         intakeVictor.set(ControlMode.PercentOutput, 0.0);
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);

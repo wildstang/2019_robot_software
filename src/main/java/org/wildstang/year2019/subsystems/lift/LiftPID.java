@@ -9,8 +9,8 @@ import org.wildstang.framework.pid.PIDConstants;
 public enum LiftPID {
     // FIXME: Document the units each of these FPID constants are in.
     // Constants in order F, P, I, D
-    HOMING(0, new PIDConstants(0, 0.2, 0.0, 5.0)),
-    TRACKING(1, new PIDConstants(0, 0.2, 0.0, 5.0));
+    HOMING(0, new PIDConstants(0, 14, 0.0, 5.0)),
+    TRACKING(1, new PIDConstants(0, 10, 0.0, 5.0));
     
     // only four slots are available on the Talon
 

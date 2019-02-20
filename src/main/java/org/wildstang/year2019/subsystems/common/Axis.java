@@ -129,7 +129,7 @@ public abstract class Axis implements Subsystem {
         public double maxLimitedOutput = 1;
 
         /** Error within which we consider ourselves "on target" (inches). */
-        public double targetWindow = 0.25;
+        public double targetWindow = 0.02;
         /**
          * If we go this long without making it into the target window,
          * we assume that we're jammed and go into override (seconds).
