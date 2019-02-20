@@ -23,7 +23,7 @@ public class Hatch implements Subsystem {
     private WsTimer timer = new WsTimer();
 
     // Local outputs
-    private WsDoubleSolenoid hatchOut;
+    private WsSolenoid hatchOut;
     private WsSolenoid hatchLock;
 
     // Logical variables
@@ -84,7 +84,7 @@ public class Hatch implements Subsystem {
         hatchCollect = (DigitalInput) Core.getInputManager().getInput(WSInputs.HATCH_COLLECT.getName());
         hatchCollect.addInputListener(this);
 
-        hatchOut = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
+        hatchOut = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
         hatchLock = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_LOCK_SOLENOID.getName());
 
         timer.start();
@@ -127,8 +127,9 @@ public class Hatch implements Subsystem {
             if (!working) {
                 working = true;
                 outPosition = true;
-                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+                hatchOut.setValue(outPosition);
+                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
 
                 timer.reset();
                 //deployLastMovementTime = System.currentTimeMillis();
@@ -138,8 +139,9 @@ public class Hatch implements Subsystem {
 
             } else if (timer.hasPeriodPassed(2*LOCK_WAIT) && !timer.hasPeriodPassed(3*LOCK_WAIT)) {
                 outPosition = false;
-                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-                else hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                hatchOut.setValue(outPosition);
+                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+                // else hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
             } else if (timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
@@ -153,15 +155,17 @@ public class Hatch implements Subsystem {
             if (!working) {
                 working = true;
                 outPosition = true;
-                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+                hatchOut.setValue(outPosition);
+                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
 
                 timer.reset();
                 //collectLastMovementTime = System.currentTimeMillis();
             } else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
                 outPosition = false;
-                if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+                hatchOut.setValue(outPosition);
+                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+                // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
                 working = false;
 
                 currentCommand = commands.IDLE.ordinal();
@@ -174,8 +178,9 @@ public class Hatch implements Subsystem {
         // Reset local variables back to default state
         outPosition = false;
         lockPosition = true;
-        if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        hatchOut.setValue(outPosition);
+        // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+        // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
         hatchLock.setValue(lockPosition);
 
         working = false;
