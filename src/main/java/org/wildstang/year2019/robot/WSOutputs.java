@@ -37,20 +37,20 @@ public enum WSOutputs implements Outputs {
     // Solenoids
     // ********************************
     // TODO IDs
-    WEDGE_SOLENOID("Wedge solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(1,2, 3, WsDoubleSolenoidState.FORWARD), false),//1,2&3
+    WEDGE_SOLENOID("Wedge solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0,2, 3, WsDoubleSolenoidState.FORWARD), false),//1,2&3
     //WEDGE_SOLENOID("Wedge Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
     // TODO IDs
 
    
 
-    HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(1,0, 1, WsDoubleSolenoidState.REVERSE), false),//1,0&1
+    HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0,0, 1, WsDoubleSolenoidState.REVERSE), false),//1,0&1
     //HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
     INTAKE_SOLENOID("Intake Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0, 4,5, WsDoubleSolenoidState.FORWARD), false),//1,4&5
     //INTAKE_SOLENOID("Intake Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
     // TODO IDs
-    HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0,1,2,WsDoubleSolenoidState.REVERSE),false),//0,1&2
+    HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(1,1,2,WsDoubleSolenoidState.REVERSE),false),//0,1&2
     //HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false),false),
-    HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,0,false),false),//0,0
+    HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(1,0,false),false),//0,0
     //HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false),false),
     
     // ********************************
