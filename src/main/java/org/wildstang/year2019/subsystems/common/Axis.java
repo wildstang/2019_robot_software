@@ -66,7 +66,6 @@ public abstract class Axis implements Subsystem {
     /** The last time (according to timer) that we have been on target */
     private double lastTimeOnTarget;
 
-
     protected static class AxisConfig {
         public AxisConfig() {
             // Configuration is done by writing members
@@ -138,6 +137,9 @@ public abstract class Axis implements Subsystem {
          * we get jammed.
          */
         public double maxTimeToTarget = 200;
+
+        // Threshold (in ticks) for which axis motor can be considered in range of target
+        public double axisInRangeThreshold;
         
     }
 
@@ -179,6 +181,16 @@ public abstract class Axis implements Subsystem {
         SmartDashboard.putNumber("adjust", config.manualAdjustmentJoystick.getValue());
         SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
         SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
+
+        // Puts a colored box (true: green, false: red) on SmartDashboard based on if axis motor is
+        // within +/- <> inches of target (rough target +/- manual adjustment)
+        if (motor.getSelectedSensorPosition(0) >= ((roughTarget + manualAdjustment) - config.axisInRangeThreshold)
+                && motor.getSelectedSensorPosition(0) <= ((roughTarget + manualAdjustment) + config.axisInRangeThreshold)) {
+            SmartDashboard.putBoolean("Axis in Range of Target", true);
+        } else {
+            SmartDashboard.putBoolean("Axis in Range of Target", false);
+        }
+
         }// isStrafeOverride if statement
     
 
