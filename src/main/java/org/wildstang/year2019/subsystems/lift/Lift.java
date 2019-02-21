@@ -17,6 +17,8 @@ import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
 import org.wildstang.year2019.subsystems.lift.LiftPID;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * This subsystem goes up and down and puts hatches on holes.
  * 
@@ -57,8 +59,8 @@ public class Lift extends Axis implements Subsystem {
     //position_3+28=position_4
     private static double POSITION_1 = 0.0;//low goal
     private static double POSITION_2 = 8.0;//cargo goal - cargo only
-    private static double POSITION_3 = 28.0;//mid goal
-    private static double POSITION_4 = 56.0;//high goal
+    private static double POSITION_3 = 2.4228;//mid goal
+    private static double POSITION_4 = 6.0;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 5.092;                                                   
@@ -128,6 +130,7 @@ public class Lift extends Axis implements Subsystem {
 
     @Override
     public void update() {
+        SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
         super.update();
     }
 

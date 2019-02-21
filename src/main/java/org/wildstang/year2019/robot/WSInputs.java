@@ -99,16 +99,16 @@ public enum WSInputs implements Inputs {
     // Manipulator DPAD Buttons
     // ---------------------------------
     LIFT_PRESET_1("Lift Preset 1", WSInputType.JS_DPAD_BUTTON,
-            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_UP), false), // Lift 
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_DOWN), false), // Lift 
                                                                                //Subsystem
     LIFT_PRESET_2("Lift Preset 2", WSInputType.JS_DPAD_BUTTON,
-            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_DOWN), false), // Lift
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_X_LEFT), false), // Lift
                                                                                  // Subsystem
     LIFT_PRESET_3("Lift Preset 3", WSInputType.JS_DPAD_BUTTON,
             new WsJSButtonInputConfig(1, JoystickConstants.DPAD_X_RIGHT), false), // Lift 
                                                                                   //Subsystem
     LIFT_PRESET_4("Lift Preset 4", WSInputType.JS_DPAD_BUTTON,
-            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_X_LEFT), false), // Lift
+            new WsJSButtonInputConfig(1, JoystickConstants.DPAD_Y_UP), false), // Lift
                                                                                  // Subsystem
 
     // ---------------------------------

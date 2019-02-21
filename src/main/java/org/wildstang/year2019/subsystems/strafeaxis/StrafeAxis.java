@@ -69,6 +69,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double LEFT_MAX_TRAVEL = -5;
     private static final double RIGHT_MAX_TRAVEL = 5;
 
+    private static final double AXIS_IN_RANGE_THRESHOLD = TICKS_PER_INCH * 0.5;
+
     /** Line position input --- receive from RasPi */
     private RemoteAnalogInput linePositionInput;
 
@@ -204,6 +206,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.homingSlot = StrafePID.HOMING.slot;
         axisConfig.homingK = StrafePID.HOMING.k;
         axisConfig.lowerLimitPosition = LEFT_STOP_POS;
+        axisConfig.axisInRangeThreshold = AXIS_IN_RANGE_THRESHOLD;
 
         initAxis(axisConfig);
     }
