@@ -133,16 +133,16 @@ public class Hatch implements Subsystem {
 
                 timer.reset();
                 //deployLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT)) {
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(LOCK_WAIT + DEPLOY_WAIT)) {
                 lockPosition = false;
                 hatchLock.setValue(lockPosition);
 
-            } else if (timer.hasPeriodPassed(2*LOCK_WAIT) && !timer.hasPeriodPassed(3*LOCK_WAIT)) {
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT + LOCK_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT + LOCK_WAIT)) {
                 outPosition = false;
                 hatchOut.setValue(outPosition);
                 // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
                 // else hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-            } else if (timer.hasPeriodPassed(3*DEPLOY_WAIT)) {
+            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + LOCK_WAIT)) {
                 lockPosition = true;
                 hatchLock.setValue(lockPosition);
 
