@@ -33,7 +33,7 @@ public abstract class Axis implements Subsystem {
      * glitch causes a long pause, however, we don't want to suddenly make a huge position update and
      * run off the rails (potentially literally). So we cap that time at some sane value.
      */
-    private static final double MAX_UPDATE_DT = .04;
+    public static final double MAX_UPDATE_DT = .04;
 
     /**
      * Timeout for configuring Talons DURING INIT ONLY. During run we should set a timeout of -1.
@@ -47,11 +47,11 @@ public abstract class Axis implements Subsystem {
 
     
     //private WsTimer timer;
-    private StopWatch timer = new StopWatch();//timertesting
-    private double lastUpdateTime;
+    public StopWatch timer = new StopWatch();//timertesting
+    public double lastUpdateTime;
 
-    private AxisConfig config = new AxisConfig();
-    private IMotorController motor;
+    public AxisConfig config = new AxisConfig();
+    public IMotorController motor;
     /** True during homing cycle */
     public boolean isHoming = false;
     /**
@@ -176,6 +176,11 @@ public abstract class Axis implements Subsystem {
                     setOverride(true);
                     
                 }
+                SmartDashboard.putNumber("rough target", roughTarget);
+                SmartDashboard.putNumber("adjust", config.manualAdjustmentJoystick.getValue());
+                SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
+                SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
+
             }
         SmartDashboard.putNumber("rough target", roughTarget);
         SmartDashboard.putNumber("adjust", config.manualAdjustmentJoystick.getValue());

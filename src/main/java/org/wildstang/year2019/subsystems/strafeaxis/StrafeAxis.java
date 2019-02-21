@@ -4,6 +4,7 @@ package org.wildstang.year2019.subsystems.strafeaxis;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 //import org.wildstang.framework.CoreUtils.CTREException;
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
@@ -18,7 +19,7 @@ import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
 import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
 
-/**
+/*
  * This subsystem is responsible for lining up hatch panels left-to-right.
  * 
  * There should probably be a PID loop controlling the position of this axis.
@@ -27,7 +28,7 @@ import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
  * <ul>
  * <li>Line detection photocells (handled by LineDetector.java? or RasPi?)
  * <li>Limit switch(es). TODO: left, right or both?
- * <li>Encoder on lead screw Talon.
+ * <l   i>Encoder on lead screw Talon.
  * </ul>
  * 
  * Actuators:
@@ -45,6 +46,11 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** TODO: remove this */
     private static final int TIMEOUT = -1;
 
+    private boolean rubberControl = true; 
+    private int offFromCenter; 
+    private int CENTER = 100; //needs to set manually once axis is created
+    private static int RUBBER_FLEX = 30;
+    
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 10; 
     /** Number of encoder ticks in one revolution */
@@ -78,15 +84,18 @@ public class StrafeAxis extends Axis implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
         if (axisConfig.pidOverrideButton.getValue()) {
-            beginHoming(arduino.getLinePosition());
+            //beginHoming(arduino.getLinePosition());
         }
         if (isHoming && !axisConfig.pidOverrideButton.getValue()) {
-            finishHoming();
+            //finishHoming();
         }
         if (source == linePositionInput) {
             setRoughTarget(linePositionInput.getValue());
         }
+        //System.out.println("test");
     }
+
+
 
     @Override
     public void init() {
@@ -95,6 +104,9 @@ public class StrafeAxis extends Axis implements Subsystem {
         initOutputs();
         initAxis();
         resetState();
+        CENTER = motor.getSelectedSensorPosition();
+        
+        
     }
 
     @Override
@@ -104,8 +116,35 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
-        super.update();
+        ///super.update();
+
+         //double time = timer.get();
+         double time = super.timer.GetTimeInSec();//timertesting
+         double dT = time - super.lastUpdateTime;
+         lastUpdateTime = time;
+         // Clamp the dT to be no more than MAX_UPDATE_DT so that
+         // if we glitch and don't update for a while we don't do a big jerk motion
+         if (dT > super.MAX_UPDATE_DT) {
+             System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
+             dT = super.MAX_UPDATE_DT;
+         }
+                 
+        double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
+        if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
+            manualMotorSpeed = 0;
+        }
+        else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
+            manualMotorSpeed = 0;
+        }
+        if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
+            motor.set(ControlMode.PercentOutput, manualMotorSpeed);
+        }
+
+        arduino.getLinePosition();
+
     }
+         
+        
 
     @Override
     public void resetState() {
@@ -173,5 +212,6 @@ public class StrafeAxis extends Axis implements Subsystem {
     }
 
     private void initMotor() {
+
     }
 }
