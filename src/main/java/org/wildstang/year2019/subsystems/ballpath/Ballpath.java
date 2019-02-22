@@ -73,8 +73,8 @@ public class Ballpath implements Subsystem {
     // be set later
 
     // Solenoids
-    private WsDoubleSolenoid hopper_solenoid;
-    private WsDoubleSolenoid intake_solenoid;
+    private WsSolenoid hopper_solenoid;
+    private WsSolenoid intake_solenoid;
 
     // Victors
     private VictorSPX intakeVictor;
@@ -210,8 +210,8 @@ public class Ballpath implements Subsystem {
         safetyInput.addInputListener(this);
 
         // Solenoids
-        hopper_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
-        intake_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
+        hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
+        intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
 
         // WsVictors
         intakeVictor = new VictorSPX(CANConstants.INTAKE_VICTOR);
@@ -245,10 +245,9 @@ public class Ballpath implements Subsystem {
          * carriage and hopper rollers
          * 
          */
-        if (hopper_position) hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        else hopper_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        if (intake_position) intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        else intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        
+        hopper_solenoid.setValue(hopper_position);
+        intake_solenoid.setValue(intake_position);
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
         } else {
@@ -287,8 +286,8 @@ public class Ballpath implements Subsystem {
 
     @Override
     public void resetState() {
-        hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        hopper_solenoid.setValue(false);
+        intake_solenoid.setValue(false);
         intakeVictor.set(ControlMode.PercentOutput, 0.0);
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);
