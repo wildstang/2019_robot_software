@@ -55,8 +55,6 @@ public class superlift implements Subsystem {
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
-    /** TODO: remove this */
-    private static final int TIMEOUT = -1;
 
     // All positions in inches above lower limit
     //position_1+28=position_3
@@ -322,22 +320,22 @@ public class superlift implements Subsystem {
     private void initOutputs() {
         System.out.println("Initializing lift Talon ID " + CANConstants.LIFT_TALON);
         motor = new TalonSRX(CANConstants.LIFT_TALON);
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, 0);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, 0);
         // Peak output is managed by Axis class
         // PID settings are managed by Axis class
         timer.Start();//timertesting old was .start
-        /*CoreUtils.checkCTRE*/motor.config_kF(runSlot, runK.f, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kP(runSlot, runK.p, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kI(runSlot, runK.i, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kD(runSlot, runK.d, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kF(homingSlot, homingK.f, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kP(homingSlot, homingK.p, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kI(homingSlot, homingK.i, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kD(homingSlot, homingK.d, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kF(runSlot, runK.f, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kP(runSlot, runK.p, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kI(runSlot, runK.i, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kD(runSlot, runK.d, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kF(homingSlot, homingK.f, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kP(homingSlot, homingK.p, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kI(homingSlot, homingK.i, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kD(homingSlot, homingK.d, 0);
         setSpeedAndAccel(runSpeed, runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setSelectedSensorPosition(0, 0, -1);
