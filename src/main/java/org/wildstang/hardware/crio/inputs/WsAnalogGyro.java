@@ -20,7 +20,7 @@ public class WsAnalogGyro extends AnalogInput {
         m_gyro = new AnalogGyro(p_channel);
         m_driftCompensation = p_driftCompensation;
 
-        m_gyro.calibrate();
+        //m_gyro.calibrate();
 
         m_startTime = System.nanoTime();
         double angle1 = m_gyro.getAngle();
