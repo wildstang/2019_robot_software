@@ -51,8 +51,7 @@ public class Lift extends Axis implements Subsystem {
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
-    /** TODO: remove this */
-    private static final int TIMEOUT = -1;
+
 
     // All positions in inches above lower limit
     //position_1+28=position_3
@@ -163,11 +162,11 @@ public class Lift extends Axis implements Subsystem {
     private void initOutputs() {
         System.out.println("Initializing lift Talon ID " + CANConstants.LIFT_TALON);
         motor = new TalonSRX(CANConstants.LIFT_TALON);
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, 0);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, 0);
         // Peak output is managed by Axis class
         // PID settings are managed by Axis class
 
