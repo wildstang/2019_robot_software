@@ -43,8 +43,6 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
-    /** TODO: remove this */
-    private static final int TIMEOUT = -1;
 
     private boolean rubberControl = true; 
     private int offFromCenter; 
@@ -168,9 +166,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initOutputs() {
         motor = new TalonSRX(CANConstants.STRAFE_TALON);
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-        motor.configNominalOutputForward(0, TIMEOUT);
-        motor.configNominalOutputReverse(0, TIMEOUT);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+        motor.configNominalOutputForward(0, 0);
+        motor.configNominalOutputReverse(0, 0);
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
