@@ -60,9 +60,9 @@ public class superlift implements Subsystem {
     //position_1+28=position_3
     //position_3+28=position_4
     private static double POSITION_1 = 0.0;//low goal
-    private static double POSITION_2 = 8.0;//cargo goal - cargo only
-    private static double POSITION_3 = 28.0;//mid goal
-    private static double POSITION_4 = 56.0;//high goal
+    private static double POSITION_2 = -10.62;//cargo goal - cargo only
+    private static double POSITION_3 = -28.0;//mid goal
+    private static double POSITION_4 = -44;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 1/9.087;//5.092                                                   
@@ -161,6 +161,9 @@ public class superlift implements Subsystem {
     /** PID constants to use while homing the axis */
     public PIDConstants homingK= LiftPID.HOMING.k;
 
+    public int downSlot = 2;
+    public PIDConstants downK = LiftPID.DOWNTRACK.k;
+
     /** Maximum motor output during normal operation */
     public double maxMotorOutput = 1;
     /** Maximum motor output when we've hit a limit switch */
@@ -247,6 +250,12 @@ public class superlift implements Subsystem {
     @Override
     public void update() {
         SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
+        SmartDashboard.putNumber("Lift Encoder Voltage", motor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Current Command", currentcommand);
+        SmartDashboard.putNumber("Target", target);
+
+        // DEBUG
+        SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() - getEncoderLocation(-target)));
 
         if (isPIDOverridden){
             currentcommand = control.MANUAL.ordinal();
@@ -267,20 +276,27 @@ public class superlift implements Subsystem {
     }
 
     public void manualDrive(){
-        motor.set(ControlMode.PercentOutput,manualAdjustmentJoystick.getValue());
+        //TODO: Change 0.6 to Variable
+        motor.set(ControlMode.PercentOutput, 0.3 * manualAdjustmentJoystick.getValue());
     }
     public void home(){
         motor.selectProfileSlot(homingSlot, 0);
         motor.set(ControlMode.Position, -target);
     }
     public void track(){
-        if (Math.abs(motor.getSensorCollection().getQuadraturePosition() - getEncoderLocation(target))<getEncoderLocation(0.5)){
+        if (Math.abs(motor.getSensorCollection().getQuadraturePosition() - target) < getEncoderLocation(0.5)){
             
             currentcommand = control.HOME.ordinal();
             home();
         } else{
-            motor.selectProfileSlot(runSlot, 0);
-            motor.set(ControlMode.Position, -target);
+            if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) < Math.abs(getEncoderLocation(-target))) {
+                motor.selectProfileSlot(runSlot, 0);
+                motor.set(ControlMode.Position, -target);
+            } else if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) > Math.abs(getEncoderLocation(-target))){
+                motor.selectProfileSlot(downSlot, 0);
+                motor.set(ControlMode.Position, -target + 1600);
+            }
+
         }
     }
 
@@ -336,6 +352,11 @@ public class superlift implements Subsystem {
         /*CoreUtils.checkCTRE*/motor.config_kP(homingSlot, homingK.p, 0);
         /*CoreUtils.checkCTRE*/motor.config_kI(homingSlot, homingK.i, 0);
         /*CoreUtils.checkCTRE*/motor.config_kD(homingSlot, homingK.d, 0);
+        
+        /*CoreUtils.checkCTRE*/motor.config_kF(downSlot, downK.f, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kP(downSlot, downK.p, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kI(downSlot, downK.i, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kD(downSlot, downK.d, 0);
         setSpeedAndAccel(runSpeed, runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setSelectedSensorPosition(0, 0, -1);
