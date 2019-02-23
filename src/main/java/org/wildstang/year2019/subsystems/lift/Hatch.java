@@ -21,6 +21,7 @@ public class Hatch implements Subsystem {
     // Local inputs
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;
+    private DigitalInput startButton;
     private WsTimer timer = new WsTimer();
 
     // Local outputs
@@ -34,6 +35,7 @@ public class Hatch implements Subsystem {
                                   //                      fit back through opening)
                                   // false = Retracted (mechanism can freely move in any direction through hatch panel opening)
     private boolean working;
+    private boolean isStartPressed;
 
     public static final boolean lockVal = false;
     public static final boolean outVal = false;
@@ -57,6 +59,12 @@ public class Hatch implements Subsystem {
 
     @Override
     public void inputUpdate(Input source) {
+        if(source == startButton) {
+            isStartPressed = true;
+        } else {
+            isStartPressed = false;
+        }
+
         if (source == hatchDeploy) {
             
             if (currentCommand == commands.IDLE.ordinal()  && hatchDeploy.getValue() == true) {
@@ -68,7 +76,7 @@ public class Hatch implements Subsystem {
         if (source == hatchCollect) {
             
 
-            if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true) {
+            if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true && !isStartPressed){
                 currentCommand = commands.COLLECT.ordinal();
             } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue() == false){
                 currentCommand = commands.COLLECT2.ordinal();
@@ -84,6 +92,9 @@ public class Hatch implements Subsystem {
 
         hatchCollect = (DigitalInput) Core.getInputManager().getInput(WSInputs.HATCH_COLLECT.getName());
         hatchCollect.addInputListener(this);
+
+        startButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
+        startButton.addInputListener(this);
 
         hatchOut = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
         hatchLock = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_LOCK_SOLENOID.getName());
@@ -129,6 +140,7 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
                 hatchLock.setValue(lockPosition);
                 timer.reset();
+                working=false;
             } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
             //     outPosition = outVal;
             //     hatchOut.setValue(outPosition);
@@ -137,11 +149,20 @@ public class Hatch implements Subsystem {
             //     currentCommand = commands.IDLE.ordinal();
             // }
         } else if (currentCommand == commands.COLLECT2.ordinal()){
+            if (!working) {
+                timer.reset();
+                working = true;
+            }
             outPosition=outVal;
             lockPosition=lockVal;
-            hatchOut.setValue(outPosition);
             hatchLock.setValue(lockPosition);
-            currentCommand = commands.IDLE.ordinal();
+            if (timer.hasPeriodPassed(LOCK_WAIT)){
+                
+                hatchOut.setValue(outPosition);
+                working=false;
+                currentCommand = commands.IDLE.ordinal();
+            }
+            
         }
     }
 
