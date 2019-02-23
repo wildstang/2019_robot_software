@@ -92,6 +92,7 @@ public class Ballpath implements Subsystem {
     private boolean Sensor_A_Value;
     private boolean Sensor_B_Value;
     private boolean carriage_slowed;
+    private boolean transferCarriage;
 
     /**
      * TODO: Names set up for each Victor that we are going to need TODO: Add
@@ -141,7 +142,7 @@ public class Ballpath implements Subsystem {
             hopper_position = false;
         }
 
-        if (!safetyInput.getValue() && carriageRollersInput.getValue()) {
+        if (carriageRollersInput.getValue()) {
             isCarriageMotor = true;
             carriage_slowed = false;
         } else {
@@ -150,10 +151,10 @@ public class Ballpath implements Subsystem {
 
         // check if everything should be activated
         if (fullBallpathInput.getValue()) {
-            hopper_position = true;
             intake_position = true;
             isIntake_motor = true;
             isHopper_motor = true;
+            hopper_position = true;
 
             // If carriage motor is already running because of the carriage input, that
             // should override our logic in this branch
@@ -172,13 +173,15 @@ public class Ballpath implements Subsystem {
         // Everything is not activated so we check each indivigual button!
         else {
             if (intakeInput.getValue()) {
-                intake_position = true;
-                isIntake_motor = true;
-                isHopper_motor = false;
+                isCarriageMotor = true;
+                isHopper_motor = true;
+
+                transferCarriage = true;
             } else {
+                isHopper_motor = false;
                 intake_position = false;
                 isIntake_motor = false;
-                isHopper_motor = false;
+                transferCarriage = false;
             }
         }
     }
@@ -255,7 +258,7 @@ public class Ballpath implements Subsystem {
         }
 
         if (isCarriageMotor) {
-            if (carriage_slowed && Sensor_B_Value) {
+            if ((carriage_slowed && Sensor_B_Value) || transferCarriage) {
                 carriageVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED_SLOWED_2);
             } else if (carriage_slowed) {
                 carriageVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED_SLOWED_1);
