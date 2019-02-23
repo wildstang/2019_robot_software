@@ -19,10 +19,10 @@ public enum WSSubsystems implements Subsystems {
     // CLAW_EXAMPLE("CLAW_EXAMPLE",Claw_Example.class), this shouldn't be uncommented
     BALLPATH("Ballpath", Ballpath.class),
     CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
-    //LIFT("Lift", Lift.class),
+    //LIFT("Lift", Lift.class), old lift
     //STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
     HATCH("Hatch",Hatch.class),
-    LIFT("Lift",superlift.class),
+    //LIFT("Lift",superlift.class),
     ;
 
     private String name;
