@@ -22,7 +22,7 @@ public enum WSSubsystems implements Subsystems {
     //LIFT("Lift", Lift.class),
     //STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
     HATCH("Hatch",Hatch.class),
-    LIFT("Lift",superlift.class),
+    //LIFT("Lift",superlift.class),
     ;
 
     private String name;

@@ -15,7 +15,8 @@ import org.wildstang.framework.timer.WsTimer;
 public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
-    private static final double DEPLOY_WAIT = 0.65;
+    private static final double DEPLOY_WAIT = 0.25;
+    private static final double RETRACT_WAIT = 0.65;
     private static final double LOCK_WAIT = 0.15;
     // Local inputs
     private DigitalInput hatchDeploy;
@@ -105,14 +106,14 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
 
                 timer.reset();
-            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(LOCK_WAIT + DEPLOY_WAIT)) {
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(RETRACT_WAIT + DEPLOY_WAIT)) {
                 lockPosition = !lockVal;
                 hatchLock.setValue(lockPosition);
 
-            } else if (timer.hasPeriodPassed(DEPLOY_WAIT + LOCK_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT + LOCK_WAIT)) {
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT + RETRACT_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
                 outPosition = outVal;
                 hatchOut.setValue(outPosition);
-            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + LOCK_WAIT)) {
+            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
                 lockPosition = lockVal;
                 hatchLock.setValue(lockPosition);
 
@@ -126,7 +127,7 @@ public class Hatch implements Subsystem {
                 outPosition = !outVal;
                 lockPosition= !lockVal;
                 hatchOut.setValue(outPosition);
-
+                hatchLock.setValue(lockPosition);
                 timer.reset();
             } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
             //     outPosition = outVal;
@@ -138,6 +139,8 @@ public class Hatch implements Subsystem {
         } else if (currentCommand == commands.COLLECT2.ordinal()){
             outPosition=outVal;
             lockPosition=lockVal;
+            hatchLock.setValue(lockVal);
+            hatchOut.setValue(outVal);
             currentCommand = commands.IDLE.ordinal();
         }
     }
