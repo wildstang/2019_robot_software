@@ -163,7 +163,7 @@ public class Drive implements Subsystem {
     public void inputUpdate(Input source) {
 
         if (source == throttleInput) {
-            setThrottle(throttleInput.getValue());
+            setThrottle(-throttleInput.getValue());
         } else if (source == headingInput) {
             setHeading(headingInput.getValue());
         }
