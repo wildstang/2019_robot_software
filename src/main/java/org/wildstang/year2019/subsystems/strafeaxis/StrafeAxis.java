@@ -45,9 +45,10 @@ public class StrafeAxis extends Axis implements Subsystem {
 
 
     private boolean rubberControl = true; 
-    private int offFromCenter; 
-    private int CENTER = 100; //needs to set manually once axis is created
+    private double offFromCenter; 
+    private int CENTER = 40960; //needs to set manually once axis is created
     private static int RUBBER_FLEX = 30;
+    private double manualAdjustment = 1;
     
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 10; 
@@ -64,8 +65,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double HOMING_MAX_ACCEL = 2; // in/s^2
 
     private static final double LEFT_STOP_POS = -6;
-    private static final double LEFT_MAX_TRAVEL = -5;
-    private static final double RIGHT_MAX_TRAVEL = 5;
+    //private static final double LEFT_MAX_TRAVEL = -5;
+    private static final double MAX_TRAVEL = 5;
 
     private static final double AXIS_IN_RANGE_THRESHOLD = TICKS_PER_INCH * 0.5;
 
@@ -134,11 +135,20 @@ public class StrafeAxis extends Axis implements Subsystem {
         else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
             manualMotorSpeed = 0;
         }
-        if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-            motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        }
+        // if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
+        //     motor.set(ControlMode.PercentOutput, manualMotorSpeed);
+        // }
 
-        arduino.getLinePosition();
+        offFromCenter= arduino.getLinePosition();
+
+        if (offFromCenter < 0 && manualMotorSpeed < 0){
+            manualAdjustment = 1 - Math.abs(offFromCenter/MAX_TRAVEL);
+        } else if (offFromCenter > 0 && manualMotorSpeed < 0){
+            manualAdjustment = 1 - Math.abs(offFromCenter/MAX_TRAVEL);
+        } else manualAdjustment = 1;
+
+        motor.set(ControlMode.Position, TICKS_PER_INCH * (MAX_TRAVEL + offFromCenter + manualAdjustment * manualMotorSpeed * MAX_TRAVEL));
+
 
     }
          
@@ -197,8 +207,8 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.homingAcceleration = HOMING_MAX_ACCEL;
         axisConfig.homingSpeed = HOMING_MAX_SPEED;
         axisConfig.manualSpeed = MANUAL_SPEED;
-        axisConfig.minTravel = LEFT_MAX_TRAVEL;
-        axisConfig.maxTravel = RIGHT_MAX_TRAVEL;
+        axisConfig.minTravel = -MAX_TRAVEL;
+        axisConfig.maxTravel = MAX_TRAVEL;
         axisConfig.runSlot = StrafePID.TRACKING.slot;
         axisConfig.runK = StrafePID.TRACKING.k;
         axisConfig.homingSlot = StrafePID.HOMING.slot;
