@@ -127,7 +127,7 @@ public class Hatch implements Subsystem {
                 outPosition = !outVal;
                 lockPosition= !lockVal;
                 hatchOut.setValue(outPosition);
-
+                hatchLock.setValue(lockPosition);
                 timer.reset();
             } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
             //     outPosition = outVal;

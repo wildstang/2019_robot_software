@@ -538,4 +538,9 @@ public class FakeTalonSRX implements IMotorControllerEnhanced {
     public SensorCollection getSensorCollection() {
         throw new RuntimeException(); // UNIMPLEMENTED
     }
+
+    @Override
+    public ErrorCode configMotionSCurveStrength(int curveStrength, int timeoutMs) {
+        throw new RuntimeException(); // UNIMPLEMENTED
+    }
 }
