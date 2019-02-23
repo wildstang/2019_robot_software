@@ -314,11 +314,14 @@ public class Drive implements Subsystem {
         pathFollower = new PathFollower(p_path, masters[LEFT], masters[RIGHT]);
     }
 
+    // FIXME this is an abstraction violation to freely share the path follower
     public PathFollower getPathFollower() {
         return pathFollower;
     }
 
     public void startFollowingPath() {
+        setPathFollowingMode();
+        
         if (pathFollower == null) {
             throw new IllegalStateException("No path set");
         }
@@ -348,8 +351,6 @@ public class Drive implements Subsystem {
             pathFollower.stop();
         }
     }
-
-    // TODO copy in the rest of path functionality Fixed?
 
     /** Switch to cheesy drive. */
     public void setOpenLoopDrive() {
@@ -408,6 +409,23 @@ public class Drive implements Subsystem {
     /////////////////////////////////////////////////////////
     // PRIVATE METHODS
 
+    /** Change our motor settings to follow a path */
+
+    private void setPathFollowingMode() {
+
+        driveMode = DriveType.PATH;
+
+        // Configure motor controller modes for path following
+        masters[LEFT].set(ControlMode.MotionProfile, 0);
+        masters[LEFT].selectProfileSlot(DrivePID.PATH.slot, 0);
+
+        masters[RIGHT].set(ControlMode.MotionProfile, 0);
+        masters[RIGHT].selectProfileSlot(DrivePID.PATH.slot, 0);
+
+        // Use brake mode to stop quickly at end of path, since Talons will put
+        // output to neutral
+        setBrakeMode(true);
+    }
     /** Set up our input members and subscribe to inputUpdate events */
     private void initInputs() {
         // Set and subscribe to inputs
