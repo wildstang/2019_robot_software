@@ -1,6 +1,5 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
 
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -18,6 +17,8 @@ import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
 import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * This subsystem is responsible for lining up hatch panels left-to-right.
@@ -44,12 +45,12 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final boolean SENSOR_PHASE = true;
 
     /** TODO: remove this */
-    private static final int TIMEOUT = -1;
+    //private static final int TIMEOUT = 0;
 
-    private boolean rubberControl = true; 
+    private boolean rubberControl = false; 
     private int offFromCenter; 
     private int CENTER = 100; //needs to set manually once axis is created
-    private static int RUBBER_FLEX = 30;
+    private static int RUBBER_FLEX = 200;
     
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 10; 
@@ -93,22 +94,18 @@ public class StrafeAxis extends Axis implements Subsystem {
             setRoughTarget(linePositionInput.getValue());
         }
         //System.out.println("test");
+           
     }
 
-
-
     @Override
-    public void init() {
-        
+    public void init() {        
         initInputs();
         initOutputs();
         initAxis();
         resetState();
-        CENTER = motor.getSelectedSensorPosition();
-        
-        
+        CENTER = motor.getSelectedSensorPosition();                
     }
-
+    
     @Override
     public void selfTest() {
         // TODO
@@ -116,20 +113,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
-        ///super.update();
-
-         //double time = timer.get();
-         double time = super.timer.GetTimeInSec();//timertesting
-         double dT = time - super.lastUpdateTime;
-         lastUpdateTime = time;
-         // Clamp the dT to be no more than MAX_UPDATE_DT so that
-         // if we glitch and don't update for a while we don't do a big jerk motion
-         if (dT > super.MAX_UPDATE_DT) {
-             System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
-             dT = super.MAX_UPDATE_DT;
-         }
-                 
-        double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
+        double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
         if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
             manualMotorSpeed = 0;
         }
@@ -138,14 +122,31 @@ public class StrafeAxis extends Axis implements Subsystem {
         }
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        }
-
+        }   
         arduino.getLinePosition();
 
+        if(rubberControl) { //rubberControl bool currently has no control to enable, must change bool to true in code. 
+            if(manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
+                motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
+            }
+            else {
+                if(motor.getSelectedSensorPosition() > CENTER + RUBBER_FLEX) {
+                    motor.set(ControlMode.PercentOutput, -0.75);
+                }
+                if(motor.getSelectedSensorPosition() < CENTER - RUBBER_FLEX) {
+                    motor.set(ControlMode.PercentOutput, 0.75);
+                }
+                else{
+                    motor.set(ControlMode.PercentOutput, 0);
+                }   
+            }
+        }
+
+        SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
+        SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
+        SmartDashboard.putNumber("Strafe Encoder Value", motor.getSensorCollection().getQuadraturePosition()); 
     }
          
-        
-
     @Override
     public void resetState() {
         super.resetState();
@@ -168,9 +169,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initOutputs() {
         motor = new TalonSRX(CANConstants.STRAFE_TALON);
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
-        motor.configNominalOutputForward(0, TIMEOUT);
-        motor.configNominalOutputReverse(0, TIMEOUT);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, -1);
+        motor.configNominalOutputForward(0, -1);
+        motor.configNominalOutputReverse(0, -1);
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
@@ -212,6 +213,13 @@ public class StrafeAxis extends Axis implements Subsystem {
     }
 
     private void initMotor() {
-
+        while(!axisConfig.lowerLimitSwitch.getValue()) {
+            motor.set(ControlMode.PercentOutput, 0.75);
+        }
+        motor.setSelectedSensorPosition(0);
+        while(!axisConfig.upperLimitSwitch.getValue()) {
+            motor.set(ControlMode.PercentOutput, -0.75);
+        }
+        CENTER = motor.getSelectedSensorPosition() / 2;
     }
 }
