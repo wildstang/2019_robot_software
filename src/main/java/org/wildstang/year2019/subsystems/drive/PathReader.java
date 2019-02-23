@@ -1,12 +1,12 @@
-package org.wildstang.year2017.subsystems.drive;
+package org.wildstang.year2019.subsystems.drive;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
 
@@ -15,73 +15,60 @@ public class PathReader {
     public static Trajectory readTrajectory(File p_path) {
         Trajectory trajectory = new Trajectory();
 
-        ArrayList<String> rawData = new ArrayList<String>();
-
         // Open the file
         BufferedReader reader = null;
-
+        Iterable<CSVRecord> records = null;
         try {
             reader = new BufferedReader(new FileReader(p_path));
-        } catch (FileNotFoundException e) {
+            records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(reader);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (reader != null) {
-            String line;
-            try {
-                // Read all the lines. Sort into left and right paths
-                while ((line = reader.readLine()) != null) {
-                    rawData.add(line);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        double[][] dataPoints = new double[rawData.size()][];
+        ArrayList<double[]> dataPoints = new ArrayList<double[]>();
         TrajectoryPoint mpPoint = null;
         ArrayList<TrajectoryPoint> trajPoints = new ArrayList<TrajectoryPoint>();
 
-        // Parse into numbers
-        for (int i = 0; i < rawData.size(); i++) {
-            String tempLine = rawData.get(i);
-            StringTokenizer st = new StringTokenizer(tempLine, ",\n");
+        if (records != null) {
+            for (CSVRecord record : records) {
+                double position_inches = Double.parseDouble(record.get("position"));
+                double velocity_inches = Double.parseDouble(record.get("velocity"));
+                double interval_seconds = Double.parseDouble(record.get("dt"));
 
-            dataPoints[i] = new double[3];
-            double rotations = Double.parseDouble(st.nextToken());
-            double velocity = Double.parseDouble(st.nextToken());
-            double interval = Double.parseDouble(st.nextToken());
+                // unit conversion
+                // TODO verify that this is necessary
+                double rotations = position_inches * DriveConstants.TICKS_PER_INCH;
+                double velocity = velocity_inches * DriveConstants.TICKS_PER_INCH / 10;
+                double interval = interval_seconds * 1000;
 
-            dataPoints[i][0] = rotations;
-            dataPoints[i][1] = velocity;
-            dataPoints[i][2] = interval;
+                double dataPoint[] = new double[3];
+                dataPoint[0] = rotations;
+                dataPoint[1] = velocity;
+                dataPoint[2] = interval;
+                dataPoints.add(new double[3]);
 
-            // Create a TrajectoryPoint for the Talon - do this while reading the file
-            mpPoint = new TrajectoryPoint();
-            mpPoint.position = rotations;
-            mpPoint.velocity = velocity;
-            // FIXME The durations are quantized now! We can't put in an arbitrary duration.
-            // mpPoint.timeDur = (int) interval;
-            mpPoint.profileSlotSelect0 = 0; // which set of gains would you like to use?
-            // FIXME no analog for velocityOnly now?
-            // mpPoint.velocityOnly = false; // set true to not do any position servo, just velocity
-            //                               // feedforward
-            mpPoint.zeroPos = false;
+                // Create a TrajectoryPoint for the Talon - do this while reading the file
+                mpPoint = new TrajectoryPoint();
+                mpPoint.position = rotations;
+                mpPoint.velocity = velocity;
+                mpPoint.timeDur = (int)(interval * 1000);
+                mpPoint.profileSlotSelect0 = DrivePID.PATH.slot;
+                mpPoint.zeroPos = false;
 
-            if (i == 0) {
-                mpPoint.zeroPos = true; // set this to true on the first point
+                mpPoint.isLastPoint = false;
+
+                trajPoints.add(mpPoint);
             }
-
-            mpPoint.isLastPoint = false;
-
-            if ((i + 1) == rawData.size()) {
-                mpPoint.isLastPoint = true; // set this to true on the last point
+            // Make sure the first and last points are marked as such
+            if (trajPoints.size() > 0) {
+                trajPoints.get(0).zeroPos = true;
+                trajPoints.get(dataPoints.size() - 1).isLastPoint = true;
+            } else {
+                System.out.println("Somehow loaded empty trajectory!");
             }
-
-            trajPoints.add(mpPoint);
         }
 
-        trajectory.setTrajectoryPoints(dataPoints);
+        trajectory.setTrajectoryPoints((double[][])dataPoints.toArray());
         trajectory.setTalonPoints(trajPoints);
 
         return trajectory;

@@ -30,8 +30,8 @@ public class PathFollowerStep extends AutoStep {
     @Override
     public void initialize() {
         m_path = new Path();
-        File leftFile = new File(m_filePath + ".left");
-        File rightFile = new File(m_filePath + ".right");
+        File leftFile = new File(m_filePath + ".left.pf1.csv");
+        File rightFile = new File(m_filePath + ".right.pf1.csv");
         Trajectory leftTrajectory;
         Trajectory rightTrajectory;
 
