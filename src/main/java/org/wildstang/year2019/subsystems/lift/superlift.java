@@ -71,17 +71,6 @@ public class superlift implements Subsystem {
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
 
-    /** The maximum speed the operator can command to move in fine-tuning */
-    private static final double MANUAL_SPEED = 2; // in/s
-    private static final double TRACKING_MAX_SPEED = 1; // in/s
-    private static final double TRACKING_MAX_ACCEL = 1; // in/s^2
-    private static final double HOMING_MAX_SPEED = 1; // in/s
-    private static final double HOMING_MAX_ACCEL = 1; // in/s^2
-
-    private static final double BOTTOM_STOP_POS = -.5;
-    private static final double BOTTOM_MAX_TRAVEL = 0;
-    private static final double TOP_MAX_TRAVEL = 40;
-
     private DigitalInput position1Button;
     private DigitalInput position2Button;
     private DigitalInput position3Button;
@@ -91,8 +80,6 @@ public class superlift implements Subsystem {
     private VictorSPX follower;
 
     public static final double MAX_UPDATE_DT = .04;
-
-    
 
     /** The accumulated manual adjustment from the manip oper */
     private double manualAdjustment;
@@ -255,7 +242,7 @@ public class superlift implements Subsystem {
         SmartDashboard.putNumber("Target", target);
 
         // DEBUG
-        SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() - getEncoderLocation(-target)));
+        SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
 
         if (isPIDOverridden){
             currentcommand = control.MANUAL.ordinal();
@@ -284,15 +271,15 @@ public class superlift implements Subsystem {
         motor.set(ControlMode.Position, -target);
     }
     public void track(){
-        if (Math.abs(motor.getSensorCollection().getQuadraturePosition() - target) < getEncoderLocation(0.5)){
+        if (Math.abs(Math.abs(motor.getSensorCollection().getQuadraturePosition()) - Math.abs(target)) < getEncoderLocation(2)){
             
             currentcommand = control.HOME.ordinal();
             home();
         } else{
-            if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) < Math.abs(getEncoderLocation(-target))) {
+            if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) < Math.abs(-target)) {
                 motor.selectProfileSlot(runSlot, 0);
                 motor.set(ControlMode.Position, -target);
-            } else if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) > Math.abs(getEncoderLocation(-target))){
+            } else if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) > Math.abs(-target)){
                 motor.selectProfileSlot(downSlot, 0);
                 motor.set(ControlMode.Position, -target + 1600);
             }
@@ -306,7 +293,7 @@ public class superlift implements Subsystem {
         lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was .get
         isLimitSwitchOverridden = false;
         isPIDOverridden = false;
-        target = POSITION_1;
+        target = POSITION_1 * TICKS_PER_INCH;
     }
 
     @Override
