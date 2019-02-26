@@ -61,7 +61,7 @@ public class superlift implements Subsystem {
     //position_3+28=position_4
     private static double POSITION_1 = 0.0;//low goal
     private static double POSITION_2 = -10.62;//cargo goal - cargo only
-    private static double POSITION_3 = -28.0;//mid goal
+    private static double POSITION_3 = -20.0;//mid goal
     private static double POSITION_4 = -44;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
@@ -105,6 +105,8 @@ public class superlift implements Subsystem {
 
     /** The last time (according to timer) that we have been on target */
     private double lastTimeOnTarget;
+
+    public boolean isdown = false;
 
     // Logical variables
     public double runAcceleration = 2;
@@ -240,6 +242,7 @@ public class superlift implements Subsystem {
         SmartDashboard.putNumber("Lift Encoder Voltage", motor.getMotorOutputVoltage());
         SmartDashboard.putNumber("Current Command", currentcommand);
         SmartDashboard.putNumber("Target", target);
+        SmartDashboard.putBoolean("is Down", isdown);
 
         // DEBUG
         SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
@@ -278,10 +281,12 @@ public class superlift implements Subsystem {
         } else{
             if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) < Math.abs(-target)) {
                 motor.selectProfileSlot(runSlot, 0);
-                motor.set(ControlMode.Position, -target);
+                isdown = false;
+                motor.set(ControlMode.Position, -target-200);
             } else if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) > Math.abs(-target)){
                 motor.selectProfileSlot(downSlot, 0);
-                motor.set(ControlMode.Position, -target + 1600);
+                isdown=true;
+                motor.set(ControlMode.Position, -target + 800);
             }
 
         }
