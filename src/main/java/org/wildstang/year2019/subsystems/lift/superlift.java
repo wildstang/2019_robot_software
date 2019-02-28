@@ -61,7 +61,7 @@ public class superlift implements Subsystem {
     //position_3+28=position_4
     private static double POSITION_1 = 0.0;//low goal
     private static double POSITION_2 = -10.62;//cargo goal - cargo only
-    private static double POSITION_3 = -20.0;//mid goal
+    private static double POSITION_3 = -22.0;//mid goal
     private static double POSITION_4 = -44;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
