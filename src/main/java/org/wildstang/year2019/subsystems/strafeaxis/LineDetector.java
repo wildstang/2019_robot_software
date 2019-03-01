@@ -17,6 +17,7 @@ public class LineDetector {
     private SerialPort arduino;
     private static int[] SENSOR_CONSTANTS = {-130, -114, 96, -82, -56, -40, -24, -8, 0, 8, 24, 40, 56, 82, 96, 114, 130};
     private static double TICKS_PER_MM = 17.746;
+    boolean arduinoActive; 
     //private byte[] lineLocation = new byte[1]; 
     private byte[] lineLocation = new byte[16]; 
     
@@ -36,10 +37,10 @@ public class LineDetector {
               System.out.println("Falied to connect to kUSB1.  Attempting to connect to kUSB2");
               try {
                 arduino = new SerialPort(9600, Port.kUSB2);  
-                System.out.println("Connected to kUSB2");
+                System.out.println("Connected to kUSB2");                
               } 
               catch(Exception e2) {
-                System.out.println("Failed to connect");
+                System.out.println("Failed to connect");                
               }
             }
           }
@@ -48,6 +49,7 @@ public class LineDetector {
 
     public double getLinePosition() {
         double target; 
+        
         lineLocation = arduino.read(16);
         for(int i = 0; i < 16; i++) {
           System.out.println(i + ": " + lineLocation[i]);
@@ -61,6 +63,9 @@ public class LineDetector {
 
 
         */
+        
+        
+        
        
     }
     /*

@@ -88,7 +88,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             setRoughTarget(linePositionInput.getValue());
         }
         if (axisConfig.pidOverrideButton.getValue()) {
-            motor.set(ControlMode.Position, arduino.getLinePosition());           
+            //motor.set(ControlMode.Position, arduino.getLinePosition());           
         }
         
         //init motor; use if needed
