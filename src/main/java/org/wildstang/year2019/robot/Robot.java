@@ -82,6 +82,10 @@ public class Robot extends TimedRobot {
 
         core.executeUpdate();
 
+        // Empty the state tracker so we don't OOM out
+        // TODO: figure out what this thing is and why
+        Core.getStateTracker().getStateList();
+
         /* This code is used to debug garbage collection. Note that it has its own core.executeUpdate();
         WsTimer timer = new WsTimer();
         timer.start();
