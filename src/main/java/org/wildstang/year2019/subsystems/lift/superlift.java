@@ -61,7 +61,7 @@ public class superlift implements Subsystem {
     //position_3+28=position_4
     private static double POSITION_1 = 0.0;//low goal
     private static double POSITION_2 = -10.62;//cargo goal - cargo only
-    private static double POSITION_3 = -20.0;//mid goal
+    private static double POSITION_3 = -22.0;//mid goal
     private static double POSITION_4 = -44;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
@@ -156,7 +156,7 @@ public class superlift implements Subsystem {
     /** Maximum motor output during normal operation */
     public double maxMotorOutput = 1;
     /** Maximum motor output when we've hit a limit switch */
-    public double maxLimitedOutput = 1;
+    public double maxLimitedOutput = 0.05;
 
     /** Error within which we consider ourselves "on target" (inches). */
     public double targetWindow = 0.02;
@@ -222,7 +222,27 @@ public class superlift implements Subsystem {
             if (pidOverrideButton.getValue() == true && overrideButtonValue == true) {
                 isPIDOverridden = !isPIDOverridden;
             }
-        } 
+        } else if (source == limitSwitchOverrideButton) {
+            if (limitSwitchOverrideButton.getValue() == true && overrideButtonValue == true) {
+                isLimitSwitchOverridden = !isLimitSwitchOverridden;
+            }
+        } else if (source == lowerLimitSwitch) {
+            SmartDashboard.putBoolean("Lower Limit Switch", lowerLimitSwitch.getValue());
+            
+            if (lowerLimitSwitch.getValue() == true && !isLimitSwitchOverridden) {
+                motor.configPeakOutputForward(maxLimitedOutput, -1);
+            } else {
+                motor.configPeakOutputForward(maxMotorOutput, -1);
+            }
+        } else if (source == upperLimitSwitch) {
+            SmartDashboard.putBoolean("Upper Limit Switch", upperLimitSwitch.getValue());
+
+            if (upperLimitSwitch.getValue() == true && !isLimitSwitchOverridden) {
+                motor.configPeakOutputReverse(-maxLimitedOutput, -1);
+            } else {
+                motor.configPeakOutputReverse(-maxMotorOutput, -1);
+            }
+        }
     }
 
     @Override
@@ -239,13 +259,13 @@ public class superlift implements Subsystem {
     @Override
     public void update() {
         SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
-        SmartDashboard.putNumber("Lift Encoder Voltage", motor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Lift Voltage", motor.getMotorOutputVoltage());
         SmartDashboard.putNumber("Current Command", currentcommand);
         SmartDashboard.putNumber("Target", target);
-        SmartDashboard.putBoolean("is Down", isdown);
+        SmartDashboard.putBoolean("Is Down", isdown);
 
         // DEBUG
-        SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
+        SmartDashboard.putNumber("Lift Target Difference", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
 
         if (isPIDOverridden){
             currentcommand = control.MANUAL.ordinal();
@@ -323,6 +343,16 @@ public class superlift implements Subsystem {
         position4Button.addInputListener(this);
         manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
+        overrideButtonModifier = (DigitalInput) inputManager.getInput(WSInputs.WEDGE_SAFETY_2);
+        overrideButtonModifier.addInputListener(this);
+        pidOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.HATCH_COLLECT);
+        pidOverrideButton.addInputListener(this);
+        limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.LIFT_LIMIT_SWITCH_OVERRIDE);
+        limitSwitchOverrideButton.addInputListener(this);
+        lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.LIFT_LOWER_LIMIT);
+        lowerLimitSwitch.addInputListener(this);
+        upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.LIFT_UPPER_LIMIT);
+        upperLimitSwitch.addInputListener(this);
     }
 
     private void initOutputs() {
