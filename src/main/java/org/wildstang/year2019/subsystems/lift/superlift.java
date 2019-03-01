@@ -239,13 +239,13 @@ public class superlift implements Subsystem {
     @Override
     public void update() {
         SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
-        SmartDashboard.putNumber("Lift Encoder Voltage", motor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Lift Voltage", motor.getMotorOutputVoltage());
         SmartDashboard.putNumber("Current Command", currentcommand);
         SmartDashboard.putNumber("Target", target);
-        SmartDashboard.putBoolean("is Down", isdown);
+        SmartDashboard.putBoolean("Is Down", isdown);
 
         // DEBUG
-        SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
+        SmartDashboard.putNumber("Lift Target Difference", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
 
         if (isPIDOverridden){
             currentcommand = control.MANUAL.ordinal();

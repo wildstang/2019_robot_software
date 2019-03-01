@@ -165,8 +165,8 @@ public class Lift extends Axis implements Subsystem {
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, 0);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, 0);
+        motor.configNominalOutputForward(0, 0);
+        motor.configNominalOutputReverse(0, 0);
         // Peak output is managed by Axis class
         // PID settings are managed by Axis class
 

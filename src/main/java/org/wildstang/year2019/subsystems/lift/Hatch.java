@@ -6,6 +6,9 @@ import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.robot.WSOutputs;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
 import org.wildstang.hardware.crio.outputs.WsDoubleSolenoid;
 import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
@@ -164,6 +167,8 @@ public class Hatch implements Subsystem {
             }
             
         }
+        SmartDashboard.putBoolean("Hatch Out", hatchOut.getValue());
+        SmartDashboard.putBoolean("Hatch Lock", hatchLock.getValue());
     }
 
     @Override
