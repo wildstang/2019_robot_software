@@ -250,11 +250,15 @@ public class Ballpath implements Subsystem {
          */
         
         hopper_solenoid.setValue(hopper_position);
+        SmartDashboard.putBoolean("Hopper Position", hopper_position);
         intake_solenoid.setValue(intake_position);
+        SmartDashboard.putBoolean("Intake Position", intake_position);
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
+            SmartDashboard.putNumber("Intake Speed", ROLLER_SPEED);
         } else {
             intakeVictor.set(ControlMode.PercentOutput, 0);
+            SmartDashboard.putNumber("Intake Speed", 0);
         }
 
         if (isCarriageMotor) {
@@ -268,7 +272,7 @@ public class Ballpath implements Subsystem {
         } else {
             carriageVictor.set(ControlMode.PercentOutput, 0);
         }
-
+        SmartDashboard.putNumber("Carriage Speed", carriageVictor.getMotorOutputPercent());
         if (isHopper_motor) {
             hopperVictor1.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED);
             hopperVictor2.set(ControlMode.PercentOutput,  ROLLER_SPEED);
@@ -277,6 +281,8 @@ public class Ballpath implements Subsystem {
             hopperVictor1.set(ControlMode.PercentOutput, 0);
             hopperVictor2.set(ControlMode.PercentOutput, 0);
         }
+        SmartDashboard.putNumber("Hopper Speed (Victor 1)", hopperVictor1.getMotorOutputPercent());
+        SmartDashboard.putNumber("Hopper Speed (Victor 2)", hopperVictor2.getMotorOutputPercent());
 
         if (reverseValue) {
             hopperVictor1.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
