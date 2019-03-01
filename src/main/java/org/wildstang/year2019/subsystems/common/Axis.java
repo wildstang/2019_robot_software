@@ -188,14 +188,14 @@ public abstract class Axis implements Subsystem {
         SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
 
         // Puts a colored box (true: green, false: red) on SmartDashboard based on if axis motor is
-        // within +/- <> inches of target (rough target +/- manual adjustment)
+        // within    +/- <> inches of target (rough target +/- manual adjustment)
         if (motor.getSelectedSensorPosition(0) >= ((roughTarget + manualAdjustment) - config.axisInRangeThreshold)
                 && motor.getSelectedSensorPosition(0) <= ((roughTarget + manualAdjustment) + config.axisInRangeThreshold)) {
             SmartDashboard.putBoolean("Axis in Range of Target", true);
         } else {
             SmartDashboard.putBoolean("Axis in Range of Target", false);
         }
-
+         
         }// isStrafeOverride if statement
     
 

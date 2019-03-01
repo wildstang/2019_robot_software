@@ -133,7 +133,7 @@ public class StrafeAxis extends Axis implements Subsystem {
                 if(motor.getSelectedSensorPosition() > CENTER + RUBBER_FLEX) {
                     motor.set(ControlMode.PercentOutput, -0.75);
                 }
-                if(motor.getSelectedSensorPosition() < CENTER - RUBBER_FLEX) {
+                if(motor.getSelectedSensorPosition() < CENTER - RUBBER_FLEX) { 
                     motor.set(ControlMode.PercentOutput, 0.75);
                 }
                 else{
@@ -144,7 +144,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
-        SmartDashboard.putNumber("Strafe Encoder Value", motor.getSensorCollection().getQuadraturePosition()); 
+        SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
     }
          
     @Override

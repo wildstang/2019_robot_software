@@ -130,7 +130,8 @@ public class Lift extends Axis implements Subsystem {
 
     @Override
     public void update() {
-        SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
+        //SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
+
         super.update();
     }
 
@@ -150,7 +151,7 @@ public class Lift extends Axis implements Subsystem {
     // Private methods
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
-        position1Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_1);
+        position1Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_1); 
         position1Button.addInputListener(this);
         position2Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_2);
         position2Button.addInputListener(this);
