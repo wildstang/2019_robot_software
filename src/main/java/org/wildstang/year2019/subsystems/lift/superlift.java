@@ -158,6 +158,8 @@ public class superlift implements Subsystem {
     /** Maximum motor output when we've hit a limit switch */
     public double maxLimitedOutput = 0.05;
 
+    public double manualControlModifier = 1.0;
+
     /** Error within which we consider ourselves "on target" (inches). */
     public double targetWindow = 0.02;
     /**
@@ -269,9 +271,11 @@ public class superlift implements Subsystem {
 
         if (isPIDOverridden){
             currentcommand = control.MANUAL.ordinal();
+            manualControlModifier = 1.0;
             needtargetUpdate=true;
             manualDrive();
         } else if (currentcommand == control.MANUAL.ordinal()){
+            manualControlModifier = 0.3;
             manualDrive();
         } else if (currentcommand == control.TRACK.ordinal()){
             track();
@@ -287,7 +291,7 @@ public class superlift implements Subsystem {
 
     public void manualDrive(){
         //TODO: Change 0.6 to Variable
-        motor.set(ControlMode.PercentOutput, 0.3 * manualAdjustmentJoystick.getValue());
+        motor.set(ControlMode.PercentOutput, manualControlModifier * manualAdjustmentJoystick.getValue());
     }
     public void home(){
         motor.selectProfileSlot(homingSlot, 0);
