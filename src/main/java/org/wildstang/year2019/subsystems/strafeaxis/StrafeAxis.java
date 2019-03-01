@@ -84,16 +84,18 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void inputUpdate(Input source) {
-        if (axisConfig.pidOverrideButton.getValue()) {
-            //beginHoming(arduino.getLinePosition());
-        }
-        if (isHoming && !axisConfig.pidOverrideButton.getValue()) {
-            //finishHoming();
-        }
         if (source == linePositionInput) {
             setRoughTarget(linePositionInput.getValue());
         }
-        //System.out.println("test");
+        if (axisConfig.pidOverrideButton.getValue()) {
+            motor.set(ControlMode.Position, arduino.getLinePosition());           
+        }
+        
+        //init motor; use if needed
+        //if (axisConfig.overrideButtonValue) { 
+        //    initMotor();
+        //}
+
            
     }
 
@@ -123,24 +125,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
         }   
-        arduino.getLinePosition();
-
-        if(rubberControl) { //rubberControl bool currently has no control to enable, must change bool to true in code. 
-            if(manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-                motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
-            }
-            else {
-                if(motor.getSelectedSensorPosition() > CENTER + RUBBER_FLEX) {
-                    motor.set(ControlMode.PercentOutput, -0.75);
-                }
-                if(motor.getSelectedSensorPosition() < CENTER - RUBBER_FLEX) { 
-                    motor.set(ControlMode.PercentOutput, 0.75);
-                }
-                else{
-                    motor.set(ControlMode.PercentOutput, 0);
-                }   
-            }
-        }
+        //arduino.getLinePosition();
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
@@ -212,13 +197,13 @@ public class StrafeAxis extends Axis implements Subsystem {
         initAxis(axisConfig);
     }
 
-    private void initMotor() {
+    private void initMotor() {  //Strafe axis 15' across, mechanism 5' across
         while(!axisConfig.lowerLimitSwitch.getValue()) {
-            motor.set(ControlMode.PercentOutput, 0.75);
+            motor.set(ControlMode.PercentOutput, 0.25);
         }
         motor.setSelectedSensorPosition(0);
         while(!axisConfig.upperLimitSwitch.getValue()) {
-            motor.set(ControlMode.PercentOutput, -0.75);
+            motor.set(ControlMode.PercentOutput, -0.25);
         }
         CENTER = motor.getSelectedSensorPosition() / 2;
     }
