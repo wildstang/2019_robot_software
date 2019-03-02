@@ -105,7 +105,9 @@ public class StrafeAxis extends Axis implements Subsystem {
         //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         resetState();
         //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
-        
+
+        // Start the thread reading from the arduino serial port
+        arduino.start();
     }
     
     @Override
@@ -133,7 +135,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
         motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
-        arduinoPositions = arduino.getLinePosition();
+        arduinoPositions = arduino.getLineSensor();
         
         
         for(int i = 0; i < 16; i++) {
