@@ -72,25 +72,16 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private static final double AXIS_IN_RANGE_THRESHOLD = TICKS_PER_INCH * 0.5;
 
-    /** Line position input --- receive from RasPi */
-    private RemoteAnalogInput linePositionInput;
-
     private TalonSRX motor;
 
+    /** Line detector class talks to Arduino with line sensors on it */
     public LineDetector arduino = new LineDetector();
 
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
 
-    public StrafeAxis() {
-        //ystem.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
-    }
-
     @Override
     public void inputUpdate(Input source) {
-        if (source == linePositionInput) {
-            setRoughTarget(linePositionInput.getValue());
-        }
         if (axisConfig.pidOverrideButton.getValue()) {
             //motor.set(ControlMode.Position, arduino.getLinePosition());           
         }
@@ -100,7 +91,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         //    initMotor();
         //}
 
-           
+        
     }
 
     @Override
@@ -151,7 +142,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         }
         
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
-        SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
+        SmartDashboard.putBoolean("Lower limit switch", axisConfig.lowerLimitSwitch.getValue());
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
         SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());  
     }
@@ -171,9 +162,6 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
-        linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
-        linePositionInput.addInputListener(this);
-
     }
 
     private void initOutputs() {
