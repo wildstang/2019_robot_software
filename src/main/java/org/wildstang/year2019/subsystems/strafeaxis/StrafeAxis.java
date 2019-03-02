@@ -173,7 +173,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         motor.configNominalOutputForward(0, -1);
         motor.configNominalOutputReverse(0, -1);
         motor.configPeakOutputForward(1, -1);
-        motor.configPeakOutputReverse(1, -1);
+        motor.configPeakOutputReverse(-1, -1);
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
