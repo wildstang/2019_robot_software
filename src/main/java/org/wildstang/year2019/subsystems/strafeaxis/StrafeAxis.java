@@ -77,6 +77,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     public LineDetector arduino = new LineDetector();
 
+    public boolean isLimitSwitchOverridden;
+    public boolean overrideButtonValue;
+
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
 
@@ -90,6 +93,18 @@ public class StrafeAxis extends Axis implements Subsystem {
         }
         if (source == linePositionInput) {
             setRoughTarget(linePositionInput.getValue());
+        }
+        
+        if (source == axisConfig.overrideButtonModifier) {
+            overrideButtonValue = axisConfig.overrideButtonModifier.getValue();
+        } else if (source == axisConfig.limitSwitchOverrideButton) {
+            if (axisConfig.limitSwitchOverrideButton.getValue() == true && axisConfig.overrideButtonValue) {
+                isLimitSwitchOverridden = !isLimitSwitchOverridden;
+            }
+        } else if (source == axisConfig.lowerLimitSwitch) {
+            SmartDashboard.putBoolean("Left Limit Switch", axisConfig.lowerLimitSwitch.getValue());
+        } else if (source == axisConfig.upperLimitSwitch) {
+            SmartDashboard.putBoolean("Right Limit Switch", axisConfig.upperLimitSwitch.getValue());
         }
         //System.out.println("test");
     }
@@ -129,11 +144,13 @@ public class StrafeAxis extends Axis implements Subsystem {
          }
                  
         double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
-        if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-            manualMotorSpeed = 0;
-        }
-        else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-            manualMotorSpeed = 0;
+        if (!isLimitSwitchOverridden) {
+            if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
+                manualMotorSpeed = 0;
+            }
+            else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
+                manualMotorSpeed = 0;
+            }
         }
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
@@ -166,7 +183,6 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
         linePositionInput.addInputListener(this);
-
     }
 
     private void initOutputs() {
@@ -178,6 +194,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
+        motor.overrideLimitSwitchesEnable(false);
     }
 
     private void initAxis() {
