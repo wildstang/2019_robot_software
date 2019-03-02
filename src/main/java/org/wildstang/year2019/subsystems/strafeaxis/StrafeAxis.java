@@ -82,6 +82,10 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
 
+    public StrafeAxis() {
+        //ystem.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+    }
+
     @Override
     public void inputUpdate(Input source) {
         if (source == linePositionInput) {
@@ -100,12 +104,17 @@ public class StrafeAxis extends Axis implements Subsystem {
     }
 
     @Override
-    public void init() {        
+    public void init() {       
+        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         initInputs();
+        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         initOutputs();
+        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         initAxis();
+        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         resetState();
-        CENTER = motor.getSelectedSensorPosition();                
+        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+        
     }
     
     @Override
@@ -115,17 +124,24 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
-        double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
-        if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-            manualMotorSpeed = 0;
-        }
-        else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-            manualMotorSpeed = 0;
-        }
-        if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-            motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        }   
+
+        //super.update();
+
+        //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
+        //if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
+        //    manualMotorSpeed = 0;
+        //}
+        //else if (!axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
+        //    manualMotorSpeed = 0;
+        //}
+        //if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
+        //    motor.set(ControlMode.PercentOutput, manualMotorSpeed);
+        //}   
         //arduino.getLinePosition();
+
+        //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
+
+        motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());

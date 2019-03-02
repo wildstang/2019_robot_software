@@ -29,7 +29,7 @@ public class EnableIntakeStep extends AutoStep{
 
     public void initialize(){
 
-        ballpath = (Ballpath) Core.getSubsystemManager().getSubsystem(WSSubsystems.BALLPATH.getName());
+        //ballpath = (Ballpath) Core.getSubsystemManager().getSubsystem(WSSubsystems.BALLPATH.getName());
 
     }
 }
