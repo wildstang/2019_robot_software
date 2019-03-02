@@ -144,20 +144,25 @@ public class StrafeAxis extends Axis implements Subsystem {
          }
                  
         double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
-        if (!isLimitSwitchOverridden) {
+        if (isLimitSwitchOverridden) {
+            motor.overrideLimitSwitchesEnable(false);
+        } else {
+            motor.overrideLimitSwitchesEnable(true);
+            /*
+            Uncomment this if we switch to RIO input limit switches instead of endstops wired to motors
             if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
                 manualMotorSpeed = 0;
             }
             else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
                 manualMotorSpeed = 0;
-            }
+            }*/
         }
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
         }
         SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
-        SmartDashboard.putBoolean("Lower Limit Switch", axisConfig.lowerLimitSwitch.getValue());
-        SmartDashboard.putBoolean("Upper Limit Switch", axisConfig.upperLimitSwitch.getValue());
+        SmartDashboard.putBoolean("Lower Limit Switch", motor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putBoolean("Upper Limit Switch", motor.getSensorCollection().isFwdLimitSwitchClosed());
         SmartDashboard.putNumber("StrafeAxis Encoder Value", motor.getSensorCollection().getQuadraturePosition());
 
         arduino.getLinePosition();
