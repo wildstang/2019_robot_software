@@ -117,7 +117,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
-
+ 
         //super.update();
 
         //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
@@ -135,7 +135,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
         motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
-        arduinoPositions = arduino.getLineSensor();
+        arduinoPositions = arduino.getLineSensorData();
         
         
         for(int i = 0; i < 16; i++) {
