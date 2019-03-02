@@ -49,20 +49,12 @@ public class LineDetector {
 
     public double getLinePosition() {
         double target; 
-        
-        lineLocation = arduino.read(16);
-        for(int i = 0; i < 16; i++) {
-          System.out.println(i + ": " + lineLocation[i]);
-        }
-        return 0.0;
-
-        /*
         lineLocation = arduino.read(1);
         System.out.println(lineLocation[0]);
-        return SENSOR_CONSTANTS[lineLocation[0]] * TICKS_PER_MM;
+        //return SENSOR_CONSTANTS[lineLocation[0]] * TICKS_PER_MM;
+        return lineLocation[0]; 
 
-
-        */
+        
         
         
         

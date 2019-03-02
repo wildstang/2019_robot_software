@@ -141,6 +141,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
         motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
 
+        SmartDashboard.putNumber("Line position", arduino.getLinePosition());
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
@@ -171,6 +172,8 @@ public class StrafeAxis extends Axis implements Subsystem {
         motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, -1);
         motor.configNominalOutputForward(0, -1);
         motor.configNominalOutputReverse(0, -1);
+        motor.configPeakOutputForward(1, -1);
+        motor.configPeakOutputReverse(1, -1);
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
