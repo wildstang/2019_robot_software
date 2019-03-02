@@ -24,19 +24,19 @@ public class LineDetector {
     public LineDetector() {
 
         try {
-            arduino = new SerialPort(9600, Port.kUSB);  
+            //arduino = new SerialPort(9600, Port.kUSB);  
             System.out.println("Connected to kUSB");
           }
           catch(Exception e) {
             System.out.println("Falied to connect to kUSB.  Attempting to connect to kUSB1");
             try {
-              arduino = new SerialPort(9600, Port.kUSB1);  
+              //arduino = new SerialPort(9600, Port.kUSB1);  
               System.out.println("Connected to kUSB1");
             }
             catch(Exception e1) {
               System.out.println("Falied to connect to kUSB1.  Attempting to connect to kUSB2");
               try {
-                arduino = new SerialPort(9600, Port.kUSB2);  
+                //arduino = new SerialPort(9600, Port.kUSB2);  
                 System.out.println("Connected to kUSB2");                
               } 
               catch(Exception e2) {
