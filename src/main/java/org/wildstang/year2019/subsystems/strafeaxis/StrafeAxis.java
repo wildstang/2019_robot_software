@@ -1,6 +1,5 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
 
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -18,6 +17,8 @@ import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
 import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * This subsystem is responsible for lining up hatch panels left-to-right.
@@ -137,6 +138,10 @@ public class StrafeAxis extends Axis implements Subsystem {
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
         }
+        SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
+        SmartDashboard.putBoolean("Lower Limit Switch", axisConfig.lowerLimitSwitch.getValue());
+        SmartDashboard.putBoolean("Upper Limit Switch", axisConfig.upperLimitSwitch.getValue());
+        SmartDashboard.putNumber("StrafeAxis Encoder Value", motor.getSensorCollection().getQuadraturePosition());
 
         arduino.getLinePosition();
 
