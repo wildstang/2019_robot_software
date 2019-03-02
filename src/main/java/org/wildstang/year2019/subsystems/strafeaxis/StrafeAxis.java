@@ -143,7 +143,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
         SmartDashboard.putNumber("Line position", arduino.getLinePosition());
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
-        SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
+        SmartDashboard.putBoolean("Lower limit switch", axisConfig.lowerLimitSwitch.getValue());
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
     }
          
