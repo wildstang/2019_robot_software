@@ -128,10 +128,12 @@ public enum WSInputs implements Inputs {
                                                                                                 // Subsystem
     CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // Ballpath
                                                                                                         // Subsystem
-    STRAFE_OVERRIDE("Button to override strafe", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
+    AUTOMATIC_STRAFE_SWITCH("Button to turn on auto strafe", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
                                                                                            // Subsystem
+    // USED AS MODIFIER, DO NOT CHANGE:
     WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 8), false), // Wedge
                                                                                                          // Subsystem
+    // USED AS MODIFIER, DO NOT CHANGE:
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
     LIFT_LIMIT_SWITCH_OVERRIDE("Lift Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // Lift
