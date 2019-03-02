@@ -71,11 +71,11 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double AXIS_IN_RANGE_THRESHOLD = TICKS_PER_INCH * 0.5;
 
     /** Line position input --- receive from RasPi */
-    private RemoteAnalogInput linePositionInput;
+    //private RemoteAnalogInput linePositionInput;
 
     private TalonSRX motor;
 
-    public LineDetector arduino = new LineDetector();
+    //public LineDetector arduino = new LineDetector();
 
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
@@ -88,9 +88,9 @@ public class StrafeAxis extends Axis implements Subsystem {
         if (isHoming && !axisConfig.pidOverrideButton.getValue()) {
             //finishHoming();
         }
-        if (source == linePositionInput) {
-            setRoughTarget(linePositionInput.getValue());
-        }
+        //if (source == linePositionInput) {
+            //setRoughTarget(linePositionInput.getValue());
+        //}
         //System.out.println("test");
     }
 
@@ -118,32 +118,33 @@ public class StrafeAxis extends Axis implements Subsystem {
         ///super.update();
 
          //double time = timer.get();
-         double time = super.timer.GetTimeInSec();//timertesting
-         double dT = time - super.lastUpdateTime;
-         lastUpdateTime = time;
-         // Clamp the dT to be no more than MAX_UPDATE_DT so that
-         // if we glitch and don't update for a while we don't do a big jerk motion
-         if (dT > super.MAX_UPDATE_DT) {
-             System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
-             dT = super.MAX_UPDATE_DT;
-         }
+        //  double time = super.timer.GetTimeInSec();//timertesting
+        //  double dT = time - super.lastUpdateTime;
+        //  lastUpdateTime = time;
+        //  // Clamp the dT to be no more than MAX_UPDATE_DT so that
+        //  // if we glitch and don't update for a while we don't do a big jerk motion
+        //  if (dT > super.MAX_UPDATE_DT) {
+        //      System.out.println("WARNING: MAX_UPDATE_DT exceeded in Axis");
+        //      dT = super.MAX_UPDATE_DT;
+        //  }
                  
-        double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
-        if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-            manualMotorSpeed = 0;
-        }
-        else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-            manualMotorSpeed = 0;
-        }
+         double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
+        // if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
+        //     manualMotorSpeed = 0;
+        // }
+        // else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
+        //     manualMotorSpeed = 0;
+        // }
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
         }
-        SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
-        SmartDashboard.putBoolean("Lower Limit Switch", axisConfig.lowerLimitSwitch.getValue());
-        SmartDashboard.putBoolean("Upper Limit Switch", axisConfig.upperLimitSwitch.getValue());
+        
+        //SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
+        //SmartDashboard.putBoolean("Lower Limit Switch", axisConfig.lowerLimitSwitch.getValue());
+        //SmartDashboard.putBoolean("Upper Limit Switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putNumber("StrafeAxis Encoder Value", motor.getSensorCollection().getQuadraturePosition());
 
-        arduino.getLinePosition();
+        //arduino.getLinePosition();
 
     }
          
@@ -164,8 +165,8 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
-        linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
-        linePositionInput.addInputListener(this);
+        //linePositionInput = (RemoteAnalogInput) inputManager.getInput(WSInputs.LINE_POSITION);
+        //linePositionInput.addInputListener(this);
 
     }
 
