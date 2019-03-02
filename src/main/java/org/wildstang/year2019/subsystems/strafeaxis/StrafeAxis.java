@@ -49,14 +49,10 @@ public class StrafeAxis extends Axis implements Subsystem {
     private boolean isTrackingAutomatically = false;
     private DigitalInput automaticStrafeButton;
 
-    /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 10;
-    /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 1024;
-    /** # of ticks in one inch of axis movement */
-    private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
     /**# of ticks in millimeters for encoders */
     private static double TICKS_PER_MM = 17.746;
+    /** # of ticks in one inch of axis movement */
+    private static final double TICKS_PER_INCH = 25.4 * TICKS_PER_MM;
 
     /** The maximum speed the operator can command to move in fine-tuning */
     private static final double MANUAL_SPEED = 2; // in/s
@@ -157,7 +153,10 @@ public class StrafeAxis extends Axis implements Subsystem {
                 minIndex = i;
             }
         }
-        
+        double linePositionTicks = TICKS_PER_MM * SENSOR_POSITIONS[minIndex];
+        if (isTrackingAutomatically) {
+            motor.set(ControlMode.Position, linePositionTicks);
+        }
     }
     @Override
     public void resetState() {
@@ -203,8 +202,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.overrideButtonModifier.addInputListener(this);
         axisConfig.limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LIMIT_SWITCH_OVERRIDE);
         axisConfig.limitSwitchOverrideButton.addInputListener(this);
-        axisConfig.pidOverrideButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.STRAFE_OVERRIDE);
-        axisConfig.pidOverrideButton.addInputListener(this);
+        
 
         axisConfig.motor = motor;
         axisConfig.ticksPerInch = TICKS_PER_INCH;
