@@ -51,8 +51,8 @@ public class Ballpath implements Subsystem {
 
     // Constants
     private static final double ROLLER_SPEED = 1.0;
-    private static final double ROLLER_SPEED_SLOWED_1 = 0.6; // For sensor A
-    private static final double ROLLER_SPEED_SLOWED_2 = 0.4; // For sensor A + B
+    private static final double ROLLER_SPEED_SLOWED_1 = 0.8; // For sensor A
+    private static final double ROLLER_SPEED_SLOWED_2 = 0.6; // For sensor A + B
     private static final double ROLLER_SPEED_BRAKE = 0.0; // For setting to zero AND sensor B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;// subject to change
@@ -73,8 +73,8 @@ public class Ballpath implements Subsystem {
     // be set later
 
     // Solenoids
-    private WsDoubleSolenoid hopper_solenoid;
-    private WsDoubleSolenoid intake_solenoid;
+    private WsSolenoid hopper_solenoid;
+    private WsSolenoid intake_solenoid;
 
     // Victors
     private VictorSPX intakeVictor;
@@ -92,6 +92,7 @@ public class Ballpath implements Subsystem {
     private boolean Sensor_A_Value;
     private boolean Sensor_B_Value;
     private boolean carriage_slowed;
+    private boolean transferCarriage;
 
     /**
      * TODO: Names set up for each Victor that we are going to need TODO: Add
@@ -141,7 +142,7 @@ public class Ballpath implements Subsystem {
             hopper_position = false;
         }
 
-        if (!safetyInput.getValue() && carriageRollersInput.getValue()) {
+        if (carriageRollersInput.getValue()) {
             isCarriageMotor = true;
             carriage_slowed = false;
         } else {
@@ -150,10 +151,10 @@ public class Ballpath implements Subsystem {
 
         // check if everything should be activated
         if (fullBallpathInput.getValue()) {
-            hopper_position = true;
             intake_position = true;
             isIntake_motor = true;
             isHopper_motor = true;
+            hopper_position = true;
 
             // If carriage motor is already running because of the carriage input, that
             // should override our logic in this branch
@@ -172,13 +173,15 @@ public class Ballpath implements Subsystem {
         // Everything is not activated so we check each indivigual button!
         else {
             if (intakeInput.getValue()) {
-                intake_position = true;
-                isIntake_motor = true;
-                isHopper_motor = false;
+                isCarriageMotor = true;
+                isHopper_motor = true;
+
+                transferCarriage = true;
             } else {
+                isHopper_motor = false;
                 intake_position = false;
                 isIntake_motor = false;
-                isHopper_motor = false;
+                transferCarriage = false;
             }
         }
     }
@@ -210,8 +213,8 @@ public class Ballpath implements Subsystem {
         safetyInput.addInputListener(this);
 
         // Solenoids
-        hopper_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
-        intake_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
+        hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
+        intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
 
         // WsVictors
         intakeVictor = new VictorSPX(CANConstants.INTAKE_VICTOR);
@@ -245,10 +248,9 @@ public class Ballpath implements Subsystem {
          * carriage and hopper rollers
          * 
          */
-        if (hopper_position) hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        else hopper_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        if (intake_position) intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        else intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        
+        hopper_solenoid.setValue(hopper_position);
+        intake_solenoid.setValue(intake_position);
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
         } else {
@@ -256,7 +258,7 @@ public class Ballpath implements Subsystem {
         }
 
         if (isCarriageMotor) {
-            if (carriage_slowed && Sensor_B_Value) {
+            if ((carriage_slowed && Sensor_B_Value) || transferCarriage) {
                 carriageVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED_SLOWED_2);
             } else if (carriage_slowed) {
                 carriageVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * ROLLER_SPEED_SLOWED_1);
@@ -287,8 +289,8 @@ public class Ballpath implements Subsystem {
 
     @Override
     public void resetState() {
-        hopper_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-        intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        hopper_solenoid.setValue(false);
+        intake_solenoid.setValue(false);
         intakeVictor.set(ControlMode.PercentOutput, 0.0);
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);

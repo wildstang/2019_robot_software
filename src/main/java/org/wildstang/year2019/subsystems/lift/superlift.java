@@ -55,16 +55,14 @@ public class superlift implements Subsystem {
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
-    /** TODO: remove this */
-    private static final int TIMEOUT = -1;
 
     // All positions in inches above lower limit
     //position_1+28=position_3
     //position_3+28=position_4
     private static double POSITION_1 = 0.0;//low goal
-    private static double POSITION_2 = 8.0;//cargo goal - cargo only
-    private static double POSITION_3 = 28.0;//mid goal
-    private static double POSITION_4 = 56.0;//high goal
+    private static double POSITION_2 = -10.62;//cargo goal - cargo only
+    private static double POSITION_3 = -22.0;//mid goal
+    private static double POSITION_4 = -44;//high goal
 
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 1/9.087;//5.092                                                   
@@ -72,17 +70,6 @@ public class superlift implements Subsystem {
     private static final double TICKS_PER_REV = 4096;//4096 
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
-
-    /** The maximum speed the operator can command to move in fine-tuning */
-    private static final double MANUAL_SPEED = 2; // in/s
-    private static final double TRACKING_MAX_SPEED = 1; // in/s
-    private static final double TRACKING_MAX_ACCEL = 1; // in/s^2
-    private static final double HOMING_MAX_SPEED = 1; // in/s
-    private static final double HOMING_MAX_ACCEL = 1; // in/s^2
-
-    private static final double BOTTOM_STOP_POS = -.5;
-    private static final double BOTTOM_MAX_TRAVEL = 0;
-    private static final double TOP_MAX_TRAVEL = 40;
 
     private DigitalInput position1Button;
     private DigitalInput position2Button;
@@ -93,8 +80,6 @@ public class superlift implements Subsystem {
     private VictorSPX follower;
 
     public static final double MAX_UPDATE_DT = .04;
-
-    
 
     /** The accumulated manual adjustment from the manip oper */
     private double manualAdjustment;
@@ -120,6 +105,8 @@ public class superlift implements Subsystem {
 
     /** The last time (according to timer) that we have been on target */
     private double lastTimeOnTarget;
+
+    public boolean isdown = false;
 
     // Logical variables
     public double runAcceleration = 2;
@@ -162,6 +149,9 @@ public class superlift implements Subsystem {
     public int homingSlot = 1;
     /** PID constants to use while homing the axis */
     public PIDConstants homingK= LiftPID.HOMING.k;
+
+    public int downSlot = 2;
+    public PIDConstants downK = LiftPID.DOWNTRACK.k;
 
     /** Maximum motor output during normal operation */
     public double maxMotorOutput = 1;
@@ -249,6 +239,13 @@ public class superlift implements Subsystem {
     @Override
     public void update() {
         SmartDashboard.putNumber("Lift Encoder Value", motor.getSensorCollection().getQuadraturePosition());
+        SmartDashboard.putNumber("Lift Encoder Voltage", motor.getMotorOutputVoltage());
+        SmartDashboard.putNumber("Current Command", currentcommand);
+        SmartDashboard.putNumber("Target", target);
+        SmartDashboard.putBoolean("is Down", isdown);
+
+        // DEBUG
+        SmartDashboard.putNumber("Lift Target Differnece", Math.abs(motor.getSensorCollection().getQuadraturePosition() -target));
 
         if (isPIDOverridden){
             currentcommand = control.MANUAL.ordinal();
@@ -269,20 +266,29 @@ public class superlift implements Subsystem {
     }
 
     public void manualDrive(){
-        motor.set(ControlMode.PercentOutput,manualAdjustmentJoystick.getValue());
+        //TODO: Change 0.6 to Variable
+        motor.set(ControlMode.PercentOutput, 0.3 * manualAdjustmentJoystick.getValue());
     }
     public void home(){
         motor.selectProfileSlot(homingSlot, 0);
         motor.set(ControlMode.Position, -target);
     }
     public void track(){
-        if (Math.abs(motor.getSensorCollection().getQuadraturePosition() - getEncoderLocation(target))<getEncoderLocation(0.5)){
+        if (Math.abs(Math.abs(motor.getSensorCollection().getQuadraturePosition()) - Math.abs(target)) < getEncoderLocation(2)){
             
             currentcommand = control.HOME.ordinal();
             home();
         } else{
-            motor.selectProfileSlot(runSlot, 0);
-            motor.set(ControlMode.Position, -target);
+            if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) < Math.abs(-target)) {
+                motor.selectProfileSlot(runSlot, 0);
+                isdown = false;
+                motor.set(ControlMode.Position, -target-200);
+            } else if(Math.abs(motor.getSensorCollection().getQuadraturePosition()) > Math.abs(-target)){
+                motor.selectProfileSlot(downSlot, 0);
+                isdown=true;
+                motor.set(ControlMode.Position, -target + 800);
+            }
+
         }
     }
 
@@ -292,7 +298,7 @@ public class superlift implements Subsystem {
         lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was .get
         isLimitSwitchOverridden = false;
         isPIDOverridden = false;
-        target = POSITION_1;
+        target = POSITION_1 * TICKS_PER_INCH;
     }
 
     @Override
@@ -322,22 +328,27 @@ public class superlift implements Subsystem {
     private void initOutputs() {
         System.out.println("Initializing lift Talon ID " + CANConstants.LIFT_TALON);
         motor = new TalonSRX(CANConstants.LIFT_TALON);
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         motor.setInverted(INVERTED);
         motor.setSensorPhase(SENSOR_PHASE);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputForward(0, 0);
+        /*CoreUtils.checkCTRE*/motor.configNominalOutputReverse(0, 0);
         // Peak output is managed by Axis class
         // PID settings are managed by Axis class
         timer.Start();//timertesting old was .start
-        /*CoreUtils.checkCTRE*/motor.config_kF(runSlot, runK.f, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kP(runSlot, runK.p, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kI(runSlot, runK.i, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kD(runSlot, runK.d, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kF(homingSlot, homingK.f, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kP(homingSlot, homingK.p, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kI(homingSlot, homingK.i, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kD(homingSlot, homingK.d, TIMEOUT);
+        /*CoreUtils.checkCTRE*/motor.config_kF(runSlot, runK.f, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kP(runSlot, runK.p, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kI(runSlot, runK.i, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kD(runSlot, runK.d, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kF(homingSlot, homingK.f, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kP(homingSlot, homingK.p, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kI(homingSlot, homingK.i, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kD(homingSlot, homingK.d, 0);
+        
+        /*CoreUtils.checkCTRE*/motor.config_kF(downSlot, downK.f, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kP(downSlot, downK.p, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kI(downSlot, downK.i, 0);
+        /*CoreUtils.checkCTRE*/motor.config_kD(downSlot, downK.d, 0);
         setSpeedAndAccel(runSpeed, runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setSelectedSensorPosition(0, 0, -1);

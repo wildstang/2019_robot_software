@@ -16,10 +16,12 @@ public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
     private static final double DEPLOY_WAIT = 0.25;
+    private static final double RETRACT_WAIT = 0.65;
     private static final double LOCK_WAIT = 0.15;
     // Local inputs
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;
+    private DigitalInput startButton;
     private WsTimer timer = new WsTimer();
 
     // Local outputs
@@ -33,6 +35,10 @@ public class Hatch implements Subsystem {
                                   //                      fit back through opening)
                                   // false = Retracted (mechanism can freely move in any direction through hatch panel opening)
     private boolean working;
+    private boolean isStartPressed;
+
+    public static final boolean lockVal = false;
+    public static final boolean outVal = false;
 
     //No Longer using
     // private long deployRestartLastMovementTime;
@@ -43,7 +49,7 @@ public class Hatch implements Subsystem {
 
 
     enum commands {
-        IDLE, DEPLOY_RESTART, COLLECT_RESTART, DEPLOY, COLLECT;
+        IDLE, DEPLOY, COLLECT, COLLECT2;
     }
     private int currentCommand; // 0 = Idle
                                 // 1 = Deploy restart
@@ -53,24 +59,27 @@ public class Hatch implements Subsystem {
 
     @Override
     public void inputUpdate(Input source) {
-        if (source == hatchDeploy) {
-            // if (currentCommand != 0 && hatchDeploy.getValue() == true) {
-            //     currentCommand = 1;
-            // }
+        if(source == startButton) {
+            isStartPressed = true;
+        } else {
+            isStartPressed = false;
+        }
 
+        if (source == hatchDeploy) {
+            
             if (currentCommand == commands.IDLE.ordinal()  && hatchDeploy.getValue() == true) {
                 currentCommand = commands.DEPLOY.ordinal();
                 
-            }
+            } 
         }
         
         if (source == hatchCollect) {
-            // if (currentCommand != 0 && hatchDeploy.getValue() == true) {
-            //     currentCommand = 2;
-            // }
+            
 
-            if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true) {
+            if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true && !isStartPressed){
                 currentCommand = commands.COLLECT.ordinal();
+            } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue() == false){
+                currentCommand = commands.COLLECT2.ordinal();
             }
         }
     }
@@ -83,6 +92,9 @@ public class Hatch implements Subsystem {
 
         hatchCollect = (DigitalInput) Core.getInputManager().getInput(WSInputs.HATCH_COLLECT.getName());
         hatchCollect.addInputListener(this);
+
+        startButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
+        startButton.addInputListener(this);
 
         hatchOut = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_OUT_SOLENOID.getName());
         hatchLock = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HATCH_LOCK_SOLENOID.getName());
@@ -97,99 +109,72 @@ public class Hatch implements Subsystem {
 
     @Override
     public void update() {
-        // Restart commands (1 and 2) take priority over regular ones (3 and 4)
-        // if (currentCommand == 1) {
-        //     if (deployRestartLastMovementTime == 0) {
-        //         outPosition = false;
-        //         hatchOut.setValue(outPosition);
-
-        //         deployRestartLastMovementTime = System.currentTimeMillis();
-        //     } else if (deployRestartLastMovementTime + solenoidDelayMillis >= System.currentTimeMillis()) {
-        //         lockPosition = true;
-        //         hatchLock.setValue(lockPosition);
-        //     } else if (deployRestartLastMovementTime + 2 * solenoidDelayMillis >= System.currentTimeMillis()) {
-        //         deployRestartLastMovementTime = 0;
-
-        //         currentCommand = 2;
-        //     }
-        // } else if (currentCommand == 2) {
-        //     if (collectRestartLastMovementTime == 0) {
-        //         outPosition = false;
-        //         hatchOut.setValue(outPosition);
-
-        //         collectRestartLastMovementTime = System.currentTimeMillis();
-        //     } else if (collectRestartLastMovementTime + solenoidDelayMillis >= System.currentTimeMillis()) {
-        //         collectRestartLastMovementTime = 0;
-
-        //         currentCommand = 4;
-        //     }}
+        
         if (currentCommand == commands.DEPLOY.ordinal()) {
             if (!working) {
                 working = true;
-                outPosition = true;
+                outPosition = !outVal;
                 hatchOut.setValue(outPosition);
-                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
 
                 timer.reset();
-                //deployLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(LOCK_WAIT + DEPLOY_WAIT)) {
-                lockPosition = false;
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT) && !timer.hasPeriodPassed(RETRACT_WAIT + DEPLOY_WAIT)) {
+                lockPosition = !lockVal;
                 hatchLock.setValue(lockPosition);
 
-            } else if (timer.hasPeriodPassed(DEPLOY_WAIT + LOCK_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT + LOCK_WAIT)) {
-                outPosition = false;
+            } else if (timer.hasPeriodPassed(DEPLOY_WAIT + RETRACT_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
+                outPosition = outVal;
                 hatchOut.setValue(outPosition);
-                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-                // else hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + LOCK_WAIT)) {
-                lockPosition = true;
+            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
+                lockPosition = lockVal;
                 hatchLock.setValue(lockPosition);
 
                 working = false;
-                //deployLastMovementTime = 0;
 
                 currentCommand = commands.IDLE.ordinal();
             }
         } else if (currentCommand == commands.COLLECT.ordinal()) {
             if (!working) {
                 working = true;
-                outPosition = true;
+                outPosition = !outVal;
+                lockPosition= !lockVal;
                 hatchOut.setValue(outPosition);
-                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-
+                hatchLock.setValue(lockPosition);
                 timer.reset();
-                //collectLastMovementTime = System.currentTimeMillis();
-            } else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
-                outPosition = false;
-                hatchOut.setValue(outPosition);
-                // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-                // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
-                working = false;
+                working=false;
+            } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
+            //     outPosition = outVal;
+            //     hatchOut.setValue(outPosition);
+            //     working = false;
 
+            //     currentCommand = commands.IDLE.ordinal();
+            // }
+        } else if (currentCommand == commands.COLLECT2.ordinal()){
+            if (!working) {
+                timer.reset();
+                working = true;
+            }
+            outPosition=outVal;
+            lockPosition=lockVal;
+            hatchLock.setValue(lockPosition);
+            if (timer.hasPeriodPassed(LOCK_WAIT)){
+                
+                hatchOut.setValue(outPosition);
+                working=false;
                 currentCommand = commands.IDLE.ordinal();
             }
+            
         }
     }
 
     @Override
     public void resetState() {
         // Reset local variables back to default state
-        outPosition = false;
-        lockPosition = true;
+        outPosition = outVal;
+        lockPosition = lockVal;
         hatchOut.setValue(outPosition);
-        // if (outPosition) hatchOut.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
-        // else hatchOut.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
         hatchLock.setValue(lockPosition);
 
         working = false;
-
-        // deployRestartLastMovementTime = 0;
-        // deployLastMovementTime = 0;
-
-        // collectRestartLastMovementTime = 0;
-        // collectLastMovementTime = 0;
 
         currentCommand = commands.IDLE.ordinal();
     }

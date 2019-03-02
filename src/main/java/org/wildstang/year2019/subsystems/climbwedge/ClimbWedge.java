@@ -33,7 +33,7 @@ public class ClimbWedge implements Subsystem {
     private DigitalInput wedgeButton1;
     private DigitalInput wedgeButton2;
 
-    private WsDoubleSolenoid deployWedge;
+    private WsSolenoid deployWedge;
 
     private WsTimer timer = new WsTimer();
     
@@ -61,7 +61,7 @@ public class ClimbWedge implements Subsystem {
         wedgeButton2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_2.getName());
         wedgeButton2.addInputListener(this);
 
-        deployWedge = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.WEDGE_SOLENOID.getName());
+        deployWedge = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.WEDGE_SOLENOID.getName());
 
         resetState();
     }
@@ -87,7 +87,7 @@ public class ClimbWedge implements Subsystem {
             timer.stop();
             timerStatus = false;
         }
-        if (deployWedgeStatus) deployWedge.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+        if (deployWedgeStatus) deployWedge.setValue(false);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class ClimbWedge implements Subsystem {
         //Reset local variables back to default state
         wedgeButton1Status = false;
         wedgeButton2Status = false;
-        deployWedgeStatus = false;
+        deployWedgeStatus = true;
         timerStatus = false;
     }
 

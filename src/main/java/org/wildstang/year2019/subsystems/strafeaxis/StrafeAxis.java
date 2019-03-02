@@ -44,8 +44,6 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
-    /** TODO: remove this */
-    //private static final int TIMEOUT = 0;
 
     private boolean rubberControl = false; 
     private int offFromCenter; 
