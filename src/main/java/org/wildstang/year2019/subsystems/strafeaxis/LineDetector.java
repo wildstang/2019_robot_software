@@ -48,13 +48,19 @@ public class LineDetector {
     }
 
     public byte [] getLinePosition() {
-        double target; 
-        lineLocation = arduino.read(16);
-        
+        byte valueRead = arduino.read(1)[0];
+        /* We keep reading until we get a byte with the high bit set. In Java, byte is signed
+        so if the high bit is set the valueRead will be <0. */
+        while (valueRead >= 0) {
+            valueRead = arduino.read(1)[0];
+        }
+        lineLocation[0] = (byte)((int)valueRead + 128);
+        for (int i = 1; i < lineLocation.length; ++i) {
+            lineLocation[i] = arduino.read(1)[0];
+        }
         //System.out.println(lineLocation[0]);
         //return SENSOR_CONSTANTS[lineLocation[0]] * TICKS_PER_MM;
-        return lineLocation; 
-                                       
+        return lineLocation;                
     }
     /*
     130  114  96   82   56   40   24   08 0 08   24   40   56   82   96   114  130
