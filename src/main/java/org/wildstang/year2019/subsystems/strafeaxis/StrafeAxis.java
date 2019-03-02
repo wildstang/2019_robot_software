@@ -44,23 +44,19 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
+    private int CENTER = 100; // needs to set manually once axis is created
+    private byte[] lightValues = new byte[16];
+    private boolean isTrackingAutomatically = false;
+    private DigitalInput automaticStrafeButton;
 
-    private boolean rubberControl = false; 
-    private int offFromCenter; 
-    private int CENTER = 100; //needs to set manually once axis is created
-    /** Light values of all the indexes  */
-    private byte[] lightValues = new byte[16];  
-    
     /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 10; 
+    private static final double REVS_PER_INCH = 10;
     /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 1024; 
+    private static final double TICKS_PER_REV = 1024;
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
     /**# of ticks in millimeters for encoders */
     private static double TICKS_PER_MM = 17.746;
-
-
 
     /** The maximum speed the operator can command to move in fine-tuning */
     private static final double MANUAL_SPEED = 2; // in/s
@@ -88,33 +84,46 @@ public class StrafeAxis extends Axis implements Subsystem {
     @Override
     public void inputUpdate(Input source) {
         if (axisConfig.pidOverrideButton.getValue()) {
-            //motor.set(ControlMode.Position, arduino.getLinePosition());           
+            // motor.set(ControlMode.Position, arduino.getLinePosition());
         }
-        
-        //init motor; use if needed
-        //if (axisConfig.overrideButtonValue) { 
-        //    initMotor();
-        //}
 
-        
+        // init motor; use if needed
+        // if (axisConfig.overrideButtonValue) {
+        // initMotor();
+        // }
+
+        if (source == automaticStrafeButton) {
+            if (automaticStrafeButton.getValue()) {
+                isTrackingAutomatically = true;
+
+            }
+
+        }
+
+        if (source == axisConfig.manualAdjustmentJoystick) {
+            double joystickValue = axisConfig.manualAdjustmentJoystick.getValue();
+            if (joystickValue < -0.25 || joystickValue > 0.25) {
+                isTrackingAutomatically = false;
+            }
+        }
     }
 
     @Override
-    public void init() {       
-        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+    public void init() {
+        // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         initInputs();
-        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+        // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         initOutputs();
-        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+        // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         initAxis();
-        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+        // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
         resetState();
-        //System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
+        // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
 
         // Start the thread reading from the arduino serial port
         arduino.start();
     }
-    
+
     @Override
     public void selfTest() {
         // TODO
@@ -123,31 +132,16 @@ public class StrafeAxis extends Axis implements Subsystem {
     @Override
     public void update() {
 
-        //super.update();
-
-        //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
-        //if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-        //    manualMotorSpeed = 0;
-        //}
-        //else if (!axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-        //    manualMotorSpeed = 0;
-        //}
-        //if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-        //    motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        //}   
-        //arduino.getLinePosition();
-
-        //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
-
-        motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
+        if (isTrackingAutomatically == false) {
+            motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
+        }
         lightValues = arduino.getLineSensor();
-        
-        
-        for(int i = 0; i < 16; i++) {
-            String smartName = i + " Position"; 
+
+        for (int i = 0; i < 16; i++) {
+            String smartName = i + " Position";
             SmartDashboard.putNumber(smartName, lightValues[i]);
         }
-        
+
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.lowerLimitSwitch.getValue());
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
@@ -180,6 +174,8 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
+        automaticStrafeButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.AUTOMATIC_STRAFE_SWITCH);
+        automaticStrafeButton.addInputListener(this);
     }
 
     private void initOutputs() {
@@ -234,7 +230,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             motor.set(ControlMode.PercentOutput, 0.25);
         }
         motor.setSelectedSensorPosition(0);
-        while(!axisConfig.upperLimitSwitch.getValue()) {
+        while (!axisConfig.upperLimitSwitch.getValue()) {
             motor.set(ControlMode.PercentOutput, -0.25);
         }
         CENTER = motor.getSelectedSensorPosition() / 2;
