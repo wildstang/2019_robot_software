@@ -51,9 +51,9 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static int RUBBER_FLEX = 30;
     
     /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 10; 
+    private static final double REVS_PER_INCH = 4.0237; 
     /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 1024; 
+    private static final double TICKS_PER_REV = 4096; 
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
 
@@ -136,7 +136,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         //     manualMotorSpeed = 0;
         // }
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-            motor.set(ControlMode.PercentOutput, manualMotorSpeed);
+            motor.set(ControlMode.PercentOutput, -manualMotorSpeed);
         } else motor.set(ControlMode.PercentOutput,0);
         
         //SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
