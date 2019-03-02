@@ -47,18 +47,14 @@ public class LineDetector {
           arduino.setReadBufferSize(1);
     }
 
-    public double getLinePosition() {
+    public byte [] getLinePosition() {
         double target; 
-        lineLocation = arduino.read(1);
-        System.out.println(lineLocation[0]);
+        lineLocation = arduino.read(16);
+        
+        //System.out.println(lineLocation[0]);
         //return SENSOR_CONSTANTS[lineLocation[0]] * TICKS_PER_MM;
-        return lineLocation[0]; 
-
-        
-        
-        
-        
-       
+        return lineLocation; 
+                                       
     }
     /*
     130  114  96   82   56   40   24   08 0 08   24   40   56   82   96   114  130

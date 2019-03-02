@@ -48,7 +48,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private boolean rubberControl = false; 
     private int offFromCenter; 
     private int CENTER = 100; //needs to set manually once axis is created
-    private static int RUBBER_FLEX = 200;
+    private byte[] arduinoPositions = new byte[16];
     
     /** # of rotations of encoder in one inch of axis travel */
     private static final double REVS_PER_INCH = 10; 
@@ -56,6 +56,8 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double TICKS_PER_REV = 1024; 
     /** # of ticks in one inch of axis movement */
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
+
+
 
     /** The maximum speed the operator can command to move in fine-tuning */
     private static final double MANUAL_SPEED = 2; // in/s
@@ -140,11 +142,18 @@ public class StrafeAxis extends Axis implements Subsystem {
         //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
         motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
-
-        SmartDashboard.putNumber("Line position", arduino.getLinePosition());
+        arduinoPositions = arduino.getLinePosition();
+        
+        
+        for(int i = 0; i < 16; i++) {
+            String smartName = i + " Position"; 
+            SmartDashboard.putNumber(smartName, arduinoPositions[i]);
+        }
+        
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
+        SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());  
     }
          
     @Override
@@ -173,7 +182,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         motor.configNominalOutputForward(0, -1);
         motor.configNominalOutputReverse(0, -1);
         motor.configPeakOutputForward(1, -1);
-        motor.configPeakOutputReverse(1, -1);
+        motor.configPeakOutputReverse(-1, -1);
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
