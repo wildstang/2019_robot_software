@@ -165,7 +165,7 @@ public class Drive implements Subsystem {
         if (source == throttleInput) {
             setThrottle(-throttleInput.getValue());
         } else if (source == headingInput) {
-            setHeading(headingInput.getValue());
+            setHeading(-headingInput.getValue());
         }
 
         // TODO: Do we want to make quickturn automatic?

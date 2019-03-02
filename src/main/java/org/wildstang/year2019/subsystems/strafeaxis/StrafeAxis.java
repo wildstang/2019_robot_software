@@ -137,7 +137,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // }
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        }
+        } else motor.set(ControlMode.PercentOutput,0);
         
         //SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
         //SmartDashboard.putBoolean("Lower Limit Switch", axisConfig.lowerLimitSwitch.getValue());

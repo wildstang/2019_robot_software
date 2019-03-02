@@ -75,7 +75,7 @@ public enum WSInputs implements Inputs {
                                                                                            // Subsystem
     SHIFT("Driver Shift", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 2), false), // Driver
                                                                                           // Subsystem
-    QUICK_TURN("Quick Turn", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 5), false), // Driver
+    QUICK_TURN("Quick Turn", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 7), false), // Driver
                                                                                              // Subsystem
     BASE_LOCK("Base lock", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 3), false), // Driver
                                                                                            // Subsystem
