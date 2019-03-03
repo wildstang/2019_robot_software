@@ -1,5 +1,5 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
-
+import java.util.Arrays;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -143,8 +143,9 @@ public class StrafeAxis extends Axis implements Subsystem {
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
         SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());  
         int brightestSensor = 0;//convert to inches - find ticks
-        
+        /**minimum value */
         int min = lightValues[0];
+        /**index which has a minimum value */
         int minIndex = 0;
         for (int i = 0; i < lightValues.length; i++)
         {
@@ -152,12 +153,95 @@ public class StrafeAxis extends Axis implements Subsystem {
                 min = lightValues[i];
                 minIndex = i;
             }
+
         }
         double linePositionTicks = TICKS_PER_MM * SENSOR_POSITIONS[minIndex];
         if (isTrackingAutomatically) {
             motor.set(ControlMode.Position, linePositionTicks);
         }
+        /*START of finding the 3 lowest values and calculating the weighted average
+        This is the average of the three lowest values. Would four values be better? Remember, The line width
+        of the 2019 game is 2 inches. */
+        final byte[] lightValuesBeforeSort = lightValues;
+         Arrays.sort(lightValues);
+         
+         
+    byte smallest = Byte.MAX_VALUE;
+    byte secondSmallest = Byte.MAX_VALUE;
+    byte thirdSmallest = Byte.MAX_VALUE;
+
+    for (int i = 0; i < lightValues.length; i++) {
+      
+        if (lightValues[i] < smallest) {
+            
+            secondSmallest = smallest;
+            smallest = lightValues[i];
+        } else if (lightValues[i] < secondSmallest) {
+            thirdSmallest = secondSmallest;
+            secondSmallest = lightValues[i];
+            
+        }
+        else if (lightValues[i] < thirdSmallest) {
+            thirdSmallest = lightValues[i];
+        }
+
     }
+    //START-Find the distance of the the three smallest values in ticks from center. The following three distance values are at default zero which is the center of StrafeAxis
+    double distanceOfSmallestValueIndexFromCenterInTicks = 0; 
+    double distanceOfSecondSmallestValueIndexFromCenterInTicks = 0;
+    double distanceOfThirdSmallestValueIndexFromCenterInTicks = 0;  
+    for (int i = 0; i < lightValues.length; i++)
+    {
+         /* Should I weigh when the distance is in ticks or in millimeters? 
+         All three distance values are currently in ticks. 
+         In short, what is more precise ticks or millimeters? 
+         The percentage used for weighing is based on distance the smaller the light
+         value then the higher the weighing percentage. Since there are three values, I
+         did increments of 1/3,which is 33.33%, this gives higher importance to the lowest value.
+
+         */
+        if(smallest == lightValuesBeforeSort[i])
+        {
+        
+        distanceOfSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
+        /* The multiplied percent  can be changed or change to a variable for quick changes 
+        it is 1 because 3/3 = 1;
+        */
+            distanceOfSmallestValueIndexFromCenterInTicks *= 1;
+        }
+        if(secondSmallest == lightValuesBeforeSort[i])
+        {
+            distanceOfSecondSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
+            /* The multiplied percent  can be changed or change to a variable for quick changes 
+        it is .66 because 2/3 = .66;
+        */  
+            distanceOfSecondSmallestValueIndexFromCenterInTicks *= .66;
+        }
+        if(thirdSmallest == lightValuesBeforeSort[i])
+        {
+            distanceOfThirdSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i]; 
+                 /* The multiplied percent  can be changed or change to a variable for quick changes 
+        it is .66 because 1/3 = .33
+        */  
+            distanceOfThirdSmallestValueIndexFromCenterInTicks *= .33;
+        }
+
+
+    }
+   //The next line is the average ticks, which are weighted to where the line is
+   /** The average consists of the three distances in ticks
+    */
+    double AverageTicksToLine = (distanceOfSmallestValueIndexFromCenterInTicks + distanceOfSecondSmallestValueIndexFromCenterInTicks + distanceOfThirdSmallestValueIndexFromCenterInTicks)/3;
+    if (isTrackingAutomatically) {
+        motor.set(ControlMode.Position, AverageTicksToLine);
+    }
+    //END if the Variables are too long feel, free change the name but do not forget to do "/**definition */"
+    //before the declaration to help others
+    }
+    
+
+
+    
     @Override
     public void resetState() {
         super.resetState();
