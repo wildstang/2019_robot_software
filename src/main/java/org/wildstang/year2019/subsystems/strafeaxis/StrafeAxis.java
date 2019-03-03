@@ -345,6 +345,6 @@ public class StrafeAxis extends Axis implements Subsystem {
         }
         CENTER = motor.getSelectedSensorPosition() / 2;
         // This function finds the center. Should motor be set to 
-        //center?
+        //center somewhere locally?
     }
 }
