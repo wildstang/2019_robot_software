@@ -145,12 +145,12 @@ public class StrafeAxis extends Axis implements Subsystem {
         //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
         motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
-        arduinoPositions = arduino.getLineSensorData();
+        lightValues = arduino.getLineSensorData();
         
         
         for(int i = 0; i < 16; i++) {
-            String smartName = i + " Position"; 
-            SmartDashboard.putNumber(smartName, arduinoPositions[i]);
+            String smartName = i + "lightValue"; 
+            SmartDashboard.putNumber(smartName, lightValues[i]);
         }
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
