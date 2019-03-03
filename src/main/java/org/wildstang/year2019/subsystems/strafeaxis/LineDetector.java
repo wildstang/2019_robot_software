@@ -20,7 +20,11 @@ public class LineDetector extends Thread {
   private static double TICKS_PER_MM = 17.746;
   boolean arduinoActive;
   // private byte[] lineLocation = new byte[1];
-  private byte[] lineLocation = new byte[16];
+  private byte[] lineData = new byte[16];
+  private byte linePosition; 
+  public static double AVERAGE_CONSTANSTS[] = new double[16];
+  public double average[] = new double[16];
+  public double offFromAverage[] = new double[16];
 
   public LineDetector() {
 
@@ -55,18 +59,44 @@ public class LineDetector extends Thread {
       while (valueRead >= 0) {
         valueRead = arduino.read(1)[0];
       }
-      lineLocation[0] = (byte) ((int) valueRead + 128);
-      for (int i = 1; i < lineLocation.length; ++i) {
-        lineLocation[i] = arduino.read(1)[0];
+      lineData[0] = (byte) ((int) valueRead + 128);
+      for (int i = 1; i < lineData.length; ++i) {
+        lineData[i] = arduino.read(1)[0];
       }
       // System.out.println(lineLocation[0]);
       // return SENSOR_CONSTANTS[lineLocation[0]] * TICKS_PER_MM;
     }
   }
 
-  public byte[] getLineSensor() {
-    return lineLocation;
+  public void setAverage() {
+    System.arraycopy(lineData, 0, average, 0, lineData.length);
+    int loopDuration = 32;
+    while(loopDuration > 0) {
+      for(int i = 0; i < 16; i ++) {
+        average[i] = (average[i] + lineData[i]) / 2;
+      }
+      loopDuration++;
+    }
+    
+  };
+
+
+  public int getLineSensor() {
+    byte percievedLine = 0;
+
+    for(byte i = 0; i < 16; i ++) {
+      if (Math.abs(lineData[percievedLine] - average[percievedLine]) < Math.abs(lineData[percievedLine] - average[percievedLine] )) {
+        percievedLine = i; 
+      }
+    }
+
+    return SENSOR_CONSTANTS[percievedLine];
   }
+
+  public byte[] getLineSensorData() {
+    return lineData;
+  }
+
   /*
    * 130 114 96 82 56 40 24 08 0 08 24 40 56 82 96 114 130 NA - 06 - 05 - 04 - 03
    * - 02 - 01 - 07 - 15 - 14 - 13 - 12 - 11 - 10 - 09 - 08 C

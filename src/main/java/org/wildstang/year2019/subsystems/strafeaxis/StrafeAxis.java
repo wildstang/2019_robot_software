@@ -127,15 +127,30 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
+ 
+        //super.update();
 
-        if (isTrackingAutomatically == false) {
-            motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
-        }
-        lightValues = arduino.getLineSensor();
+        //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
+        //if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
+        //    manualMotorSpeed = 0;
+        //}
+        //else if (!axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
+        //    manualMotorSpeed = 0;
+        //}
+        //if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
+        //    motor.set(ControlMode.PercentOutput, manualMotorSpeed);
+        //}   
+        //arduino.getLinePosition();
 
-        for (int i = 0; i < 16; i++) {
-            String smartName = i + " Position";
-            SmartDashboard.putNumber(smartName, lightValues[i]);
+        //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
+
+        motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
+        arduinoPositions = arduino.getLineSensorData();
+        
+        
+        for(int i = 0; i < 16; i++) {
+            String smartName = i + " Position"; 
+            SmartDashboard.putNumber(smartName, arduinoPositions[i]);
         }
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
