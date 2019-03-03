@@ -61,7 +61,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double HOMING_MAX_SPEED = 2; // in/s
     private static final double HOMING_MAX_ACCEL = 2; // in/s^2
     /**millimeters from center for each of the sensors */
-    private static int[] SENSOR_POSITIONS = { -120, -104, 88, -72, -56, -40, -24, -8, 0, 8, 24, 40, 56, 72, 88, 104,
+    private static int[] SENSOR_POSITIONS = { -120, -104, -88, -72, -56, -40, -24, -8, 0, 8, 24, 40, 56, 72, 88, 104,
         120 };
     private static final double LEFT_STOP_POS = -6;
     private static final double LEFT_MAX_TRAVEL = -5;
@@ -210,35 +210,48 @@ public class StrafeAxis extends Axis implements Subsystem {
          /* Should I weigh when the distance is in ticks or in millimeters? 
          All three distance values are currently in ticks. 
          In short, what is more precise ticks or millimeters? 
-         The percentage used for weighing is based on distance the smaller the light
-         value then the higher the weighing percentage. Since there are three values, I
-         did increments of 1/3,which is 33.33%, this gives higher importance to the lowest value.
-
+         The percentage used for weighing is based on theSmallestValue, 
+         this gives higher importance to the lowest value. In simple terms (distanceValue/smallestValue)
+         This does mean that extraneous points could have consequences. 
+         
+         To counter the extraneous smallest values, which are values that are not over the white lines, 
+         probabibility may be needed. Pretend the strip below is the line sensors.
+         C is center. All measurements are done from the cneter of one line sensors to another
+          Line sensors 7 and 8 are 8-millimeters from the center. The distance between sequential
+          line sensors is 16-millimeters. The most likely sensors to detect the line, which is approximately
+        2 inches(50.8 mm) in width, are the ones in the middle. There would need to be testing to see which
+        sensors are more probably over the light sensor. Once the measurements from a pool of data is collected,
+        we can use graph the probabilities. Standard Deviation of the graph will then be found.
+         (Left) 0 1 2 3 4 5 6 7 C 8 9 10 11 12 13 14 15 (Right)
+        TLDR- Some sensor points are more likely to detect light and needs to be implemented in
+        this average weighting.
+         
+                
          */
         if(smallest == lightValuesBeforeSort[i])
         {
         
         distanceOfSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
         /* The multiplied percent  can be changed or change to a variable for quick changes 
-        it is 1 because 3/3 = 1;
         */
+        //the smallestValue is the most trusted
             distanceOfSmallestValueIndexFromCenterInTicks *= 1;
         }
         if(secondSmallest == lightValuesBeforeSort[i])
         {
             distanceOfSecondSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
             /* The multiplied percent  can be changed or change to a variable for quick changes 
-        it is .66 because 2/3 = .66;
+       
         */  
-            distanceOfSecondSmallestValueIndexFromCenterInTicks *= .66;
+            distanceOfSecondSmallestValueIndexFromCenterInTicks *= (distanceOfSecondSmallestValueIndexFromCenterInTicks/distanceOfSmallestValueIndexFromCenterInTicks);
         }
         if(thirdSmallest == lightValuesBeforeSort[i])
         {
             distanceOfThirdSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i]; 
                  /* The multiplied percent  can be changed or change to a variable for quick changes 
-        it is .66 because 1/3 = .33
+        
         */  
-            distanceOfThirdSmallestValueIndexFromCenterInTicks *= .33;
+            distanceOfThirdSmallestValueIndexFromCenterInTicks *= (distanceOfThirdSmallestValueIndexFromCenterInTicks/distanceOfSmallestValueIndexFromCenterInTicks);
         }
 
 
