@@ -22,21 +22,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * This subsystem is responsible for lining up hatch panels left-to-right.
- * 
+ *
  * There should probably be a PID loop controlling the position of this axis.
- * 
+ *
  * Sensors:
  * <ul>
  * <li>Line detection photocells (handled by LineDetector.java? or RasPi?)
  * <li>Limit switch(es). TODO: left, right or both?
  * <l   i>Encoder on lead screw Talon.
  * </ul>
- * 
+ *
  * Actuators:
  * <ul>
  * <li>Talon controlling lead screw motor.
  * </ul>
- * 
+ *
  */
 
 public class StrafeAxis extends Axis implements Subsystem {
@@ -127,10 +127,10 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
- 
+
         //super.update();
 
-        //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
+        //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();
         //if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
         //    manualMotorSpeed = 0;
         //}
@@ -139,24 +139,24 @@ public class StrafeAxis extends Axis implements Subsystem {
         //}
         //if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
         //    motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        //}   
+        //}
         //arduino.getLinePosition();
 
         //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
         motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
         lightValues = arduino.getLineSensorData();
-        
-        
+
+
         for(int i = 0; i < 16; i++) {
-            String smartName = i + "lightValue"; 
+            String smartName = i + "lightValue";
             SmartDashboard.putNumber(smartName, lightValues[i]);
         }
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.lowerLimitSwitch.getValue());
-        SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
-        SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());  
+        SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());
         int brightestSensor = 0;//convert to inches - find ticks
         /**minimum value */
         int min = lightValues[0];
@@ -179,22 +179,22 @@ public class StrafeAxis extends Axis implements Subsystem {
         of the 2019 game is 2 inches. */
         final byte[] lightValuesBeforeSort = lightValues;
          Arrays.sort(lightValues);
-         
-         
+
+
     byte smallest = Byte.MAX_VALUE;
     byte secondSmallest = Byte.MAX_VALUE;
     byte thirdSmallest = Byte.MAX_VALUE;
 
     for (int i = 0; i < lightValues.length; i++) {
-      
+
         if (lightValues[i] < smallest) {
-            
+
             secondSmallest = smallest;
             smallest = lightValues[i];
         } else if (lightValues[i] < secondSmallest) {
             thirdSmallest = secondSmallest;
             secondSmallest = lightValues[i];
-            
+
         }
         else if (lightValues[i] < thirdSmallest) {
             thirdSmallest = lightValues[i];
@@ -202,19 +202,19 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     }
     //START-Find the distance of the the three smallest values in ticks from center. The following three distance values are at default zero which is the center of StrafeAxis
-    double distanceOfSmallestValueIndexFromCenterInTicks = 0; 
+    double distanceOfSmallestValueIndexFromCenterInTicks = 0;
     double distanceOfSecondSmallestValueIndexFromCenterInTicks = 0;
-    double distanceOfThirdSmallestValueIndexFromCenterInTicks = 0;  
+    double distanceOfThirdSmallestValueIndexFromCenterInTicks = 0;
     for (int i = 0; i < lightValues.length; i++)
     {
-         /* Should I weigh when the distance is in ticks or in millimeters? 
-         All three distance values are currently in ticks. 
-         In short, what is more precise ticks or millimeters? 
-         The percentage used for weighing is based on theSmallestValue, 
+         /* Should I weigh when the distance is in ticks or in millimeters?
+         All three distance values are currently in ticks.
+         In short, what is more precise ticks or millimeters?
+         The percentage used for weighing is based on theSmallestValue,
          this gives higher importance to the lowest value. In simple terms (distanceValue/smallestValue)
-         This does mean that extraneous points could have consequences. 
-         
-         To counter the extraneous smallest values, which are values that are not over the white lines, 
+         This does mean that extraneous points could have consequences.
+
+         To counter the extraneous smallest values, which are values that are not over the white lines,
          probabibility may be needed. Pretend the strip below is the line sensors.
          C is center. All measurements are done from the cneter of one line sensors to another
           Line sensors 7 and 8 are 8-millimeters from the center. The distance between sequential
@@ -225,14 +225,14 @@ public class StrafeAxis extends Axis implements Subsystem {
          (Left) 0 1 2 3 4 5 6 7 C 8 9 10 11 12 13 14 15 (Right)
         TLDR- Some sensor points are more likely to detect light and needs to be implemented in
         this average weighting.
-         
-                
+
+
          */
         if(smallest == lightValuesBeforeSort[i])
         {
-        
+
         distanceOfSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
-        /* The multiplied percent  can be changed or change to a variable for quick changes 
+        /* The multiplied percent  can be changed or change to a variable for quick changes
         */
         //the smallestValue is the most trusted
             distanceOfSmallestValueIndexFromCenterInTicks *= 1;
@@ -240,17 +240,17 @@ public class StrafeAxis extends Axis implements Subsystem {
         if(secondSmallest == lightValuesBeforeSort[i])
         {
             distanceOfSecondSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
-            /* The multiplied percent  can be changed or change to a variable for quick changes 
-       
-        */  
+            /* The multiplied percent  can be changed or change to a variable for quick changes
+
+        */
             distanceOfSecondSmallestValueIndexFromCenterInTicks *= (distanceOfSecondSmallestValueIndexFromCenterInTicks/distanceOfSmallestValueIndexFromCenterInTicks);
         }
         if(thirdSmallest == lightValuesBeforeSort[i])
         {
-            distanceOfThirdSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i]; 
-                 /* The multiplied percent  can be changed or change to a variable for quick changes 
-        
-        */  
+            distanceOfThirdSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
+                 /* The multiplied percent  can be changed or change to a variable for quick changes
+
+        */
             distanceOfThirdSmallestValueIndexFromCenterInTicks *= (distanceOfThirdSmallestValueIndexFromCenterInTicks/distanceOfSmallestValueIndexFromCenterInTicks);
         }
 
@@ -259,17 +259,17 @@ public class StrafeAxis extends Axis implements Subsystem {
    //The next line is the average ticks, which are weighted to where the line is
    /** The average consists of the three distances in ticks
     */
-    double AverageTicksToLine = (distanceOfSmallestValueIndexFromCenterInTicks + distanceOfSecondSmallestValueIndexFromCenterInTicks + distanceOfThirdSmallestValueIndexFromCenterInTicks)/3;
+    double averageTicksToLine = (distanceOfSmallestValueIndexFromCenterInTicks + distanceOfSecondSmallestValueIndexFromCenterInTicks + distanceOfThirdSmallestValueIndexFromCenterInTicks)/3;
     if (isTrackingAutomatically) {
-        motor.set(ControlMode.Position, AverageTicksToLine);
+        motor.set(ControlMode.Position, averageTicksToLine);
     }
     //END if the Variables are too long feel, free change the name but do not forget to do "/**definition */"
     //before the declaration to help others
     }
-    
 
 
-    
+
+
     @Override
     public void resetState() {
         super.resetState();
@@ -314,7 +314,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.overrideButtonModifier.addInputListener(this);
         axisConfig.limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LIMIT_SWITCH_OVERRIDE);
         axisConfig.limitSwitchOverrideButton.addInputListener(this);
-        
+
 
         axisConfig.motor = motor;
         axisConfig.ticksPerInch = TICKS_PER_INCH;
