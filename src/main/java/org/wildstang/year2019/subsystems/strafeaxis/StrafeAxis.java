@@ -77,7 +77,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     public LineDetector arduino = new LineDetector();
 
+    /** Determines if software-based limit switches will be overridden */
     public boolean isLimitSwitchOverridden;
+    /** Activation value for 1st button in sequence to override limit switches */
     public boolean overrideButtonValue;
 
     /** The axis configuration we pass up to the axis initialization */
@@ -144,25 +146,33 @@ public class StrafeAxis extends Axis implements Subsystem {
          }
                  
         double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  ///Positives and negitives may need to be reversed
+        
+        // Software-based limit switch logic
+        if (!isLimitSwitchOverridden) { // Only enable hard stops if limit switches are not overridden
+            if (axisConfig.lowerLimitSwitch.getValue() == true && manualMotorSpeed > 0) {
+                manualMotorSpeed = 0;
+            }
+            else if (axisConfig.upperLimitSwitch.getValue() == true && manualMotorSpeed < 0) {
+                manualMotorSpeed = 0;
+            }
+        }
+
+        /* Uncomment if using hardware-based limit switches
         if (isLimitSwitchOverridden) {
             motor.overrideLimitSwitchesEnable(false);
         } else {
             motor.overrideLimitSwitchesEnable(true);
-            /*
-            Uncomment this if we switch to RIO input limit switches instead of endstops wired to motors
-            if (axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-                manualMotorSpeed = 0;
-            }
-            else if (axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-                manualMotorSpeed = 0;
-            }*/
-        }
+        } */
+
         if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
             motor.set(ControlMode.PercentOutput, manualMotorSpeed);
         }
         SmartDashboard.putNumber("StrafeAxis Motor Speed", manualMotorSpeed);
+
+        /* Uncomment if using hardware-based limit switches
         SmartDashboard.putBoolean("Lower Limit Switch", motor.getSensorCollection().isRevLimitSwitchClosed());
-        SmartDashboard.putBoolean("Upper Limit Switch", motor.getSensorCollection().isFwdLimitSwitchClosed());
+        SmartDashboard.putBoolean("Upper Limit Switch", motor.getSensorCollection().isFwdLimitSwitchClosed()); */
+
         SmartDashboard.putNumber("StrafeAxis Encoder Value", motor.getSensorCollection().getQuadraturePosition());
 
         arduino.getLinePosition();
