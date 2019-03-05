@@ -9,8 +9,8 @@ import org.wildstang.framework.pid.PIDConstants;
 public enum StrafePID {
     // FIXME: Document the units each of these FPID constants are in.
     // Constants in order F, P, I, D
-    HOMING(0, new PIDConstants(0, .1, 0, 0.001)),
-    TRACKING(1, new PIDConstants(0, .1, 0, 0.001));
+    HOMING(0, new PIDConstants(0, 0.5, 0, 0.0)),
+    TRACKING(1, new PIDConstants(0, 0.5, 0, 0.0));
     // only four slots are available on the Talon
 
     public final PIDConstants k;

@@ -48,11 +48,15 @@ public class StrafeAxis extends Axis implements Subsystem {
     private byte[] lightValues = new byte[16];
     private boolean isTrackingAutomatically = false;
     private DigitalInput automaticStrafeButton;
+    private DigitalInput rezero;
 
     /**# of ticks in millimeters for encoders */
-    private static double TICKS_PER_MM = 17.746;
+    //private static double TICKS_PER_MM = 17.746; - not sure where this is from, but not accurate relative to testing
     /** # of ticks in one inch of axis movement */
-    private static final double TICKS_PER_INCH = 25.4 * TICKS_PER_MM;
+    //private static final double TICKS_PER_INCH = 25.4 * TICKS_PER_MM; unit conversions guys cmon
+    private static final double TICKS_PER_INCH = 4096*4.0237;
+    //private static final double TICKS_PER_MM = TICKS_PER_INCH * 25.4;
+    private static final double TICKS_PER_MM = 652.381;
 
     /** The maximum speed the operator can command to move in fine-tuning */
     private static final double MANUAL_SPEED = 2; // in/s
@@ -61,15 +65,28 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double HOMING_MAX_SPEED = 2; // in/s
     private static final double HOMING_MAX_ACCEL = 2; // in/s^2
     /**millimeters from center for each of the sensors */
-    private static int[] SENSOR_POSITIONS = { -120, -104, -88, -72, -56, -40, -24, -8, 0, 8, 24, 40, 56, 72, 88, 104,
-        120 };
+    //private static int[] SENSOR_POSITIONS = { -120, -104, -88, -72, -56, -40, -24, -8, 0, 8, 24, 40, 56, 72, 88, 104,
+    //    120 };//assumes we start in the middle, a bad assumption. likely need to all be positive, moving left -> right
+        //mech has 8.3215 in of travel, so +- 4.15625 in, which is 105.56875 mm
+        //thus, assign everything relative to that "0" which would be -105.56875 in the initial coord system
+        //also there's 17 numbers above and we have 16 sensors. i'll assume the 0 is wrong, but #TODO
+    private static int[] SENSOR_POSITIONS = {0,1,17,33,49,65,81,97,113,129,145,161,177,193,209,210};//positions, zero encoder on left side
+    private static double[] SENSOR_LOW_CALIBRATED = {8,216,144,4000,76,144,144,216,144,144,216,216,216,296,296,296};//to be filled with calibrated low values
+    private static double[] SENSOR_HIGH_CALIBRATED = {8,292,216,4000,76,144,216,292,216,144,216,292,292,368,368,368};//to be filled with calibrated high values
     private static final double LEFT_STOP_POS = -6;
     private static final double LEFT_MAX_TRAVEL = -5;
     private static final double RIGHT_MAX_TRAVEL = 5;
+    private static final double PHYS_DIR_CHANGE = -1;
 
     private static final double AXIS_IN_RANGE_THRESHOLD = TICKS_PER_INCH * 0.5;
 
     private TalonSRX motor;
+
+    public boolean isStopped = true;
+
+    public boolean zeroing = false;
+
+    public boolean zeroPressed = false;
 
     /** Line detector class talks to Arduino with line sensors on it */
     public LineDetector arduino = new LineDetector();
@@ -77,22 +94,35 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
 
+
     @Override
     public void inputUpdate(Input source) {
-        if (axisConfig.pidOverrideButton.getValue()) {
-            // motor.set(ControlMode.Position, arduino.getLinePosition());
-        }
+        // if (axisConfig.pidOverrideButton.getValue()) {
+        //     // motor.set(ControlMode.Position, arduino.getLinePosition());
+        // }
 
         // init motor; use if needed
         // if (axisConfig.overrideButtonValue) {
         // initMotor();
         // }
 
+        if (source == rezero){
+            if (rezero.getValue()){
+                zeroPressed = true;
+            } else{
+                zeroPressed = false;
+            }
+        } 
         if (source == automaticStrafeButton) {
-            if (automaticStrafeButton.getValue()) {
+            if (automaticStrafeButton.getValue() && !zeroPressed) {
                 isTrackingAutomatically = true;
 
-            }
+            } else if (automaticStrafeButton.getValue() && zeroPressed){
+                zeroing = true;
+            } else {
+                isTrackingAutomatically = false;
+                isStopped = true;
+            }//makes sure that the strafe stops moving if the button isn't pressed and the joystick isn't in motion
 
         }
 
@@ -100,6 +130,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             double joystickValue = axisConfig.manualAdjustmentJoystick.getValue();
             if (joystickValue < -0.25 || joystickValue > 0.25) {
                 isTrackingAutomatically = false;
+                isStopped = false;
             }
         }
     }
@@ -144,7 +175,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
         //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
-        motor.set(ControlMode.PercentOutput, axisConfig.manualAdjustmentJoystick.getValue());
+        //motor.set(ControlMode.PercentOutput, PHYS_DIR_CHANGE * axisConfig.manualAdjustmentJoystick.getValue());
         lightValues = arduino.getLineSensorData();
         
         
@@ -159,115 +190,38 @@ public class StrafeAxis extends Axis implements Subsystem {
         SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());  
         int brightestSensor = 0;//convert to inches - find ticks
         /**minimum value */
-        int min = lightValues[0];
+        double min = getModifiedValue(1);//see getModifiedValue method
         /**index which has a minimum value */
-        int minIndex = 0;
-        for (int i = 0; i < lightValues.length; i++)
+        int minIndex = 1;
+        for (int i = 2; i < lightValues.length; i++)
         {
-            if (lightValues[i] < min){
+            if (getModifiedValue(i) < min && getModifiedValue(i) >= 1.0 && (i != 3 && i!=4 && i!=5 && i!=10)){//if value is lowest and in acceptable calibrated range (i.e. not noise)
                 min = lightValues[i];
                 minIndex = i;
             }
 
         }
-        double linePositionTicks = TICKS_PER_MM * SENSOR_POSITIONS[minIndex];
-        if (isTrackingAutomatically) {
+        double linePositionTicks = TICKS_PER_MM * SENSOR_POSITIONS[minIndex];//converts sensor over line to position of hatch mech
+        if (zeroing){
+            resetEncoder();
+        } else if (isTrackingAutomatically) {
             motor.set(ControlMode.Position, linePositionTicks);
+        } else {
+            if (isStopped){
+                motor.set(ControlMode.PercentOutput, 0.0);
+            } else {
+                motor.set(ControlMode.PercentOutput, PHYS_DIR_CHANGE * axisConfig.manualAdjustmentJoystick.getValue());
+                //phys_dir_change above to make it move relative to the operator's field of view
+            }
         }
-        /*START of finding the 3 lowest values and calculating the weighted average
-        This is the average of the three lowest values. Would four values be better? Remember, The line width
-        of the 2019 game is 2 inches. */
-        final byte[] lightValuesBeforeSort = lightValues;
-         Arrays.sort(lightValues);
-         
-         
-    byte smallest = Byte.MAX_VALUE;
-    byte secondSmallest = Byte.MAX_VALUE;
-    byte thirdSmallest = Byte.MAX_VALUE;
-
-    for (int i = 0; i < lightValues.length; i++) {
-      
-        if (lightValues[i] < smallest) {
-            
-            secondSmallest = smallest;
-            smallest = lightValues[i];
-        } else if (lightValues[i] < secondSmallest) {
-            thirdSmallest = secondSmallest;
-            secondSmallest = lightValues[i];
-            
-        }
-        else if (lightValues[i] < thirdSmallest) {
-            thirdSmallest = lightValues[i];
-        }
-
-    }
-    //START-Find the distance of the the three smallest values in ticks from center. The following three distance values are at default zero which is the center of StrafeAxis
-    double distanceOfSmallestValueIndexFromCenterInTicks = 0; 
-    double distanceOfSecondSmallestValueIndexFromCenterInTicks = 0;
-    double distanceOfThirdSmallestValueIndexFromCenterInTicks = 0;  
-    for (int i = 0; i < lightValues.length; i++)
-    {
-         /* Should I weigh when the distance is in ticks or in millimeters? 
-         All three distance values are currently in ticks. 
-         In short, what is more precise ticks or millimeters? 
-         The percentage used for weighing is based on theSmallestValue, 
-         this gives higher importance to the lowest value. In simple terms (distanceValue/smallestValue)
-         This does mean that extraneous points could have consequences. 
-         
-         To counter the extraneous smallest values, which are values that are not over the white lines, 
-         probabibility may be needed. Pretend the strip below is the line sensors.
-         C is center. All measurements are done from the cneter of one line sensors to another
-          Line sensors 7 and 8 are 8-millimeters from the center. The distance between sequential
-          line sensors is 16-millimeters. The most likely sensors to detect the line, which is approximately
-        2 inches(50.8 mm) in width, are the ones in the middle. There would need to be testing to see which
-        sensors are more probably over the light sensor. Once the measurements from a pool of data is collected,
-        we can use graph the probabilities. Standard Deviation of the graph will then be found.
-         (Left) 0 1 2 3 4 5 6 7 C 8 9 10 11 12 13 14 15 (Right)
-        TLDR- Some sensor points are more likely to detect light and needs to be implemented in
-        this average weighting.
-         
-                
-         */
-        if(smallest == lightValuesBeforeSort[i])
-        {
+        SmartDashboard.putNumber("Strafe target",linePositionTicks);
         
-        distanceOfSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
-        /* The multiplied percent  can be changed or change to a variable for quick changes 
-        */
-        //the smallestValue is the most trusted
-            distanceOfSmallestValueIndexFromCenterInTicks *= 1;
-        }
-        if(secondSmallest == lightValuesBeforeSort[i])
-        {
-            distanceOfSecondSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i];
-            /* The multiplied percent  can be changed or change to a variable for quick changes 
-       
-        */  
-            distanceOfSecondSmallestValueIndexFromCenterInTicks *= (distanceOfSecondSmallestValueIndexFromCenterInTicks/distanceOfSmallestValueIndexFromCenterInTicks);
-        }
-        if(thirdSmallest == lightValuesBeforeSort[i])
-        {
-            distanceOfThirdSmallestValueIndexFromCenterInTicks = TICKS_PER_MM * SENSOR_POSITIONS[i]; 
-                 /* The multiplied percent  can be changed or change to a variable for quick changes 
-        
-        */  
-            distanceOfThirdSmallestValueIndexFromCenterInTicks *= (distanceOfThirdSmallestValueIndexFromCenterInTicks/distanceOfSmallestValueIndexFromCenterInTicks);
-        }
-
-
-    }
-   //The next line is the average ticks, which are weighted to where the line is
-   /** The average consists of the three distances in ticks
-    */
-    double AverageTicksToLine = (distanceOfSmallestValueIndexFromCenterInTicks + distanceOfSecondSmallestValueIndexFromCenterInTicks + distanceOfThirdSmallestValueIndexFromCenterInTicks)/3;
-    if (isTrackingAutomatically) {
-        motor.set(ControlMode.Position, AverageTicksToLine);
-    }
-    //END if the Variables are too long feel, free change the name but do not forget to do "/**definition */"
-    //before the declaration to help others
     }
     
-
+    public double getModifiedValue(int i){ //rearranges values from 1-10, with 1 being the lowest calibrated value and 10 the highest
+        //this allows us to compare the "confidence" that the sensor sees the line with no regard to the sensor's differences in values
+        return ((double)lightValues[i]-SENSOR_LOW_CALIBRATED[i])*10/(SENSOR_HIGH_CALIBRATED[i]-SENSOR_LOW_CALIBRATED[i]);
+    }
 
     
     @Override
@@ -287,6 +241,8 @@ public class StrafeAxis extends Axis implements Subsystem {
         IInputManager inputManager = Core.getInputManager();
         automaticStrafeButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.AUTOMATIC_STRAFE_SWITCH);
         automaticStrafeButton.addInputListener(this);
+        rezero = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_1);
+        rezero.addInputListener(this);
     }
 
     private void initOutputs() {
@@ -299,7 +255,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
-        motor.setSensorPhase(SENSOR_PHASE);
+        motor.setSensorPhase(!SENSOR_PHASE);
     }
 
     private void initAxis() {
@@ -344,5 +300,13 @@ public class StrafeAxis extends Axis implements Subsystem {
             motor.set(ControlMode.PercentOutput, -0.25);
         }
         CENTER = motor.getSelectedSensorPosition() / 2;
+    }
+    private void resetEncoder(){
+         if (!axisConfig.lowerLimitSwitch.getValue()) {
+            motor.set(ControlMode.PercentOutput, 0.25);
+        } else{
+            motor.setSelectedSensorPosition(0);
+            zeroing = false;
+        }
     }
 }

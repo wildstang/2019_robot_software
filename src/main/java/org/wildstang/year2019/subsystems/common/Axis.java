@@ -294,6 +294,7 @@ public abstract class Axis implements Subsystem {
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setSelectedSensorPosition(0, 0, -1);
+        motor.selectProfileSlot(config.homingSlot, 0);
     }
 
     /** Begin homing the axis */
