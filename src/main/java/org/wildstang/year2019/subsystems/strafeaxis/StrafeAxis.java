@@ -1,4 +1,5 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
+
 import java.util.Arrays;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -22,21 +23,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * This subsystem is responsible for lining up hatch panels left-to-right.
- * 
+ *
  * There should probably be a PID loop controlling the position of this axis.
- * 
+ *
  * Sensors:
  * <ul>
  * <li>Line detection photocells (handled by LineDetector.java? or RasPi?)
  * <li>Limit switch(es). TODO: left, right or both?
  * <l   i>Encoder on lead screw Talon.
  * </ul>
- * 
+ *
  * Actuators:
  * <ul>
  * <li>Talon controlling lead screw motor.
  * </ul>
- * 
+ *
  */
 
 public class StrafeAxis extends Axis implements Subsystem {
@@ -50,8 +51,10 @@ public class StrafeAxis extends Axis implements Subsystem {
     private DigitalInput automaticStrafeButton;
     private DigitalInput rezero;
 
+
     /**# of ticks in millimeters for encoders */
     //private static double TICKS_PER_MM = 17.746; - not sure where this is from, but not accurate relative to testing
+
     /** # of ticks in one inch of axis movement */
     //private static final double TICKS_PER_INCH = 25.4 * TICKS_PER_MM; unit conversions guys cmon
     private static final double TICKS_PER_INCH = 4096*4.0237;
@@ -64,6 +67,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double TRACKING_MAX_ACCEL = 100; // in/s^2
     private static final double HOMING_MAX_SPEED = 2; // in/s
     private static final double HOMING_MAX_ACCEL = 2; // in/s^2
+
     /**millimeters from center for each of the sensors */
     //private static int[] SENSOR_POSITIONS = { -120, -104, -88, -72, -56, -40, -24, -8, 0, 8, 24, 40, 56, 72, 88, 104,
     //    120 };//assumes we start in the middle, a bad assumption. likely need to all be positive, moving left -> right
@@ -73,6 +77,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static int[] SENSOR_POSITIONS = {0,1,17,33,49,65,81,97,113,129,145,161,177,193,209,210};//positions, zero encoder on left side
     private static double[] SENSOR_LOW_CALIBRATED = {8,216,144,4000,76,144,144,216,144,144,216,216,216,296,296,296};//to be filled with calibrated low values
     private static double[] SENSOR_HIGH_CALIBRATED = {8,292,216,4000,76,144,216,292,216,144,216,292,292,368,368,368};//to be filled with calibrated high values
+
     private static final double LEFT_STOP_POS = -6;
     private static final double LEFT_MAX_TRAVEL = -5;
     private static final double RIGHT_MAX_TRAVEL = 5;
@@ -158,34 +163,34 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
- 
-        //super.update();
 
-        //double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();  
-        //if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-        //    manualMotorSpeed = 0;
-        //}
-        //else if (!axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-        //    manualMotorSpeed = 0;
-        //}
-        //if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-        //    motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        //}   
-        //arduino.getLinePosition();
+        // super.update();
 
-        //System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
+        // double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();
+        // if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
+        // manualMotorSpeed = 0;
+        // }
+        // else if (!axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
+        // manualMotorSpeed = 0;
+        // }
+        // if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
+        // motor.set(ControlMode.PercentOutput, manualMotorSpeed);
+        // }
+        // arduino.getLinePosition();
+
+        // System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
 
         //motor.set(ControlMode.PercentOutput, PHYS_DIR_CHANGE * axisConfig.manualAdjustmentJoystick.getValue());
         lightValues = arduino.getLineSensorData();
-        
-        
-        for(int i = 0; i < 16; i++) {
-            String smartName = i + "lightValue"; 
+
+        for (int i = 0; i < 16; i++) {
+            String smartName = i + "lightValue";
             SmartDashboard.putNumber(smartName, lightValues[i]);
         }
 
         SmartDashboard.putBoolean("Upper limit switch", axisConfig.upperLimitSwitch.getValue());
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.lowerLimitSwitch.getValue());
+
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition()); 
         SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());  
         int brightestSensor = 0;//convert to inches - find ticks
@@ -196,6 +201,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         for (int i = 2; i < lightValues.length; i++)
         {
             if (getModifiedValue(i) < min && getModifiedValue(i) >= 1.0 && (i != 3 && i!=4 && i!=5 && i!=10)){//if value is lowest and in acceptable calibrated range (i.e. not noise)
+
                 min = lightValues[i];
                 minIndex = i;
             }
@@ -214,6 +220,7 @@ public class StrafeAxis extends Axis implements Subsystem {
                 //phys_dir_change above to make it move relative to the operator's field of view
             }
         }
+
         SmartDashboard.putNumber("Strafe target",linePositionTicks);
         
     }
@@ -221,9 +228,9 @@ public class StrafeAxis extends Axis implements Subsystem {
     public double getModifiedValue(int i){ //rearranges values from 1-10, with 1 being the lowest calibrated value and 10 the highest
         //this allows us to compare the "confidence" that the sensor sees the line with no regard to the sensor's differences in values
         return ((double)lightValues[i]-SENSOR_LOW_CALIBRATED[i])*10/(SENSOR_HIGH_CALIBRATED[i]-SENSOR_LOW_CALIBRATED[i]);
+
     }
 
-    
     @Override
     public void resetState() {
         super.resetState();
@@ -268,9 +275,9 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.manualAdjustmentJoystick.addInputListener(this);
         axisConfig.overrideButtonModifier = (DigitalInput) inputManager.getInput(WSInputs.WEDGE_SAFETY_1);
         axisConfig.overrideButtonModifier.addInputListener(this);
-        axisConfig.limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LIMIT_SWITCH_OVERRIDE);
+        axisConfig.limitSwitchOverrideButton = (DigitalInput) inputManager
+                .getInput(WSInputs.STRAFE_LIMIT_SWITCH_OVERRIDE);
         axisConfig.limitSwitchOverrideButton.addInputListener(this);
-        
 
         axisConfig.motor = motor;
         axisConfig.ticksPerInch = TICKS_PER_INCH;
@@ -291,8 +298,8 @@ public class StrafeAxis extends Axis implements Subsystem {
         initAxis(axisConfig);
     }
 
-    private void centerOfStrafeMotor() {  //Strafe axis 15' across, mechanism 5' across
-        while(!axisConfig.lowerLimitSwitch.getValue()) {
+    private void centerOfStrafeMotor() { // Strafe axis 15' across, mechanism 5' across
+        while (!axisConfig.lowerLimitSwitch.getValue()) {
             motor.set(ControlMode.PercentOutput, 0.25);
         }
         motor.setSelectedSensorPosition(0);
@@ -300,6 +307,9 @@ public class StrafeAxis extends Axis implements Subsystem {
             motor.set(ControlMode.PercentOutput, -0.25);
         }
         CENTER = motor.getSelectedSensorPosition() / 2;
+        // This function finds the center. Should motor be set to
+        // center somewhere locally?
+
     }
     private void resetEncoder(){
          if (!axisConfig.lowerLimitSwitch.getValue()) {
