@@ -62,8 +62,9 @@ public class StrafeAxis extends Axis implements Subsystem {
     private static final double HOMING_MAX_SPEED = 2; // in/s
     private static final double HOMING_MAX_ACCEL = 2; // in/s^2
     /** millimeters from center for each of the sensors */
-    //0 should be the centor but there is no sensor in the center. 
-    //0 which was in index 8 before removal was taken out because there is no sensor there
+    // 0 should be the centor but there is no sensor in the center.
+    // 0,which was in index 8 before removal, was taken out because there is no
+    // sensor there
     private static int[] SENSOR_POSITIONS = { -120, -104, -88, -72, -56, -40, -24, -8, 8, 24, 40, 56, 72, 88, 104,
             120 };
     private static final double LEFT_STOP_POS = -6;
@@ -159,7 +160,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         SmartDashboard.putBoolean("Lower limit switch", axisConfig.lowerLimitSwitch.getValue());
         SmartDashboard.putNumber("Strafe Encoder Value", motor.getSelectedSensorPosition());
         SmartDashboard.putNumber("Joystick Position", axisConfig.manualAdjustmentJoystick.getValue());
-        int brightestSensor = 0;// convert to inches - find ticks
+
         /** minimum value */
         int min = lightValues[0];
         /** index which has a minimum value */
@@ -175,11 +176,11 @@ public class StrafeAxis extends Axis implements Subsystem {
         if (isTrackingAutomatically) {
             motor.set(ControlMode.Position, linePositionTicks);
         }
-        
+
         // START of finding the 3 lowest values and calculating the weighted average
         // This is the average of the three lowest values. Would four values be better?
         // Remember, The line width of the 2019 game is 2 inches.
-         
+
         final byte[] lightValuesBeforeSort = lightValues;
         Arrays.sort(lightValues);
 
@@ -187,20 +188,19 @@ public class StrafeAxis extends Axis implements Subsystem {
         byte secondSmallest = lightValues[1];
         byte thirdSmallest = lightValues[2];
 
-    
         // Find the distance of the the three smallest values in millimeters from
         // center. The following three distance values are at default zero which is the
         // center of StrafeAxis. There is no sensor at the center
         double distanceOfSmallestValueIndexFromCenterInMM = 0;
         double distanceOfSecondSmallestValueIndexFromCenterInMM = 0;
         double distanceOfThirdSmallestValueIndexFromCenterInMM = 0;
-        double averageTicksToLine= 0;
+        double averageTicksToLine = 0;
         for (int i = 0; i < lightValues.length; i++) {
             /*
-             * The percentage used for weighing is based on
-             * theSmallestValue, this gives higher importance to the lowest value. In simple
-             * terms (distanceValue/smallestValue) This does mean that extraneous points
-             * could have consequences.
+             * The percentage used for weighing is based on theSmallestValue, this gives
+             * higher importance to the lowest value. In simple terms
+             * (distanceValue/smallestValue) This does mean that extraneous points could
+             * have consequences.
              * 
              * To counter the extraneous smallest values, which are values that are not over
              * the white lines, probabibility may be needed. Pretend the strip below is the
@@ -217,10 +217,10 @@ public class StrafeAxis extends Axis implements Subsystem {
              * 
              * 
              */
-            
+
             if (smallest == lightValuesBeforeSort[i]) {
 
-                distanceOfSmallestValueIndexFromCenterInMM =  SENSOR_POSITIONS[i];
+                distanceOfSmallestValueIndexFromCenterInMM = SENSOR_POSITIONS[i];
                 /*
                  * The multiplied percent can be changed or change to a variable for quick
                  * changes
@@ -228,38 +228,37 @@ public class StrafeAxis extends Axis implements Subsystem {
                 // the smallestValue is the most trusted
                 distanceOfSmallestValueIndexFromCenterInMM *= 1;
             }
-         if (!(distanceOfSecondSmallestValueIndexFromCenterInMM == 0))
-         {
-            if (secondSmallest == lightValuesBeforeSort[i]) {
-                distanceOfSecondSmallestValueIndexFromCenterInMM = SENSOR_POSITIONS[i];
-                /*
-                 * The multiplied percent can be changed or change to a variable for quick
-                 * changes
-                 * 
-                 */
-                distanceOfSecondSmallestValueIndexFromCenterInMM *= (distanceOfSecondSmallestValueIndexFromCenterInMM
-                        / distanceOfSmallestValueIndexFromCenterInMM);
+            if (!(distanceOfSecondSmallestValueIndexFromCenterInMM == 0)) {
+                if (secondSmallest == lightValuesBeforeSort[i]) {
+                    distanceOfSecondSmallestValueIndexFromCenterInMM = SENSOR_POSITIONS[i];
+                    /*
+                     * The multiplied percent can be changed or change to a variable for quick
+                     * changes
+                     * 
+                     */
+                    distanceOfSecondSmallestValueIndexFromCenterInMM *= (distanceOfSecondSmallestValueIndexFromCenterInMM
+                            / distanceOfSmallestValueIndexFromCenterInMM);
+                }
+                if (thirdSmallest == lightValuesBeforeSort[i]) {
+                    distanceOfThirdSmallestValueIndexFromCenterInMM = SENSOR_POSITIONS[i];
+                    /*
+                     * The multiplied percent can be changed or change to a variable for quick
+                     * changes
+                     * 
+                     */
+                    distanceOfThirdSmallestValueIndexFromCenterInMM *= (distanceOfThirdSmallestValueIndexFromCenterInMM
+                            / distanceOfSmallestValueIndexFromCenterInMM);
+                }
             }
-            if (thirdSmallest == lightValuesBeforeSort[i]) {
-                distanceOfThirdSmallestValueIndexFromCenterInMM = SENSOR_POSITIONS[i];
-                /*
-                 * The multiplied percent can be changed or change to a variable for quick
-                 * changes
-                 * 
-                 */
-                distanceOfThirdSmallestValueIndexFromCenterInMM *= (distanceOfThirdSmallestValueIndexFromCenterInMM
-                        / distanceOfSmallestValueIndexFromCenterInMM);
-            }
-        }
 
         }
         // The next line is the average ticks, which are weighted to where the line is
         /**
          * The average consists of the three distances in ticks
          */
-         averageTicksToLine = ((distanceOfSmallestValueIndexFromCenterInMM
-                + distanceOfSecondSmallestValueIndexFromCenterInMM
-                + distanceOfThirdSmallestValueIndexFromCenterInMM) / 3) * TICKS_PER_MM;
+        averageTicksToLine = ((distanceOfSmallestValueIndexFromCenterInMM
+                + distanceOfSecondSmallestValueIndexFromCenterInMM + distanceOfThirdSmallestValueIndexFromCenterInMM)
+                / 3) * TICKS_PER_MM;
         if (isTrackingAutomatically) {
             motor.set(ControlMode.Position, averageTicksToLine);
         }
@@ -267,6 +266,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // forget to do "/**definition */"
         // before the declaration to help others
     }
+
     @Override
     public void resetState() {
         super.resetState();
@@ -341,7 +341,8 @@ public class StrafeAxis extends Axis implements Subsystem {
             motor.set(ControlMode.PercentOutput, -0.25);
         }
         CENTER = motor.getSelectedSensorPosition() / 2;
-        // This function finds the center. Should motor be set to 
-        //center somewhere locally?
+        // This function finds the center. Should motor be set to
+        // center somewhere locally?
+
     }
 }
