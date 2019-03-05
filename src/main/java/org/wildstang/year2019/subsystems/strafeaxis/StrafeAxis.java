@@ -261,8 +261,8 @@ public class StrafeAxis extends Axis implements Subsystem {
         motor.configPeakOutputReverse(-1, -1);
         // peak output managed by axis
         // speed and accel managed by axis
-        motor.setInverted(INVERTED);
-        motor.setSensorPhase(!SENSOR_PHASE);
+        motor.setInverted(!INVERTED);
+        motor.setSensorPhase(SENSOR_PHASE);
     }
 
     private void initAxis() {
