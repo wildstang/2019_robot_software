@@ -65,7 +65,7 @@ public enum WSInputs implements Inputs {
             new WsJSJoystickInputConfig(0, JoystickConstants.LEFT_JOYSTICK_Y), true), // Driver
                                                                                       // Subsystem
     DRIVE_HEADING("Heading", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(0, JoystickConstants.RIGHT_JOYSTICK_X), true), // Driver
+            new WsJSJoystickInputConfig(0, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Driver
                                                                                        // Subsystem
 
     // ---------------------------------
@@ -93,7 +93,7 @@ public enum WSInputs implements Inputs {
             //new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
     STRAFE_MANUAL("Hatch Strafe", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_X), true), // Lift
+            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
     // ---------------------------------
     // Manipulator DPAD Buttons
@@ -114,11 +114,11 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator Buttons
     // ---------------------------------
-    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Ballpath
+    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Ballpath
                                                                                     // Subsystem
-    REVERSE_BUTTON("Reverse", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Ballpath
+    REVERSE_BUTTON("Reverse", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Ballpath
                                                                                           // Subsystem
-    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Ballpath
+    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Ballpath
                                                                                                         // Subsystem
     FULL_BALLPATH("Full Ballpath", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Ballpath
                                                                                                    // Subsystem
@@ -128,15 +128,15 @@ public enum WSInputs implements Inputs {
                                                                                                 // Subsystem
     CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // Ballpath
                                                                                                         // Subsystem
-    STRAFE_OVERRIDE("Button to override strafe", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
+    AUTOMATIC_STRAFE_SWITCH("Button to override strafe", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
                                                                                            // Subsystem
     WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 8), false), // Wedge
                                                                                                          // Subsystem
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
-    LIFT_LIMIT_SWITCH_OVERRIDE("Lift Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // Lift
+    LIFT_LIMIT_SWITCH_OVERRIDE("Lift Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 10), false), // Lift
                                                                                                                               // Subsystem
-    STRAFE_LIMIT_SWITCH_OVERRIDE("Strafe Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 12), false), // Lift
+    STRAFE_LIMIT_SWITCH_OVERRIDE("Strafe Limit Switch Override", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 11), false), // Lift
                                                                                                                                   // Subsystem
 
     // ********************************
