@@ -88,7 +88,7 @@ public class LineDetector extends Thread {
       //while (true) {
         byte valueRead = arduino.read(1)[0];
         if(valueRead < 0) {
-          linePosition = Math.abs(valueRead) + 127;
+          linePosition = Math.abs(valueRead) + 127;  // 256?
         }
         else {
           linePosition = valueRead;
