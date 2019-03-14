@@ -7,7 +7,10 @@ import org.wildstang.framework.io.outputs.OutputType;
 import org.wildstang.hardware.crio.outputs.WSOutputType;
 import org.wildstang.hardware.crio.outputs.config.WsI2COutputConfig;
 import org.wildstang.hardware.crio.outputs.config.WsSolenoidConfig;
+import org.wildstang.hardware.crio.outputs.config.WsDoubleSolenoidConfig;
+import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 import org.wildstang.hardware.crio.outputs.config.WsVictorConfig;
+import org.wildstang.framework.hardware.WsRemoteDigitalOutputConfig;
 import org.wildstang.hardware.crio.outputs.config.WsDigitalOutputConfig;
 
 import edu.wpi.first.wpilibj.I2C;
@@ -19,21 +22,10 @@ public enum WSOutputs implements Outputs {
     // ---------------------------------
     // Motors
     // ---------------------------------
-    FEEDER_LEFT("Left Feeder Motor", WSOutputType.VICTOR, new WsVictorConfig(0, 0.0), false), // Shooter
-                                                                                              // Subsystem
-    FEEDER_RIGHT("Right Feeder Motor", WSOutputType.VICTOR, new WsVictorConfig(1, 0.0), false), // Shooter
-                                                                                                // Subsystem
-    INTAKE("Intake Motor", WSOutputType.VICTOR, new WsVictorConfig(2, 0.0), false), // Intake
-                                                                                    // Subsystem
-    WINCH("Winch motor", WSOutputType.VICTOR, new WsVictorConfig(3, 0.0), false), // Winch Subsystem
-    BLENDER("Blender motor", WSOutputType.VICTOR, new WsVictorConfig(4, 0.0), false), // Blender
-                                                                                      // Subsystem
 
     // ---------------------------------
     // Servos
     // ---------------------------------
-    // SERVO_0("Test Servo 0", WSOutputType.SERVO, new WsServoConfig(0, 0.0),
-    // false), // PWM 0, Initial Rotation Angle 0.0
 
     // ********************************
     // DIO Outputs
@@ -44,23 +36,23 @@ public enum WSOutputs implements Outputs {
     // ********************************
     // Solenoids
     // ********************************
-    SHIFTER("Shifter single solenoid", WSOutputType.SOLENOID_SINGLE,
-            new WsSolenoidConfig(0, 7, false), false), // Ctrl 1, Pins 0 Driver Subsystem
-    // GATE("Gate", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 4, false),
-    // false), // Ctrl 1, Pin 1 Shooter Subsystem
-    GEAR_HOLD("Gear Doors", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 0, false), false), // Ctrl
-                                                                                                     // 1,
-                                                                                                     // Pin
-                                                                                                     // 2
-                                                                                                     // Gear
-                                                                                                     // Subsystem
-    GEAR_TILT("Gear Tilt", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 1, false), false), // Ctrl
-                                                                                                    // 1,
-                                                                                                    // Pin
-                                                                                                    // 3
-                                                                                                    // Gear
-                                                                                                    // Subsystem
+    // TODO IDs
+    WEDGE_SOLENOID("Wedge solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 5, true), false),//1,2&3
+    //WEDGE_SOLENOID("Wedge Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
+    // TODO IDs
 
+   
+
+    HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,6,false), false),//1,0&1
+    //HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
+    INTAKE_SOLENOID("Intake Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 4,false), false),//1,4&5
+    //INTAKE_SOLENOID("Intake Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
+    // TODO IDs
+    HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,2,false),false),//0,1&2
+    //HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false),false),
+    HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,3,false),false),//0,0
+    //HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false),false),
+    
     // ********************************
     // Relays
     // ********************************

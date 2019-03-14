@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
+import org.wildstang.framework.core.Subsystems;
 
 /**
  * This class in the manager for all outputs.
@@ -123,6 +124,10 @@ public class SubsystemManager {
         }
 
         return result;
+    }
+
+    public Subsystem getSubsystem(Subsystems desiredSubsystem) {
+        return getSubsystem(desiredSubsystem.getName());
     }
 
     public List<Subsystem> getSubsystems() {

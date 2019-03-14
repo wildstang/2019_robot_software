@@ -32,12 +32,13 @@ public class Claw_Example implements Subsystem{
 
     public void init(){
         //registers and creates all sensors and other items
+        //test
         button = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
         button.addInputListener(this);
         button2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.SHIFT.getName());
         button2.addInputListener(this);
-        solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_HOLD.getName());
-        solenoid2 = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_TILT.getName());
+        //solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_HOLD.getName());
+        //solenoid2 = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_TILT.getName());
 
         resetState();
     }

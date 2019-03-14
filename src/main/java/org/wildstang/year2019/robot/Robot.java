@@ -1,14 +1,25 @@
 package org.wildstang.year2019.robot;
 
+//import com.sun.management.GarbageCollectionNotificationInfo;
+//import com.sun.management.internal.GarbageCollectionNotifInfoCompositeData;
+
 import org.wildstang.framework.core.Core;
+import org.wildstang.framework.io.InputManager;
+import org.wildstang.framework.io.inputs.RemoteAnalogInput;
+import org.wildstang.framework.timer.WsTimer;
 import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.subsystems.drive.Drive;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import java.lang.management.ManagementFactory;
+import java.util.List;
+import java.lang.management.GarbageCollectorMXBean;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -43,6 +54,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         System.out.println("Engaging autonomous mode.");
+        Core.getSubsystemManager().resetState();
+        Drive driveBase = ((Drive) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.setOpenLoopDrive();
+        driveBase.setBrakeMode(false);
     }
 
     @Override
@@ -62,7 +78,29 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+
+
         core.executeUpdate();
+
+        // Empty the state tracker so we don't OOM out
+        // TODO: figure out what this thing is and why
+        Core.getStateTracker().getStateList();
+
+        /* This code is used to debug garbage collection. Note that it has its own core.executeUpdate();
+        WsTimer timer = new WsTimer();
+        timer.start();
+        core.executeUpdate();
+        timer.stop();
+        double time = timer.get();
+
+        System.out.println(time);
+
+        List<GarbageCollectorMXBean> GCs = ManagementFactory.getGarbageCollectorMXBeans();
+        for (GarbageCollectorMXBean gc : GCs) {
+            System.out.println(gc.getCollectionCount());
+            System.out.println(gc.getCollectionTime());
+        }
+        */
     }
 
     @Override
@@ -73,6 +111,24 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        try {
+
+            // Update all inputs, outputs and subsystems
+            
+            long start = System.currentTimeMillis();
+            core.executeUpdate();
+            long end = System.currentTimeMillis();
+
+            
+            SmartDashboard.putNumber("Cycle Time", (end - start));
+        } catch (Throwable e) {
+            SmartDashboard.putString("Last error", "Exception thrown during teleopPeriodic");
+            SmartDashboard.putString("Exception thrown", e.toString());
+            //exceptionThrown = true;
+            throw e;
+        } finally {
+            SmartDashboard.putBoolean("ExceptionThrown",true);
+        }
     }
 
     @Override
