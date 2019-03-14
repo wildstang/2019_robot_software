@@ -174,7 +174,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
 
         // Start the thread reading from the arduino serial port
-        arduino.start();
+        // arduino.start();
     }
 
     @Override
@@ -267,7 +267,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // SmartDashboard.putNumber("strafe target",target);
         SmartDashboard.putNumber("Strafe encoder", motor.getSelectedSensorPosition());
         // SmartDashboard.putNumber("Strafe target",linePositionTicks);
-        // arduino.run();
+        arduino.run();
         sensorLocation = (double) arduino.getLineSensorData();
         if (isManual) {
             if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25) {
