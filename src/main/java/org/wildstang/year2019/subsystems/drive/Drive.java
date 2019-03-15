@@ -406,6 +406,22 @@ public class Drive implements Subsystem {
         return masters[RIGHT].getSensorCollection().getQuadraturePosition();
     }
 
+    public void setPathFollowingMode() {
+
+        driveMode = DriveType.PATH;
+
+        // Configure motor controller modes for path following
+        masters[LEFT].set(ControlMode.MotionProfile, 0);
+        masters[LEFT].selectProfileSlot(DrivePID.PATH.slot, 0);
+
+        masters[RIGHT].set(ControlMode.MotionProfile, 0);
+        masters[RIGHT].selectProfileSlot(DrivePID.PATH.slot, 0);
+
+        // Use brake mode to stop quickly at end of path, since Talons will put
+        // output to neutral
+        setBrakeMode(true);
+    }
+
     /////////////////////////////////////////////////////////
     // PRIVATE METHODS
 
