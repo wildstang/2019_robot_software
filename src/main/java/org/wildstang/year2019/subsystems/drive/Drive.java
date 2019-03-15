@@ -411,21 +411,21 @@ public class Drive implements Subsystem {
 
     /** Change our motor settings to follow a path */
 
-    // private void setPathFollowingMode() {
+    public void setPathFollowingMode() {
 
-    //     driveMode = DriveType.PATH;
+        driveMode = DriveType.PATH;
 
-    //     // Configure motor controller modes for path following
-    //     masters[LEFT].set(ControlMode.MotionProfile, 0);
-    //     masters[LEFT].selectProfileSlot(DrivePID.PATH.slot, 0);
+        // Configure motor controller modes for path following
+        masters[LEFT].set(ControlMode.MotionProfile, 0);
+        masters[LEFT].selectProfileSlot(DrivePID.PATH.slot, 0);
 
-    //     masters[RIGHT].set(ControlMode.MotionProfile, 0);
-    //     masters[RIGHT].selectProfileSlot(DrivePID.PATH.slot, 0);
+        masters[RIGHT].set(ControlMode.MotionProfile, 0);
+        masters[RIGHT].selectProfileSlot(DrivePID.PATH.slot, 0);
 
-    //     // Use brake mode to stop quickly at end of path, since Talons will put
-    //     // output to neutral
-    //     setBrakeMode(true);
-    // }
+        // Use brake mode to stop quickly at end of path, since Talons will put
+        // output to neutral
+        setBrakeMode(true);
+    }
     /** Set up our input members and subscribe to inputUpdate events */
     private void initInputs() {
         // Set and subscribe to inputs

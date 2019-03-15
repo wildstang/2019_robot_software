@@ -19,7 +19,7 @@ public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
     private static final double DEPLOY_WAIT = 0.25;
-    private static final double RETRACT_WAIT = 0.65;
+    private static final double RETRACT_WAIT = 0.45;
     private static final double LOCK_WAIT = 0.15;
     // Local inputs
     private DigitalInput hatchDeploy;
@@ -187,5 +187,18 @@ public class Hatch implements Subsystem {
     @Override
     public String getName() {
         return "Hatch";
+    }
+    public boolean deployAuto(){
+        currentCommand = commands.DEPLOY.ordinal();
+        update();
+        if (currentCommand == commands.IDLE.ordinal()) return true;
+        return false;
+    }
+    public boolean collectAuto(boolean passed){
+        if (!passed) currentCommand = commands.COLLECT.ordinal();
+        if (passed) currentCommand = commands.COLLECT2.ordinal();
+        update();
+        if (currentCommand == commands.IDLE.ordinal()) return true;
+        return false;
     }
 }
