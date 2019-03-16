@@ -34,6 +34,7 @@ import java.lang.management.GarbageCollectorMXBean;
  */
 public class Robot extends TimedRobot {
     Core core;
+    private boolean AutoFirstRun = true;
 
     /** Nothing to do in the Robot constructor; real setup happens in robotInit. */
     public Robot() {
@@ -60,12 +61,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        System.out.println("Engaging autonomous mode.");
         Core.getSubsystemManager().resetState();
-        Drive driveBase = ((Drive) Core.getSubsystemManager()
-                .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
-        driveBase.setOpenLoopDrive();
-        driveBase.setBrakeMode(false);
+
+        core.setAutoManager(AutoManager.getInstance());
+        AutoManager.getInstance().startCurrentProgram();
     }
 
     @Override
@@ -114,27 +113,23 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         //Drive drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
         //drive.setFullBrakeMode();
+        resetRobotState();
+    }
+    
+    private void resetRobotState() {
+        AutoFirstRun = true;
     }
 
     @Override
     public void autonomousPeriodic() {
-        try {
+        core.executeUpdate();
 
-            // Update all inputs, outputs and subsystems
-            
-            long start = System.currentTimeMillis();
-            core.executeUpdate();
-            long end = System.currentTimeMillis();
+        double time = System.currentTimeMillis();
+        //SmartDashboard.putNumber("Cycle Time", time - oldTime);
+        //oldTime = time;
 
-            
-            SmartDashboard.putNumber("Cycle Time", (end - start));
-        } catch (Throwable e) {
-            SmartDashboard.putString("Last error", "Exception thrown during teleopPeriodic");
-            SmartDashboard.putString("Exception thrown", e.toString());
-            //exceptionThrown = true;
-            throw e;
-        } finally {
-            SmartDashboard.putBoolean("ExceptionThrown",true);
+        if (AutoFirstRun) {
+            AutoFirstRun = false;
         }
     }
 
