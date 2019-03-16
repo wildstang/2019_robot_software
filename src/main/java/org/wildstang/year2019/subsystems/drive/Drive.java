@@ -304,14 +304,14 @@ public class Drive implements Subsystem {
     }
 
     /** Begin to follow the given path. */
-    public void setPath(Path p_path) {
+    public void setPath(Path p_path, boolean isForwards) {
         if (pathFollower != null) {
             if (pathFollower.isActive()) {
                 throw new IllegalStateException("One path is already active!");
             }
         }
 
-        pathFollower = new PathFollower(p_path, masters[LEFT], masters[RIGHT]);
+        pathFollower = new PathFollower(p_path, isForwards, masters[LEFT], masters[RIGHT]);
     }
 
     // FIXME this is an abstraction violation to freely share the path follower

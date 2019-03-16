@@ -401,5 +401,19 @@ public class superlift implements Subsystem {
         motor.configMotionAcceleration((int) accelTicks, -1);
         motor.configMotionCruiseVelocity((int) speedTicks, -1);
     }
+    public boolean autoLift(int liftLevel){
+        if (liftLevel==1) {
+            target = POSITION_1 * TICKS_PER_INCH;
+            currentcommand = control.TRACK.ordinal();
+        } else if (liftLevel==2){
+            target = POSITION_3 * TICKS_PER_INCH;//not a typo, level 2 of rocket = position 3
+            currentcommand = control.TRACK.ordinal();
+        } else if (liftLevel==3){
+            target = POSITION_4 * TICKS_PER_INCH;//not a typo, level 3 of rocket = position 4
+            currentcommand = control.TRACK.ordinal();
+        }
+        update();
+        return (Math.abs(Math.abs(motor.getSensorCollection().getQuadraturePosition()) - Math.abs(target)) < getEncoderLocation(2));
+    }
      
 }

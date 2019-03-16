@@ -19,21 +19,24 @@ public class PathFollower {
     private TalonSRX m_left;
     private TalonSRX m_right;
 
+    private boolean isForwards;
+
     private SetValueMotionProfile m_mpEnable = SetValueMotionProfile.Disable;
     private MotionProfileStatus m_leftStatus = new MotionProfileStatus();
     private MotionProfileStatus m_rightStatus = new MotionProfileStatus();
 
     private Notifier m_notifer = new Notifier(new PeriodicRunnable());
 
-    public PathFollower(Path p_path, TalonSRX p_left, TalonSRX p_right) {
+    public PathFollower(Path p_path, boolean isForwards, TalonSRX p_left, TalonSRX p_right) {
         m_path = p_path;
         m_left = p_left;
         m_right = p_right;
+        this.isForwards = isForwards;
 
         m_left.changeMotionControlFramePeriod(10);
         m_right.changeMotionControlFramePeriod(10);
 
-        fillPathBuffers();
+        fillPathBuffers(isForwards);
     }
 
     public void start() {
@@ -111,13 +114,13 @@ public class PathFollower {
         }
     }
 
-    private void fillPathBuffers() {
+    private void fillPathBuffers(boolean isForwards) {
         fillPathBuffers(m_path.getLeft().getTalonPoints(), m_path.getRight().getTalonPoints(),
-                m_path.getLeft().getTrajectoryPoints().length);
+                m_path.getLeft().getTrajectoryPoints().length, isForwards);
     }
 
     private void fillPathBuffers(ArrayList<TrajectoryPoint> leftPoints,
-            ArrayList<TrajectoryPoint> rightPoints, int totalCnt) {
+            ArrayList<TrajectoryPoint> rightPoints, int totalCnt, boolean isForwards) {
 
         /* create an empty point */
         // System.out.println("PathFollower.fillPathBuffers() called");
@@ -141,8 +144,17 @@ public class PathFollower {
 
         /* This is fast since it's just into our TOP buffer */
         for (int i = 0; i < totalCnt; ++i) {
-            m_left.pushMotionProfileTrajectory(leftPoints.get(i));
-            m_right.pushMotionProfileTrajectory(rightPoints.get(i));
+            if (isForwards){
+                m_left.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
+                m_right.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
+                m_left.pushMotionProfileTrajectory(leftPoints.get(i));
+                m_right.pushMotionProfileTrajectory(rightPoints.get(i));
+            } else {
+                m_left.setInverted(!DriveConstants.LEFT_DRIVE_INVERTED);
+                m_right.setInverted(!DriveConstants.RIGHT_DRIVE_INVERTED);
+                m_left.pushMotionProfileTrajectory(rightPoints.get(i));
+                m_right.pushMotionProfileTrajectory(leftPoints.get(i));
+            }
         }
 
         // System.out.println("PathFollower.fillPathBuffers(): added " +

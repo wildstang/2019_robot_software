@@ -20,11 +20,13 @@ public class PathFollowerStep extends AutoStep {
     private Path m_path;
     private Drive m_drive;
     private PathFollower m_pathFollower;
+    private boolean isForwards;
 
     private boolean m_started = false;
 
-    public PathFollowerStep(String p_path) {
+    public PathFollowerStep(String p_path, boolean isForwards) {
         m_filePath = p_path;
+        this.isForwards = isForwards;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class PathFollowerStep extends AutoStep {
             if (!m_started) {
                 // TODO: Can next 3 lines be moved to init() ??
                 m_drive.setPathFollowingMode();
-                m_drive.setPath(m_path);
+                m_drive.setPath(m_path, isForwards);
                 m_pathFollower = m_drive.getPathFollower();
 
                 m_drive.startFollowingPath();
