@@ -22,6 +22,7 @@ import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -68,6 +69,9 @@ public class Drive implements Subsystem {
     /** Button to control anti-turbo mode */
     private DigitalInput antiTurboInput;
 
+    /** Gyro for path following */
+    private AHRS gyro;
+
     /**
      * Keeps track of what kind of drive we're doing (e.g. cheesy drive vs path vs
      * magic)
@@ -81,9 +85,10 @@ public class Drive implements Subsystem {
     private double maxSpeedAchieved;
 
     /**
-     * This PathFollower helper activates when we're in path mode to follow paths
+     * This PathFinderHeler activates when we're in path mode to
+     * follow PathWeaver paths using PathFinder.
      */
-    private PathFollower pathFollower;
+    private PathFinderHelper pathHelper;
 
     /** The Cheesy helper calculates the cheesy drive strategy */
     private CheesyDriveHelper cheesyHelper = new CheesyDriveHelper();
@@ -222,9 +227,7 @@ public class Drive implements Subsystem {
 
         switch (driveMode) {
         case PATH:
-            /*
-             * FIXME re-enable this collectDriveState();
-             */
+            // Nothing to do. The pathFollowerHelper owns the entire control loop.
             break;
 
         case CHEESY:
@@ -304,52 +307,39 @@ public class Drive implements Subsystem {
     }
 
     /** Begin to follow the given path. */
-    public void setPath(Path p_path, boolean isForwards) {
-        if (pathFollower != null) {
-            if (pathFollower.isActive()) {
+    public void setPath(Path path, boolean isForwards) {
+        if (pathHelper != null) {
+            if (pathHelper.isActive()) {
                 throw new IllegalStateException("One path is already active!");
             }
         }
 
-        pathFollower = new PathFollower(p_path, isForwards, masters[LEFT], masters[RIGHT]);
-    }
-
-    // FIXME this is an abstraction violation to freely share the path follower
-    public PathFollower getPathFollower() {
-        return pathFollower;
+        pathHelper = new PathFinderHelper(this, gyro, masters[LEFT], masters[RIGHT], path, isForwards);
     }
 
     public void startFollowingPath() {
         //setPathFollowingMode();
         
-        if (pathFollower == null) {
+        if (pathHelper == null) {
             throw new IllegalStateException("No path set");
         }
 
-        if (pathFollower.isActive()) {
+        if (pathHelper.isActive()) {
             throw new IllegalStateException("Path is already active");
         }
     }
 
-    /** Stop following and clean up path. FIXED? */
-    public void pathCleanup() {
-        if (pathFollower != null) {
-            pathFollower.stop();
-            pathFollower = null;
+    /** Stop following and clean up path. */
+    public void abortFollowingPath() {
+        if (pathHelper != null) {
+            pathHelper.stop();
+            pathHelper = null;
         }
     }
 
-    /**
-     * Stop following this path.
-     * 
-     * FIXME this is weirdly redundant with pathCleanup --- something is wrong The
-     * code IS redundant with pathCleanup, do we remove this whole method or do we
-     * remove the "pathFollower.stop();" from "abortFollowingPath()"?
-     */
-    public void abortFollowingPath() {
-        if (pathFollower != null) {
-            pathFollower.stop();
-        }
+    /** True IFF we are currently following an active path. */
+    public boolean isFollowingPath() {
+        return pathHelper != null && pathHelper.isActive();
     }
 
     /** Switch to cheesy drive. */
@@ -404,6 +394,15 @@ public class Drive implements Subsystem {
         // https://github.com/wildstang/2019_robot_software/blob/master/design_docs/year2019/drive.md
         // before using or adding to this method.
         return masters[RIGHT].getSensorCollection().getQuadraturePosition();
+    }
+
+    /** This is for drive helpers to directly control the motor ONLY. */
+    public void helperSetDriveSignal(DriveSignal drive) {
+        if (pathHelper == null || !pathHelper.isActive()) {
+            throw new IllegalStateException("No helper is running!");
+        }
+        masters[LEFT].set(ControlMode.PercentOutput, drive.leftMotor);
+        masters[RIGHT].set(ControlMode.PercentOutput, drive.rightMotor);
     }
 
     /////////////////////////////////////////////////////////
@@ -523,7 +522,6 @@ public class Drive implements Subsystem {
     private void stopPathFollowing() {
         if (driveMode == DriveType.PATH) {
             abortFollowingPath();
-            pathCleanup();
         }
     }
 

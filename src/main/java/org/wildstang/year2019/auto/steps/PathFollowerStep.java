@@ -1,66 +1,59 @@
 package org.wildstang.year2019.auto.steps;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.wildstang.framework.auto.steps.AutoStep;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSSubsystems;
 import org.wildstang.year2019.subsystems.drive.Drive;
+import org.wildstang.year2019.subsystems.drive.Path;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import jaci.pathfinder.PathfinderFRC;
+import jaci.pathfinder.Trajectory;
 
 public class PathFollowerStep extends AutoStep {
 
-    private String m_filePath;
-    private Path m_path;
-    private Drive m_drive;
-    private PathFollower m_pathFollower;
+    private String filePath;
+    private Path path;
+    private Drive drive;
     private boolean isForwards;
 
     private boolean m_started = false;
 
-    public PathFollowerStep(String p_path, boolean isForwards) {
-        m_filePath = p_path;
+    public PathFollowerStep(String filePath, boolean isForwards) {
+        this.filePath = filePath;
         this.isForwards = isForwards;
     }
 
     @Override
     public void initialize() {
-        m_path = new Path();
-        File leftFile = new File(m_filePath + ".left");
-        File rightFile = new File(m_filePath + ".right");
-        Trajectory leftTrajectory;
-        Trajectory rightTrajectory;
-
-        leftTrajectory = PathReader.readTrajectory(leftFile);
-        rightTrajectory = PathReader.readTrajectory(rightFile);
-
-        m_path.setLeft(leftTrajectory);
-        m_path.setRight(rightTrajectory);
-
-        m_drive = (Drive) Core.getSubsystemManager()
-                .getSubsystem(WSSubsystems.DRIVEBASE.getName());
-        
+        path = new Path();
+        try {
+            path.left = PathfinderFRC.getTrajectory(filePath + ".left.pf1.csv");
+            path.right = PathfinderFRC.getTrajectory(filePath + ".right.pf1.csv");
+        } catch (IOException fileError) {
+            for (int i = 0; i < 30; ++i) {
+                System.out.println("FAILED TO LOAD PATH!");
+                // TODO do something more helpful
+            }
+        }
+        drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
     }
 
     @Override
     public void update() {
         if (!isFinished()) {
             if (!m_started) {
-                // TODO: Can next 3 lines be moved to init() ??
-                m_drive.setPathFollowingMode();
-                m_drive.setPath(m_path, isForwards);
-                m_pathFollower = m_drive.getPathFollower();
-
-                m_drive.startFollowingPath();
-                m_drive.resetEncoders();
+                drive.setPathFollowingMode();
+                drive.setPath(path, isForwards);
+                drive.resetEncoders();
+                drive.startFollowingPath();
                 m_started = true;
             } else {
-                if (m_pathFollower.isActive()) {
-                    m_pathFollower.update();
-                } else {
-                    m_drive.pathCleanup();
+                if (!drive.isFollowingPath()) {
                     setFinished(true);
                 }
             }
