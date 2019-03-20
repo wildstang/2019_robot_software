@@ -48,7 +48,6 @@ dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
     //compile files('thirdparty/commons-csv-1.6/commons-csv-1.6.jar')
-    compile files('thirdparty/Pathfinder-Java-1.8.jar')
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile 'junit:junit:4.12'
