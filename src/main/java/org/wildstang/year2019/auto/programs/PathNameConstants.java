@@ -4,6 +4,6 @@ public class PathNameConstants {
     private PathNameConstants() {
     }
 
-    public static final String EXAMPLE = "examplefilepath";
+    public static final String EXAMPLE = "/home/lvuser/deploy/output/";
 
 }
