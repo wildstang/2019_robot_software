@@ -72,7 +72,7 @@ public class LineDetector extends Thread {
     }
     try {
       arduino.setReadBufferSize(1);
-      //run();
+      run();
     }
     catch(NullPointerException e) {
 
@@ -82,7 +82,7 @@ public class LineDetector extends Thread {
   
   public void run()  {
     SmartDashboard.putBoolean("Arduino Active",arduinoActive);
-    while(arduinoActive) {
+    if(arduinoActive) {
       running++;
       SmartDashboard.putNumber("Running", running);
       //while (true) {

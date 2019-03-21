@@ -13,7 +13,7 @@ public class ExampleAutoProgram extends AutoProgram {
     @Override
     public String toString() {
         //give it a name
-        return "ExampleAutoProgram";
+        return "";
     }
 
 }

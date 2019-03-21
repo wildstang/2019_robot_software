@@ -10,7 +10,7 @@ Further documentation is in the [`design_docs`](design_docs/) folder.
 *  Download and run the latest "CTRE Phoenix Framework Installer" CTRE installer at http://www.ctr-electronics.com/hro.html#product_tabs_technical_resources.
 *  Download and run navX-XMP installer at https://www.kauailabs.com/public_files/navx-mxp/navx-mxp.zip. 
 ### Downloading the code
-*  Install [Git for Windows](https://gitforwindows.org). Non-Windows users: you probably already have it, and if not it's in your package manager.
+*  Install [Git for Windows](https://gitforwindows.org). Non-Windows users: you probably already have it and if not it's in your package manager.
 *  Quit VSCode if you have it open, otherwise the next steps will not work.
 *  Open WPI VSCode (hexagonal icon with a W in it).
 *  Open the command palette with F1, cntl-shift-P or cmd-shift-P. Search for "Git: Clone" and select it.

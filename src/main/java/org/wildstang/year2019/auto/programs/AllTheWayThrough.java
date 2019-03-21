@@ -20,7 +20,7 @@ public class AllTheWayThrough extends AutoProgram {
     @Override
     public String toString() {
         //give it a name
-        return "AllTheWayThrough";
+        return "";
     }
 
 }
