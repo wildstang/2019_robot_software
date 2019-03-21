@@ -81,7 +81,9 @@ public class Hatch implements Subsystem {
 
             if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true && !isStartPressed){
                 currentCommand = commands.COLLECT.ordinal();
-            } 
+            } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue()==false){
+                currentCommand = commands.COLLECT2.ordinal();
+            }
         }
     }
 
@@ -136,8 +138,10 @@ public class Hatch implements Subsystem {
             //     currentCommand = commands.IDLE.ordinal();
             // }
         } else if (currentCommand == commands.COLLECT.ordinal()) {
-            lockPosition = lockVal;
-            currentCommand = commands.IDLE.ordinal();
+            if (!working){
+                lockPosition = !lockVal;
+                currentCommand = commands.COLLECT2.ordinal();
+            }
             // if (!working) {
             //     working = true;
             //     outPosition = !outVal;
@@ -153,7 +157,9 @@ public class Hatch implements Subsystem {
 
             //     currentCommand = commands.IDLE.ordinal();
             // }
-         } //else if (currentCommand == commands.COLLECT2.ordinal()){
+         } else if (currentCommand == commands.COLLECT2.ordinal()){
+             lockPosition = lockVal;
+             currentCommand = commands.IDLE.ordinal();
         //     if (!working) {
         //         timer.reset();
         //         working = true;
@@ -166,7 +172,7 @@ public class Hatch implements Subsystem {
         //         hatchOut.setValue(outPosition);
         //         working=false;
         //         currentCommand = commands.IDLE.ordinal();
-        //     }
+             }
             
         // }
         SmartDashboard.putBoolean("Hatch Out", hatchOut.getValue());
