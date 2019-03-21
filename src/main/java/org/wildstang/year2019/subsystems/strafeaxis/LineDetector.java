@@ -87,13 +87,14 @@ public class LineDetector extends Thread {
       SmartDashboard.putNumber("Running", running);
       //while (true) {
         byte valueRead = arduino.read(1)[0];
+        SmartDashboard.putNumber("Serial Byte Raw", valueRead);
         if(valueRead < 0) {
           linePosition = Math.abs(valueRead) + 127;
         }
         else {
           linePosition = valueRead;
         }
-        SmartDashboard.putNumber("Arduino Strafe Target LD",valueRead);
+        SmartDashboard.putNumber("Arduino Strafe Target LD", linePosition);
       }
     //}
   }  
