@@ -1,6 +1,5 @@
 package org.wildstang.year2019.auto.steps;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.wildstang.framework.auto.steps.AutoStep;
@@ -9,10 +8,7 @@ import org.wildstang.year2019.robot.WSSubsystems;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.subsystems.drive.Path;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import jaci.pathfinder.PathfinderFRC;
-import jaci.pathfinder.Trajectory;
 
 public class PathFollowerStep extends AutoStep {
 

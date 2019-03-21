@@ -33,26 +33,33 @@ class PathFinderHelper {
     private TalonSRX leftMotor;
     /** Reference to right motor for encoder reading */
     private TalonSRX rightMotor;
-    /** Follower for left trajectory --- includes motor control logic for left motor */
+    /**
+     * Follower for left trajectory --- includes motor control logic for left motor
+     */
     private EncoderFollower leftFollower;
-    /** Follower for right trajectory --- includes motor control logic for right motor */
+    /**
+     * Follower for right trajectory --- includes motor control logic for right
+     * motor
+     */
     private EncoderFollower rightFollower;
-    /** This notifier calls our pathUpdate() method periodically.
-     * TODO: what controls the interval? */
+    /**
+     * This notifier calls our pathUpdate() method periodically. TODO: what controls
+     * the interval?
+     */
     private Notifier followerNotifier;
     /** If this is false, we follow the path backwards. */
     private boolean isForwards;
 
     /**
      * Create PathFinderHelper with the given gyro and motors.
-     * @param gyro Gyro to use for navigation.
-     * @param leftMotor left motor. WE DO NOT ISSUE COMMANDS TO THIS MOTOR.
-     *        It is ONLY for reading the encoder.
+     * 
+     * @param gyro       Gyro to use for navigation.
+     * @param leftMotor  left motor. WE DO NOT ISSUE COMMANDS TO THIS MOTOR. It is
+     *                   ONLY for reading the encoder.
      * @param rightMotor same as leftMotor, but on the right.
-     * @param Path to follow.
+     * @param Path       to follow.
      */
-    PathFinderHelper(Drive drive, AHRS gyro, TalonSRX leftMotor, TalonSRX rightMotor,
-                     Path path, boolean isForwards) {
+    PathFinderHelper(Drive drive, AHRS gyro, TalonSRX leftMotor, TalonSRX rightMotor, Path path, boolean isForwards) {
         this.gyro = gyro;
         this.drive = drive;
         this.leftMotor = leftMotor;
@@ -67,27 +74,30 @@ class PathFinderHelper {
     void pathUpdate() {
         double leftOutput;
         double rightOutput;
-        if (isForwards) {
-            leftOutput = leftFollower.calculate(leftMotor.getSelectedSensorPosition());
-            rightOutput = rightFollower.calculate(leftMotor.getSelectedSensorPosition());
+        if (!isActive()) {
+            stop();
+            drive.abortFollowingPath();
         } else {
-            leftOutput = -rightFollower.calculate(-leftMotor.getSelectedSensorPosition());
-            rightOutput = -rightFollower.calculate(-rightMotor.getSelectedSensorPosition());
-        }
-        // TODO use gyro?
+            if (isForwards) {
+                leftOutput = leftFollower.calculate(leftMotor.getSelectedSensorPosition());
+                rightOutput = rightFollower.calculate(leftMotor.getSelectedSensorPosition());
+            } else {
+                leftOutput = -rightFollower.calculate(-leftMotor.getSelectedSensorPosition());
+                rightOutput = -rightFollower.calculate(-rightMotor.getSelectedSensorPosition());
+            }
+            // TODO use gyro?
 
-        drive.helperSetDriveSignal(new DriveSignal(leftOutput, rightOutput));
+            drive.helperSetDriveSignal(new DriveSignal(leftOutput, rightOutput));
+        }
     }
 
     /** Return true IFF we're currently following a path. */
     boolean isActive() {
-        throw new RuntimeException("unimplemented");
+        return !leftFollower.isFinished() && !rightFollower.isFinished();
     }
 
     /** Abort following the path immediately. */
     void stop() {
-        throw new RuntimeException("unimplemented");
+        followerNotifier.stop();
     }
-
-    private Notifier m_follower_notifier;
 }
