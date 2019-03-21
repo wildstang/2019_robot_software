@@ -246,7 +246,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         sensorLocation = (double)arduino.getLineSensorData();
         if (isManual) {
             if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25){
-                motor.set(ControlMode.PercentOutput,  -manualMotorSpeed);
+                motor.set(ControlMode.PercentOutput,  manualMotorSpeed);
             } else motor.set(ControlMode.PercentOutput,0.0);
 
         } else if (isTrackingAutomatically) {
