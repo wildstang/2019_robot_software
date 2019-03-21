@@ -98,6 +98,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     public boolean zeroPressed = false;
     public boolean zero2 = false;
+    public double realTarget =0.0;
 
     public double lastSensor = 0;
     /** Line detector class talks to Arduino with line sensors on it */
@@ -161,7 +162,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         // System.out.println("\n\n\n\n\n\n STRAFE ENABLED\n\n\n\n\n\n");
 
         // Start the thread reading from the arduino serial port
-        //arduino.start();
+        arduino.start();
     }
 
     @Override
@@ -244,7 +245,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         //SmartDashboard.putNumber("strafe target",target);
         SmartDashboard.putNumber("Strafe encoder",motor.getSelectedSensorPosition());
          //SmartDashboard.putNumber("Strafe target",linePositionTicks);
-         arduino.run();
+         //arduino.run();
          sensorLocation = (double)arduino.getLineSensorData();
          if (isManual){
              if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25){
@@ -253,7 +254,9 @@ public class StrafeAxis extends Axis implements Subsystem {
 
          } else if (isTrackingAutomatically){
              if (sensorLocation >= 0 && sensorLocation<=255){
-                motor.set(ControlMode.Position, (255-sensorLocation)*137000/255);
+                 realTarget = (255-sensorLocation)*137000/255;
+                 realTarget = realTarget + Math.abs(127-sensorLocation)/127*137000/8.75*2;
+                motor.set(ControlMode.Position, realTarget);
              }
          } else if (zeroing){
              resetState();
@@ -301,6 +304,7 @@ public class StrafeAxis extends Axis implements Subsystem {
         motor.configNominalOutputReverse(0, -1);
         motor.configPeakOutputForward(1, -1);
         motor.configPeakOutputReverse(-1, -1);
+        motor.configPeakCurrentLimit(20); //20 amp current limit
         // peak output managed by axis
         // speed and accel managed by axis
         motor.setInverted(INVERTED);
