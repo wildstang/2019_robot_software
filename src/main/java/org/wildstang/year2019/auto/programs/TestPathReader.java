@@ -7,7 +7,7 @@ public class TestPathReader extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        addStep(new PathFollowerStep(PathNameConstants.EXAMPLE + "habRocketCloseLeft.left.pf1.csv", true));
+        addStep(new PathFollowerStep(PathNameConstants.HAB_ROCKET_CLOSE_LEFT, true));
     }
 
     @Override

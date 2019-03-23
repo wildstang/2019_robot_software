@@ -11,8 +11,7 @@ import org.wildstang.year2019.subsystems.drive.PathFollower;
 import org.wildstang.year2019.subsystems.drive.PathReader;
 import org.wildstang.year2019.subsystems.drive.Trajectory;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.Filesystem;
 
 public class PathFollowerStep extends AutoStep {
 
@@ -25,15 +24,15 @@ public class PathFollowerStep extends AutoStep {
     private boolean m_started = false;
 
     public PathFollowerStep(String p_path, boolean isForwards) {
-        m_filePath = p_path;
+        m_filePath = Filesystem.getDeployDirectory().toString() + "/output/" + p_path;
         this.isForwards = isForwards;
     }
 
     @Override
     public void initialize() {
         m_path = new Path();
-        File leftFile = new File(m_filePath);
-        File rightFile = new File(m_filePath);
+        File leftFile = new File(m_filePath + ".left.pf1.csv");
+        File rightFile = new File(m_filePath + ".right.pf1.csv");
         Trajectory leftTrajectory;
         Trajectory rightTrajectory;
 
