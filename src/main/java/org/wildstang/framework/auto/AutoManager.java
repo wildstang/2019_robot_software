@@ -59,6 +59,9 @@ public class AutoManager {
             runningProgram = programs.get(0);
         }
         // runningProgram = programs.get(1);
+        
+        SmartDashboard.putBoolean("Checkpoint 606 yay", true);
+        
         s_log.logp(Level.ALL, "Auton", "Running Autonomous Program", runningProgram.toString());
         runningProgram.initialize();
         SmartDashboard.putString("Running Autonomous Program", runningProgram.toString());
