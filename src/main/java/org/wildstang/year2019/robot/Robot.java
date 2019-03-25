@@ -65,6 +65,8 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         Core.getSubsystemManager().resetState();
 
+        SmartDashboard.putBoolean("Checkpoint 707 yay", true);
+
         core.setAutoManager(AutoManager.getInstance());
         AutoManager.getInstance().startCurrentProgram();
     }
@@ -125,6 +127,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         core.executeUpdate();
+
+        System.out.println("Checkpoint 808 yay");
 
         double time = System.currentTimeMillis();
         //SmartDashboard.putNumber("Cycle Time", time - oldTime);

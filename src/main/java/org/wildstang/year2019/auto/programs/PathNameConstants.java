@@ -4,6 +4,10 @@ public class PathNameConstants {
     private PathNameConstants() {
     }
 
-    public static final String EXAMPLE = "/home/lvuser/deploy/output/";
-
+    public static final String HP_INTERIM_BACK_LEFT = "HPInterimBackLeft";   
+    public static final String INTERIM_BACK_ROCKET_FAR_LEFT = "InterimBackRocketFarLeft";
+    public static final String INTERIM_FRONT_HP_LEFT = "InterimFrontHPLeft";
+    public static final String UNNAMED = "Unnamed";           
+    public static final String HAB_ROCKET_CLOSE_LEFT = "habRocketCloseLeft";
+    public static final String ROCKET_CLOSE_INTERIM_LEFT = "rocketCloseInterimLeft";
 }
