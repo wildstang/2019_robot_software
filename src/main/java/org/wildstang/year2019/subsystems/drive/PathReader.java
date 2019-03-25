@@ -27,8 +27,8 @@ public class PathReader {
             dataPoints[i] = new double[3];
 
             dataPoints[i][0] = (int) values.get(i).dt;
-            dataPoints[i][1] = values.get(i).position * 4 * Math.PI;
-            dataPoints[i][2] = values.get(i).velocity;
+            dataPoints[i][1] = values.get(i).position * 4 * Math.PI*18.85;
+            dataPoints[i][2] = values.get(i).velocity;//*18.85;
             
             mpPoint.timeDur = (int) dataPoints[i][0];
             mpPoint.position = dataPoints[i][1];

@@ -329,6 +329,7 @@ public class Drive implements Subsystem {
         if (pathFollower.isActive()) {
             throw new IllegalStateException("Path is already active");
         }
+        pathFollower.start();
     }
 
     /** Stop following and clean up path. FIXED? */
