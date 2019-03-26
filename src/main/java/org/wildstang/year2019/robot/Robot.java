@@ -11,8 +11,8 @@ import org.wildstang.framework.io.inputs.RemoteAnalogInput;
 import org.wildstang.framework.timer.WsTimer;
 import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
-// import org.wildstang.year2019.auto.programs.AllTheWayThrough;
-// import org.wildstang.year2019.auto.programs.ExampleAutoProgram;
+import org.wildstang.year2019.auto.programs.AllTheWayThrough;
+import org.wildstang.year2019.auto.programs.ExampleAutoProgram;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.auto.programs.TestPathReader;
 
@@ -51,8 +51,8 @@ public class Robot extends TimedRobot {
         core.createOutputs(WSOutputs.values());
         core.createSubsystems(WSSubsystems.values());
 
-        // AutoManager.getInstance().addProgram(new ExampleAutoProgram());
-        // AutoManager.getInstance().addProgram(new AllTheWayThrough());
+        AutoManager.getInstance().addProgram(new ExampleAutoProgram());
+        AutoManager.getInstance().addProgram(new AllTheWayThrough());
         AutoManager.getInstance().addProgram(new TestPathReader());
     }
 

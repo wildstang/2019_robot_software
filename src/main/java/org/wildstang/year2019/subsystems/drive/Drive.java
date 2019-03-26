@@ -54,7 +54,7 @@ public class Drive implements Subsystem {
     /** Left and right Talon master controllers */
     private TalonSRX[] masters = new TalonSRX[2];
     /** Left and right pairs of Victor follower controllers */
-    private TalonSRX[][] followers = new TalonSRX[2][2];
+    private VictorSPX[][] followers = new VictorSPX[2][2];
 
     /** Input to steer robot */
     private AnalogInput headingInput;
@@ -280,7 +280,7 @@ public class Drive implements Subsystem {
         NeutralMode mode = brake ? NeutralMode.Brake : NeutralMode.Coast;
         for (int side : SIDES) {
             masters[side].setNeutralMode(mode);
-            for (TalonSRX follower : followers[side]) {
+            for (VictorSPX follower : followers[side]) {
                 follower.setNeutralMode(mode);
             }
         }
@@ -453,7 +453,7 @@ public class Drive implements Subsystem {
             initMaster(side, masters[side]);
 
             for (int i = 0; i < FOLLOWER_IDS[side].length; ++i) {
-                followers[side][i] = new TalonSRX(FOLLOWER_IDS[side][i]);
+                followers[side][i] = new VictorSPX(FOLLOWER_IDS[side][i]);
                 initFollower(side, followers[side][i]);
             }
         }
@@ -509,7 +509,7 @@ public class Drive implements Subsystem {
         System.out.print(master_config.toString("drive talon " + SIDE_NAMES[side]));
     }
 
-    private void initFollower(int side, TalonSRX follower) {
+    private void initFollower(int side, VictorSPX follower) {
         TalonSRX master = masters[side];
         if (side == LEFT) {
             follower.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
