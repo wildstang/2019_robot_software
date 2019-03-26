@@ -20,9 +20,9 @@ public enum WSSubsystems implements Subsystems {
     BALLPATH("Ballpath", Ballpath.class),
     CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
     //LIFT("Lift", Lift.class), old lift DO NOT USE
-    STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
+    //STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
     HATCH("Hatch",Hatch.class),
-    LIFT("Lift",superlift.class),
+    //LIFT("Lift",superlift.class),
     ;
 
     private String name;

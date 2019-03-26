@@ -33,8 +33,8 @@ public class PathFollower {
         m_right = p_right;
         this.isForwards = isForwards;
 
-        m_left.changeMotionControlFramePeriod(10);
-        m_right.changeMotionControlFramePeriod(10);
+        m_left.changeMotionControlFramePeriod(20);
+        m_right.changeMotionControlFramePeriod(20);
 
         fillPathBuffers(isForwards);
     }

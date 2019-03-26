@@ -425,7 +425,7 @@ public class Drive implements Subsystem {
 
         // Use brake mode to stop quickly at end of path, since Talons will put
         // output to neutral
-        setBrakeMode(true);
+        //setBrakeMode(true);
     }
     /** Set up our input members and subscribe to inputUpdate events */
     private void initInputs() {

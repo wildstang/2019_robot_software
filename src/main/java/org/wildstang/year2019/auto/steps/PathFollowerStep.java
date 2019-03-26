@@ -26,6 +26,7 @@ public class PathFollowerStep extends AutoStep {
 
     public PathFollowerStep(String p_path, boolean isForwards) {
         SmartDashboard.putBoolean("Checkpoint 1001 yay", true);
+        SmartDashboard.putString("Testing path loading",Filesystem.getDeployDirectory().toString() + "/output/"+p_path);
 
         m_filePath = Filesystem.getDeployDirectory().toString() + "/output/" + p_path;
         this.isForwards = isForwards;
@@ -70,7 +71,7 @@ public class PathFollowerStep extends AutoStep {
                 m_drive.resetEncoders();
                 m_started = true;
 
-                m_pathFollower.start();
+                //m_pathFollower.start();
             } else {
                 if (m_pathFollower.isActive()) {
                     m_pathFollower.update();
