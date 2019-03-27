@@ -38,7 +38,7 @@ public class PathReader {
 
             mpPoint.profileSlotSelect0 = 0;
 
-            System.out.println(mpPoint.position);
+            //System.out.println(mpPoint.position);
 
             if (i == 0) {
                 mpPoint.zeroPos = true;

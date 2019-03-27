@@ -144,25 +144,32 @@ public class PathFollower {
 
         /* This is fast since it's just into our TOP buffer */
 
-        /*
-        for (int i = 0; i < totalCnt; ++i) {
-            if (isForwards){
+        for (int i = 0; i < totalCnt; ++i) 
+        {
+            if (isForwards)
+            {
+                /*
                 m_left.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
                 m_left.setSensorPhase(DriveConstants.LEFT_DRIVE_SENSOR_PHASE);
                 m_right.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
                 m_right.setSensorPhase(DriveConstants.RIGHT_DRIVE_SENSOR_PHASE);
-                m_left.pushMotionProfileTrajectory(leftPoints.get(i));
+                */
+                m_left.pushMotionProfileTrajectory(leftPoints.get(i));                
                 m_right.pushMotionProfileTrajectory(rightPoints.get(i));
-            } else {
+            } 
+            else 
+            {
+                /*
                 m_left.setInverted(!DriveConstants.LEFT_DRIVE_INVERTED);
                 m_left.setSensorPhase(!DriveConstants.LEFT_DRIVE_SENSOR_PHASE);
                 m_right.setInverted(!DriveConstants.RIGHT_DRIVE_INVERTED);
                 m_right.setSensorPhase(!DriveConstants.RIGHT_DRIVE_SENSOR_PHASE);
+                */
                 m_left.pushMotionProfileTrajectory(rightPoints.get(i));
                 m_right.pushMotionProfileTrajectory(leftPoints.get(i));
             }
         }
-        */
+        
 
         // System.out.println("PathFollower.fillPathBuffers(): added " +
         // m_left.getMotionProfileTopLevelBufferCount());

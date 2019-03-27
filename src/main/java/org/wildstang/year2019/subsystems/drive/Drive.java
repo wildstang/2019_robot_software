@@ -252,10 +252,10 @@ public class Drive implements Subsystem {
             driveSignal = new DriveSignal(commandThrottle, commandThrottle);
             break;
         }
-        SensorCollection leftEncoder = masters[LEFT].getSensorCollection();
-        SmartDashboard.putNumber("Left Encoder", leftEncoder.getQuadraturePosition());
-        SensorCollection rightEncoder = masters[RIGHT].getSensorCollection();
-        SmartDashboard.putNumber("Right Encoder", rightEncoder.getQuadraturePosition());
+        //SensorCollection leftEncoder = masters[LEFT].getSensorCollection();
+        SmartDashboard.putNumber("Left Encoder", masters[LEFT].getSelectedSensorPosition());  //leftEncoder.getQuadraturePosition()
+        //SensorCollection rightEncoder = masters[RIGHT].getSensorCollection();
+        SmartDashboard.putNumber("Right Encoder",  masters[RIGHT].getSelectedSensorPosition());  //rightEncoder.getQuadraturePosition()
 
         updateCounter += 1;
     }
