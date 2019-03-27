@@ -64,7 +64,7 @@ public class Drive implements Subsystem {
     /** Button to control base lock mode */
     private DigitalInput baseLockInput;
     /** Button to control quick turn mode */
-    private DigitalInput quickTurnInput;
+    private AnalogInput quickTurnInput;
     /** Button to control anti-turbo mode */
     private DigitalInput antiTurboInput;
 
@@ -100,11 +100,13 @@ public class Drive implements Subsystem {
     /** The heading value currently being commanded. */
     private double commandHeading;
     /** True iff quick-turn is currently commanded. */
-    private boolean commandQuickTurn;
+    private double commandQuickTurn;
     /** True iff raw mode is currently commanded. */
     private boolean commandRawMode = false;
     /** True iff antiturbo is currently commanded. */
     private boolean commandAntiTurbo = false;
+
+    private boolean isQuick = false;
 
     ///////////////////////////////////////////////////////////
     // PUBLIC METHODS
@@ -152,7 +154,7 @@ public class Drive implements Subsystem {
         setHeading(0);
 
         // All features start disabled.
-        commandQuickTurn = false;
+        commandQuickTurn = 0.0;
         commandRawMode = false;
         commandAntiTurbo = false;
 
@@ -163,7 +165,7 @@ public class Drive implements Subsystem {
     public void inputUpdate(Input source) {
 
         if (source == throttleInput) {
-            setThrottle(throttleInput.getValue());
+            setThrottle(-throttleInput.getValue());
         } else if (source == headingInput) {
             setHeading(headingInput.getValue());
         }
@@ -171,6 +173,7 @@ public class Drive implements Subsystem {
         // TODO: Do we want to make quickturn automatic?
         else if (source == quickTurnInput) {
             commandQuickTurn = quickTurnInput.getValue();
+            isQuick = true;
         } else if (source == antiTurboInput) {
             commandAntiTurbo = antiTurboInput.getValue();
         } else if (source == baseLockInput) {
@@ -187,6 +190,9 @@ public class Drive implements Subsystem {
                 setHeading(0);
                 setThrottle(0);
             }
+        } else {
+            isQuick = false;
+
         }
     }
 
@@ -233,8 +239,9 @@ public class Drive implements Subsystem {
                 effectiveThrottle = commandThrottle * DriveConstants.ANTI_TURBO_FACTOR;
             }
 
-            SmartDashboard.putBoolean("Quick Turn", commandQuickTurn);
-            driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, commandQuickTurn);
+            SmartDashboard.putNumber("Quick Turn", commandQuickTurn);
+            
+            driveSignal = cheesyHelper.cheesyDrive(effectiveThrottle, commandHeading, isQuick);
 
             SmartDashboard.putNumber("driveSignal.left", driveSignal.leftMotor);
             SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
@@ -375,7 +382,7 @@ public class Drive implements Subsystem {
     }
 
     public void setQuickTurn(boolean quickTurn) {
-        this.commandQuickTurn = false;
+        this.commandQuickTurn = 0.0;
     }
 
     /**
@@ -434,7 +441,7 @@ public class Drive implements Subsystem {
         throttleInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_THROTTLE);
         throttleInput.addInputListener(this);
 
-        quickTurnInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.QUICK_TURN.getName());
+        quickTurnInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.QUICK_TURN.getName());
         quickTurnInput.addInputListener(this);
 
         antiTurboInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());

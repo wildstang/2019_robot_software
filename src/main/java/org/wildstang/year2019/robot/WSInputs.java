@@ -75,7 +75,7 @@ public enum WSInputs implements Inputs {
                                                                                            // Subsystem
     SHIFT("Driver Shift", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 2), false), // Driver
                                                                                           // Subsystem
-    QUICK_TURN("Quick Turn", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 7), false), // Driver
+    QUICK_TURN("Quick Turn", WSInputType.JS_JOYSTICK, new WsJSJoystickInputConfig(0, JoystickConstants.RIGHT_TRIGGER), false), // Driver
                                                                                              // Subsystem
     BASE_LOCK("Base lock", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 3), false), // Driver
                                                                                            // Subsystem
@@ -84,7 +84,7 @@ public enum WSInputs implements Inputs {
     // Manipulator Joysticks
     // ---------------------------------
     LIFT_MANUAL("Lift Manual Up/Down", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_Y), true), // Lift
+            new WsJSJoystickInputConfig(1, 1), true), // Lift
                                                                                       // Subsystem
     //OPEN JOYSTICK("name", WSInputType.JS_JOYSTICK,
     //        new WsJSJoystickInputConfig(1, JoystickConstants.LEFT_JOYSTICK_X), true), // OPEN
@@ -93,7 +93,7 @@ public enum WSInputs implements Inputs {
             //new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
                                                                                        // Subsystem
     STRAFE_MANUAL("Hatch Strafe", WSInputType.JS_JOYSTICK,
-            new WsJSJoystickInputConfig(1, JoystickConstants.RIGHT_JOYSTICK_Y), true), // Lift
+            new WsJSJoystickInputConfig(1, 2), true), // Lift
                                                                                        // Subsystem
     // ---------------------------------
     // Manipulator DPAD Buttons
