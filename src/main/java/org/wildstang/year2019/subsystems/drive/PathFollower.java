@@ -143,6 +143,8 @@ public class PathFollower {
         m_right.clearMotionProfileTrajectories();
 
         /* This is fast since it's just into our TOP buffer */
+
+        /*
         for (int i = 0; i < totalCnt; ++i) {
             if (isForwards){
                 m_left.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
@@ -160,6 +162,7 @@ public class PathFollower {
                 m_right.pushMotionProfileTrajectory(leftPoints.get(i));
             }
         }
+        */
 
         // System.out.println("PathFollower.fillPathBuffers(): added " +
         // m_left.getMotionProfileTopLevelBufferCount());

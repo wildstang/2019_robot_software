@@ -27,15 +27,18 @@ public class PathReader {
             dataPoints[i] = new double[3];
 
             dataPoints[i][0] = (int) values.get(i).dt;
-            dataPoints[i][1] = values.get(i).position*6*Math.PI ;
-            dataPoints[i][2] = values.get(i).velocity*6*Math.PI;//*18.85;
+            dataPoints[i][1] = values.get(i).position*DriveConstants.TICKS_PER_INCH;//6*Math.PI ;
+            dataPoints[i][2] = values.get(i).velocity*DriveConstants.TICKS_PER_INCH/10; //6*Math.PI;//*18.85;
 
             
+
             mpPoint.timeDur = (int) dataPoints[i][0];
             mpPoint.position = dataPoints[i][1];
             mpPoint.velocity = dataPoints[i][2];
 
             mpPoint.profileSlotSelect0 = 0;
+
+            System.out.println(mpPoint.position);
 
             if (i == 0) {
                 mpPoint.zeroPos = true;

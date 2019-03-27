@@ -474,6 +474,7 @@ public class Drive implements Subsystem {
 
         // The Talon SRX should be directly connected to an encoder
         master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, TIMEOUT);
+       // master.enableVoltageCompensation(true);
 
         if (side == LEFT) {
             master.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
