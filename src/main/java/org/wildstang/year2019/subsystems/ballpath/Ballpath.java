@@ -59,7 +59,7 @@ public class Ballpath implements Subsystem {
     private static final double PHYSICAL_DIR_CHANGE = -1;
 
     // Inputs
-    private DigitalInput carriageRollersInput;
+    private AnalogInput carriageRollersInput;
     private DigitalInput intakeInput;
     private DigitalInput fullBallpathInput;
     private DigitalInput reverseInput;
@@ -142,7 +142,7 @@ public class Ballpath implements Subsystem {
             hopper_position = false;
         }
 
-        if (carriageRollersInput.getValue()) {
+        if (carriageRollersInput.getValue() > 0.75) {
             isCarriageMotor = true;
             carriage_slowed = false;
         } else {
@@ -192,7 +192,7 @@ public class Ballpath implements Subsystem {
         // Input listeners
         intakeInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.INTAKE.getName());
         intakeInput.addInputListener(this);
-        carriageRollersInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
+        carriageRollersInput = (AnalogInput) Core.getInputManager().getInput(WSInputs.CARRIAGE_ROLLERS);
         carriageRollersInput.addInputListener(this);
         fullBallpathInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.FULL_BALLPATH.getName());
         fullBallpathInput.addInputListener(this);
