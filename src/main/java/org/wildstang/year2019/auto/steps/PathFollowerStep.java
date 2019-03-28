@@ -37,13 +37,19 @@ public class PathFollowerStep extends AutoStep {
 
         SmartDashboard.putBoolean("Checkpoint 2002 yay", true);
         m_path = new Path();
+        
         File leftFile = new File(m_filePath + ".left.pf1.csv");
         File rightFile = new File(m_filePath + ".right.pf1.csv");
+        if (!isForwards){
+            File holder = rightFile;
+            rightFile = leftFile;
+            leftFile = holder;
+        } 
+
         Trajectory leftTrajectory;
         Trajectory rightTrajectory;
-
-        leftTrajectory = PathReader.readTrajectory(leftFile);
-        rightTrajectory = PathReader.readTrajectory(rightFile);
+        leftTrajectory = PathReader.readTrajectory(leftFile,isForwards);
+        rightTrajectory = PathReader.readTrajectory(rightFile,isForwards);
 
         m_path.setLeft(leftTrajectory);
         m_path.setRight(rightTrajectory);

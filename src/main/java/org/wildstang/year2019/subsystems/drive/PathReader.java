@@ -10,13 +10,18 @@ import java.util.ArrayList;
 
 public class PathReader {
 
-    public static Trajectory readTrajectory(File p_path) {
+    private static int modifier = 1;
+
+    public static Trajectory readTrajectory(File p_path, boolean isForwards) {
         jaci.pathfinder.Trajectory values = null;
         try {
             values = Pathfinder.readFromCSV(p_path);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (isForwards) modifier = 1;
+        if (!isForwards) modifier = -1;
 
         ArrayList<TrajectoryPoint> trajPoints = new ArrayList<TrajectoryPoint>();
         double[][] dataPoints = new double[values.length()][];
@@ -27,8 +32,8 @@ public class PathReader {
             dataPoints[i] = new double[3];
 
             dataPoints[i][0] = (int) values.get(i).dt;
-            dataPoints[i][1] = values.get(i).position*DriveConstants.TICKS_PER_INCH;//6*Math.PI ;
-            dataPoints[i][2] = values.get(i).velocity*DriveConstants.TICKS_PER_INCH/10; //6*Math.PI;//*18.85;
+            dataPoints[i][1] = modifier*values.get(i).position*DriveConstants.TICKS_PER_INCH;//6*Math.PI ;
+            dataPoints[i][2] = modifier*values.get(i).velocity*DriveConstants.TICKS_PER_INCH/10; //6*Math.PI;//*18.85;
 
             
 

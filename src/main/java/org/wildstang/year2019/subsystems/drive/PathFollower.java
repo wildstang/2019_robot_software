@@ -146,28 +146,14 @@ public class PathFollower {
 
         for (int i = 0; i < totalCnt; ++i) 
         {
-            if (isForwards)
-            {
-                /*
-                m_left.setInverted(DriveConstants.LEFT_DRIVE_INVERTED);
-                m_left.setSensorPhase(DriveConstants.LEFT_DRIVE_SENSOR_PHASE);
-                m_right.setInverted(DriveConstants.RIGHT_DRIVE_INVERTED);
-                m_right.setSensorPhase(DriveConstants.RIGHT_DRIVE_SENSOR_PHASE);
-                */
+            
+                
                 m_left.pushMotionProfileTrajectory(leftPoints.get(i));                
                 m_right.pushMotionProfileTrajectory(rightPoints.get(i));
-            } 
-            else 
-            {
-                /*
-                m_left.setInverted(!DriveConstants.LEFT_DRIVE_INVERTED);
-                m_left.setSensorPhase(!DriveConstants.LEFT_DRIVE_SENSOR_PHASE);
-                m_right.setInverted(!DriveConstants.RIGHT_DRIVE_INVERTED);
-                m_right.setSensorPhase(!DriveConstants.RIGHT_DRIVE_SENSOR_PHASE);
-                */
-                m_left.pushMotionProfileTrajectory(rightPoints.get(i));
-                m_right.pushMotionProfileTrajectory(leftPoints.get(i));
-            }
+            
+               
+                
+            
         }
         
 
