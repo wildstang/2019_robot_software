@@ -18,8 +18,8 @@ import org.wildstang.framework.timer.WsTimer;
 public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
-    private static final double DEPLOY_WAIT = 0.25;
-    private static final double RETRACT_WAIT = 0.45;
+    private static final double DEPLOY_WAIT = 0.1;
+    private static final double RETRACT_WAIT = 0.05;
     private static final double LOCK_WAIT = 0.15;
     // Local inputs
     private DigitalInput hatchDeploy;
@@ -81,7 +81,7 @@ public class Hatch implements Subsystem {
 
             if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true && !isStartPressed){
                 currentCommand = commands.COLLECT.ordinal();
-            } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue() == false){
+            } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue()==false){
                 currentCommand = commands.COLLECT2.ordinal();
             }
         }
@@ -127,46 +127,56 @@ public class Hatch implements Subsystem {
             } else if (timer.hasPeriodPassed(DEPLOY_WAIT + RETRACT_WAIT) && !timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
                 outPosition = outVal;
                 hatchOut.setValue(outPosition);
-            } else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
-                lockPosition = lockVal;
-                hatchLock.setValue(lockPosition);
-
                 working = false;
-
                 currentCommand = commands.IDLE.ordinal();
-            }
+            } //else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
+            //     lockPosition = lockVal;
+            //     hatchLock.setValue(lockPosition);
+
+            //     working = false;
+
+            //     currentCommand = commands.IDLE.ordinal();
+            // }
         } else if (currentCommand == commands.COLLECT.ordinal()) {
-            if (!working) {
-                working = true;
-                outPosition = !outVal;
-                lockPosition= !lockVal;
-                hatchOut.setValue(outPosition);
+            if (!working){
+                lockPosition = !lockVal;
                 hatchLock.setValue(lockPosition);
-                timer.reset();
-                working=false;
-            } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
+                //currentCommand = commands.COLLECT2.ordinal();
+            }
+            // if (!working) {
+            //     working = true;
+            //     outPosition = !outVal;
+            //     lockPosition= !lockVal;
+            //     hatchOut.setValue(outPosition);
+            //     hatchLock.setValue(lockPosition);
+            //     timer.reset();
+            //     working=false;
+            // } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
             //     outPosition = outVal;
             //     hatchOut.setValue(outPosition);
             //     working = false;
 
             //     currentCommand = commands.IDLE.ordinal();
             // }
-        } else if (currentCommand == commands.COLLECT2.ordinal()){
-            if (!working) {
-                timer.reset();
-                working = true;
-            }
-            outPosition=outVal;
-            lockPosition=lockVal;
-            hatchLock.setValue(lockPosition);
-            if (timer.hasPeriodPassed(LOCK_WAIT)){
+         } else if (currentCommand == commands.COLLECT2.ordinal()){
+             lockPosition = lockVal;
+             hatchLock.setValue(lockPosition);
+             currentCommand = commands.IDLE.ordinal();
+        //     if (!working) {
+        //         timer.reset();
+        //         working = true;
+        //     }
+        //     outPosition=outVal;
+        //     lockPosition=lockVal;
+        //     hatchLock.setValue(lockPosition);
+        //     if (timer.hasPeriodPassed(LOCK_WAIT)){
                 
-                hatchOut.setValue(outPosition);
-                working=false;
-                currentCommand = commands.IDLE.ordinal();
-            }
+        //         hatchOut.setValue(outPosition);
+        //         working=false;
+        //         currentCommand = commands.IDLE.ordinal();
+             }
             
-        }
+        // }
         SmartDashboard.putBoolean("Hatch Out", hatchOut.getValue());
         SmartDashboard.putBoolean("Hatch Lock", hatchLock.getValue());
     }
