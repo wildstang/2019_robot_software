@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         core.executeUpdate();
 
-        System.out.println("Checkpoint 808 yay");
+        //System.out.println("Checkpoint 808 yay");
 
         double time = System.currentTimeMillis();
         //SmartDashboard.putNumber("Cycle Time", time - oldTime);

@@ -127,11 +127,11 @@ public class PathFollower {
 
         /* did we get an underrun condition since last time we checked ? */
         if (m_leftStatus.hasUnderrun) {
-            DriverStation.reportError("Left drive has underrun", false);
+            //DriverStation.reportError("Left drive has underrun", false);
             m_left.clearMotionProfileHasUnderrun();
         }
         if (m_rightStatus.hasUnderrun) {
-            DriverStation.reportError("Right drive has underrun", false);
+            //DriverStation.reportError("Right drive has underrun", false);
             m_right.clearMotionProfileHasUnderrun();
         }
 

@@ -8,7 +8,7 @@ import org.wildstang.framework.timer.WsTimer;
 
 public class DelayStep extends AutoStep{
 
-    WsTimer timer;
+    WsTimer timer = new WsTimer();
     double delay;
 
     public DelayStep(double delay) {
