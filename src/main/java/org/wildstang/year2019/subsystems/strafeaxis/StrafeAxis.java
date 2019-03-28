@@ -110,6 +110,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     public boolean zeroPressed = false;
     public boolean zero2 = false;
     public double realTarget = 0.0;
+    private double averageTarget = 0;
 
     public double lastSensor = 0;
     /** Line detector class talks to Arduino with line sensors on it */
@@ -146,8 +147,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             if (automaticStrafe && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
-
-            } else if (automaticStrafeButton.getValue() && zeroPressed) {
+            } else if (automaticStrafeButton.getValue() > .6 && zeroPressed) {
                 zeroing = true;
                 isManual = false;
                 isTrackingAutomatically = false;
@@ -190,90 +190,12 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     @Override
     public void update() {
-
-        // super.update();
-        // arduino.run();
         double manualMotorSpeed = axisConfig.manualAdjustmentJoystick.getValue();
-        // if (!axisConfig.lowerLimitSwitch.getValue() && manualMotorSpeed > 0) {
-        // manualMotorSpeed = 0;
-        // }
-        // else if (!axisConfig.upperLimitSwitch.getValue() && manualMotorSpeed < 0) {
-        // manualMotorSpeed = 0;
-        // }
-        // if (manualMotorSpeed > 0.1 || manualMotorSpeed < -0.1) {
-        // motor.set(ControlMode.PercentOutput, -manualMotorSpeed);
-        // } else motor.set(ControlMode.PercentOutput, 0);
-        // arduino.getLinePosition();
-
-        // System.out.println(axisConfig.manualAdjustmentJoystick.getValue());
-
-        // motor.set(ControlMode.PercentOutput, PHYS_DIR_CHANGE *
-        // axisConfig.manualAdjustmentJoystick.getValue());
-        // lightValues = arduino.getLineSensorData();
-
-        // for (int i = 0; i < 16; i++) {
-        // String smartName = i + "lightValue";
-        // SmartDashboard.putNumber(smartName, lightValues[i]);
-        // }
-
-        // SmartDashboard.putBoolean("Upper limit switch", true);
-        // SmartDashboard.putBoolean("Lower limit switch",
-        // axisConfig.lowerLimitSwitch.getValue());
-
-        // SmartDashboard.putNumber("Strafe Encoder Value",
-        // motor.getSelectedSensorPosition());
-        // SmartDashboard.putNumber("Joystick Position",
-        // axisConfig.manualAdjustmentJoystick.getValue());
-        // int brightestSensor = 0;//convert to inches - find ticks
-        // /**minimum value */
-        // double min = getModifiedValue(1);//see getModifiedValue method
-        // /**index which has a minimum value */
-        // int minIndex = 1;
-        // for (int i = 2; i < (double)lightValues.length; i++)
-        // {
-        // if (getModifiedValue(i) < min && getModifiedValue(i) >= 1.0 && (i != 3 &&
-        // i!=4 && i!=5 && i!=10)){//if value is lowest and in acceptable calibrated
-        // range (i.e. not noise)
-
-        // min = (double)lightValues[i];
-        // minIndex = i;
-        // }
-
-        // }
-        // double linePositionTicks = TICKS_PER_MM *
-        // SENSOR_POSITIONS[minIndex];//converts sensor over line to position of hatch
-        // mech
-        // if (zeroing){
-        // resetEncoder();
-        // } else
-        // if (false){//isTrackingAutomatically) {
-        // motor.set(ControlMode.Position, linePositionTicks);
-        // } else {
-        // if (isStopped){
-        // motor.set(ControlMode.PercentOutput, 0.0);
-        // System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        // }
-        // else {
-
-        // motor.set(ControlMode.PercentOutput, PHYS_DIR_CHANGE *
-        // axisConfig.manualAdjustmentJoystick.getValue());
-        // // System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\");
-        // // //phys_dir_change above to make it move relative to the operator's field
-        // of view
-
-        // }
-        // motor.set(ControlMode.PercentOutput, manualMotorSpeed);
-        // TILT
-        // if (zeroing){
-        // resetEncoder();
-        // } else{
-        // target = 105*TICKS_PER_MM * manualMotorSpeed;
-        // motor.set(ControlMode.Position, target);
-        // }
 
         SmartDashboard.putNumber("Strafe encoder", motor.getSelectedSensorPosition());
-        // arduino.run();
+        
         sensorLocation = (double) arduino.getLineSensorData();
+
         if (isManual) {
             if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25) {
                 motor.set(ControlMode.PercentOutput, manualMotorSpeed);
@@ -281,22 +203,32 @@ public class StrafeAxis extends Axis implements Subsystem {
                 motor.set(ControlMode.PercentOutput, 0.0);
 
         } else if (isTrackingAutomatically) {
-            if (sensorLocation >= 0 && sensorLocation <= 255) {
-                realTarget = (255 - sensorLocation) * 137000 / 255;
-                realTarget = realTarget + Math.abs(127 - sensorLocation) / 127 * 137000 / 8.75 * 2;
-                motor.set(ControlMode.Position, realTarget);
-            }
+            // don't do anything; we should always be reading the sensor
         } else if (zeroing) {
             resetState();
             zeroing = false;
         }
+
+        if (sensorLocation >= 0 && sensorLocation <= 255) {
+            // sensorLocation is 0 at left end of the sensor line and 255 at the right end
+            // flip, scale to 0-1, then scale to ticks (the line sensor being 137000 ticks long)
+            realTarget = (255 - sensorLocation) / 255.0 * 137000;
+            //realTarget = realTarget + Math.abs(127 - sensorLocation) / 127 * 137000 / 8.75 * 2;
+            averageTarget = averageTarget * .95 + realTarget * .05;
+            System.out.println(averageTarget + " " + realTarget);
+            if (isTrackingAutomatically) {
+                motor.set(ControlMode.Position, averageTarget);
+            }
+        }
+
         SmartDashboard.putBoolean("upper limit motor.", motor.getSensorCollection().isFwdLimitSwitchClosed());
         SmartDashboard.putBoolean("lower limit motor.", motor.getSensorCollection().isRevLimitSwitchClosed());
         SmartDashboard.putBoolean("Lower Limit Sensor", axisConfig.lowerLimitSwitch.getValue());
         SmartDashboard.putBoolean("Upper Limit Sensor", axisConfig.upperLimitSwitch.getValue());
 
         SmartDashboard.putNumber("Arduino Strafe Target", sensorLocation);
-        SmartDashboard.putNumber(" target", sensorLocation * 137000 / 15.0);
+        SmartDashboard.putNumber("Strafe realTarget", realTarget);
+        SmartDashboard.putNumber("Strafe averageTarget", realTarget);
         SmartDashboard.putBoolean("is manual", isManual);
     }
 
