@@ -59,8 +59,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     // private static final double TICKS_PER_INCH = 25.4 * TICKS_PER_MM; unit
     // conversions guys cmon
     private static final double TICKS_PER_INCH = 4096 * 4.0237;
-    // private static final double TICKS_PER_MM = TICKS_PER_INCH * 25.4;
-    private static final double TICKS_PER_MM = 652.381;
+    private static final double TICKS_PER_MM = TICKS_PER_INCH / 25.4;
 
     /** The maximum speed the operator can command to move in fine-tuning */
     private static final double MANUAL_SPEED = 2; // in/s
