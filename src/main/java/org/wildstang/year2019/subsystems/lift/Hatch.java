@@ -18,8 +18,8 @@ import org.wildstang.framework.timer.WsTimer;
 public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
-    private static final double DEPLOY_WAIT = 0.25;
-    private static final double RETRACT_WAIT = 0.65;
+    private static final double DEPLOY_WAIT = 0.1;
+    private static final double RETRACT_WAIT = 0.05;
     private static final double LOCK_WAIT = 0.15;
     // Local inputs
     private DigitalInput hatchDeploy;
@@ -140,7 +140,8 @@ public class Hatch implements Subsystem {
         } else if (currentCommand == commands.COLLECT.ordinal()) {
             if (!working){
                 lockPosition = !lockVal;
-                currentCommand = commands.COLLECT2.ordinal();
+                hatchLock.setValue(lockPosition);
+                //currentCommand = commands.COLLECT2.ordinal();
             }
             // if (!working) {
             //     working = true;
@@ -159,6 +160,7 @@ public class Hatch implements Subsystem {
             // }
          } else if (currentCommand == commands.COLLECT2.ordinal()){
              lockPosition = lockVal;
+             hatchLock.setValue(lockPosition);
              currentCommand = commands.IDLE.ordinal();
         //     if (!working) {
         //         timer.reset();
