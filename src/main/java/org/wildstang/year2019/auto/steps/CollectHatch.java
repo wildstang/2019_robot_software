@@ -17,6 +17,7 @@ public class CollectHatch extends AutoStep{
     private boolean firstRun = true;
     private WsTimer timer = new WsTimer();
 
+    
     public void update(){
         //call what you want the subsystem to do during this step
         // control the drive with drive. whatever you want
@@ -26,7 +27,7 @@ public class CollectHatch extends AutoStep{
             firstRun = false;
         }
 
-        setFinished(hatch.collectAuto(timer.hasPeriodPassed(0.5)));
+        setFinished(hatch.collectAuto(timer.hasPeriodPassed(0.1)));
     }
     public String toString(){
         //put a reasonable name for this step inside the string

@@ -1,6 +1,8 @@
 package org.wildstang.year2019.auto.programs;
 
 import org.wildstang.year2019.auto.steps.PathFollowerStep;
+import org.wildstang.year2019.auto.steps.CollectHatch;
+import org.wildstang.year2019.auto.steps.DeployHatch;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -14,8 +16,10 @@ public class TestPathReader extends AutoProgram {
 
         SmartDashboard.putBoolean("Checkpoint 3003 yay", true);
 
-        addStep(new PathFollowerStep(PathNameConstants.TEST_ARC, true));
-        addStep(new PathFollowerStep(PathNameConstants.TEST_ARC, false));
+        addStep(new CollectHatch());
+        addStep(new DeployHatch());
+        //addStep(new PathFollowerStep(PathNameConstants.TEST_ARC, true));
+        //addStep(new PathFollowerStep(PathNameConstants.TEST_ARC, false));
     }
 
     @Override
