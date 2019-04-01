@@ -33,7 +33,7 @@ public class RocketLeft extends AutoProgram {
 
         addStep(new DeployHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.INTERIM_HP_BACK_ROCKET_LEFT,false));
+        //addStep(new PathFollowerStep(PathNameConstants.INTERIM_HP_BACK_ROCKET_LEFT,false));
     }
 
     @Override
