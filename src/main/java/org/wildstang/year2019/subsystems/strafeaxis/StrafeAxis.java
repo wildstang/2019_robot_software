@@ -48,7 +48,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private int CENTER = 100; // needs to set manually once axis is created
     private byte[] lightValues = new byte[16];
     private boolean isTrackingAutomatically = false;
-    private AnalogInput automaticStrafeButton;
+    private DigitalInput automaticStrafeButton;
     private DigitalInput rezero;
 
 
@@ -127,11 +127,11 @@ public class StrafeAxis extends Axis implements Subsystem {
             }
         } 
         if (source == automaticStrafeButton) {
-            if (automaticStrafeButton.getValue()>0.75 && !zeroPressed) {
+            if (automaticStrafeButton.getValue() && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
 
-            } else if (automaticStrafeButton.getValue()>0.75 && zeroPressed){
+            } else if (automaticStrafeButton.getValue() && zeroPressed){
                 zeroing = true;
                 isManual = false;
                 isTrackingAutomatically = false;
@@ -249,7 +249,7 @@ public class StrafeAxis extends Axis implements Subsystem {
          sensorLocation = (double)arduino.getLineSensorData();
          if (isManual){
              if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25){
-                 motor.set(ControlMode.PercentOutput,  -manualMotorSpeed);
+                 motor.set(ControlMode.PercentOutput,  manualMotorSpeed);
              } else motor.set(ControlMode.PercentOutput,0.0);
 
          } else if (isTrackingAutomatically){
@@ -291,7 +291,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
-        automaticStrafeButton = (AnalogInput) Core.getInputManager().getInput(WSInputs.AUTOMATIC_STRAFE_SWITCH);
+        automaticStrafeButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.AUTOMATIC_STRAFE_SWITCH);
         automaticStrafeButton.addInputListener(this);
          rezero = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_1);
          rezero.addInputListener(this);
