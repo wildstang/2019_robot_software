@@ -114,11 +114,11 @@ public enum WSInputs implements Inputs {
     // ---------------------------------
     // Manipulator Buttons
     // ---------------------------------
-    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Ballpath
+    INTAKE("Intake", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Ballpath
                                                                                     // Subsystem
-    REVERSE_BUTTON("Reverse", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Ballpath
+    REVERSE_BUTTON("Reverse", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 0), false), // Ballpath
                                                                                           // Subsystem
-    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 2), false), // Ballpath
+    HOPPER_SOLENOID("Hopper solenoids", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 1), false), // Ballpath
                                                                                                         // Subsystem
     FULL_BALLPATH("Full Ballpath", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 3), false), // Ballpath
                                                                                                    // Subsystem
@@ -126,11 +126,11 @@ public enum WSInputs implements Inputs {
                                                                                                     // Subsystem
     HATCH_DEPLOY("Hatch Deploy", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 5), false), // Strafe
                                                                                                 // Subsystem
-    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // Ballpath
+    CARRIAGE_ROLLERS("Carriage Rollers", WSInputType.JS_BUTTON, new WsJSJoystickInputConfig(1, 2), false), // Ballpath
                                                                                                         // Subsystem
-    AUTOMATIC_STRAFE_SWITCH("Button to override strafe", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 7), false), // OPEN *TODO: HATCH OVERRIDE
+    AUTOMATIC_STRAFE_SWITCH("Button to override strafe", WSInputType.JS_BUTTON, new WsJSJoystickInputConfig(1, 3), false), // OPEN *TODO: HATCH OVERRIDE
                                                                                            // Subsystem
-    WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 8), false), // Wedge
+    WEDGE_SAFETY_1("First Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 6), false), // Wedge
                                                                                                          // Subsystem
     WEDGE_SAFETY_2("Second Wedge Safety", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(1, 9), false), // Wedge
                                                                                                           // Subsystem
