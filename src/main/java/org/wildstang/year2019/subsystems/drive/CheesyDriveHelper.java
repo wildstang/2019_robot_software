@@ -15,7 +15,7 @@ public class CheesyDriveHelper {
     double mQuickStopAccumulator;
     public static final double kThrottleDeadband = 0.02;
     private static final double kWheelDeadband = 0.02;
-    private static final double kTurnSensitivity = 1.6;
+    private static final double kTurnSensitivity = 1.0;
     private DriveSignal mSignal = new DriveSignal(0, 0);
 
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn) {
