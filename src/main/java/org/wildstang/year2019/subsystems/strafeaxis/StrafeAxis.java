@@ -48,7 +48,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private int CENTER = 100; // needs to set manually once axis is created
     private byte[] lightValues = new byte[16];
     private boolean isTrackingAutomatically = false;
-    private DigitalInput automaticStrafeButton;
+    private AnalogInput automaticStrafeButton;
     private DigitalInput rezero;
 
 
@@ -107,6 +107,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     /** The axis configuration we pass up to the axis initialization */
     private AxisConfig axisConfig = new AxisConfig();
 
+    boolean automaticStrafe = false; 
 
     @Override
     public void inputUpdate(Input source) {
@@ -118,25 +119,30 @@ public class StrafeAxis extends Axis implements Subsystem {
         // if (axisConfig.overrideButtonValue) {
         // initMotor();
         // }
+        
 
          if (source == rezero){
             if (rezero.getValue()){
                 zeroPressed = true;
+                zeroing = true;
             } else{
                 zeroPressed = false;
+                zeroing = false;
             }
         } 
         if (source == automaticStrafeButton) {
-            if (automaticStrafeButton.getValue() && !zeroPressed) {
+            automaticStrafe = true;
+            if (automaticStrafe && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
 
-            } else if (automaticStrafeButton.getValue() && zeroPressed){
+            } else if (automaticStrafe && zeroPressed){
                 zeroing = true;
                 isManual = false;
                 isTrackingAutomatically = false;
             } else {
                 isTrackingAutomatically = false;
+                automaticStrafe = false;
             }//makes sure that the strafe stops moving if the button isn't pressed and the joystick isn't in motion
 
         }
@@ -242,31 +248,31 @@ public class StrafeAxis extends Axis implements Subsystem {
         //     target = 105*TICKS_PER_MM * manualMotorSpeed;
         //     motor.set(ControlMode.Position, target);
         // }
-        //SmartDashboard.putNumber("strafe target",target);
         SmartDashboard.putNumber("Strafe encoder",motor.getSelectedSensorPosition());
-         //SmartDashboard.putNumber("Strafe target",linePositionTicks);
-         //arduino.run();
-         sensorLocation = (double)arduino.getLineSensorData();
-         if (isManual){
-             if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25){
-                 motor.set(ControlMode.PercentOutput,  manualMotorSpeed);
-             } else motor.set(ControlMode.PercentOutput,0.0);
+        //arduino.run();
+        sensorLocation = (double)arduino.getLineSensorData();
+        if (isManual) {
+            if (manualMotorSpeed > 0.25 || manualMotorSpeed < -0.25){
+                motor.set(ControlMode.PercentOutput,  manualMotorSpeed);
+            } else motor.set(ControlMode.PercentOutput,0.0);
 
-         } else if (isTrackingAutomatically){
-             if (sensorLocation >= 0 && sensorLocation<=255){
-                 realTarget = (255-sensorLocation)*137000/255;
-                 realTarget = realTarget + Math.abs(127-sensorLocation)/127*137000/8.75*2;
-                motor.set(ControlMode.Position, realTarget);
-             }
-         } else if (zeroing){
-             resetState();
-             zeroing=false;
-         }
-         SmartDashboard.putBoolean("upper limit",motor.getSensorCollection().isFwdLimitSwitchClosed());
-         SmartDashboard.putBoolean("lower limit", motor.getSensorCollection().isRevLimitSwitchClosed());
-         SmartDashboard.putNumber("Arduino Strafe Target",sensorLocation);
-         SmartDashboard.putNumber(" target", sensorLocation*137000/15.0);
+        } else if (isTrackingAutomatically) {
+            if (sensorLocation >= 0 && sensorLocation<=255){
+               motor.set(ControlMode.Position, (255-sensorLocation)*137000/255);
+               SmartDashboard.putNumber("Tracking Target", (255-sensorLocation)*137000/255);
+            }
+        } else if (zeroing){
+            resetState();
+            zeroing=false;
+        }
+        SmartDashboard.putBoolean("upper limit motor.", motor.getSensorCollection().isFwdLimitSwitchClosed());
+        SmartDashboard.putBoolean("lower limit motor.", motor.getSensorCollection().isRevLimitSwitchClosed());
+        SmartDashboard.putBoolean("Lower Limit Sensor", axisConfig.lowerLimitSwitch.getValue());
+        SmartDashboard.putBoolean("Upper Limit Sensor", axisConfig.upperLimitSwitch.getValue());
         
+        SmartDashboard.putNumber("Arduino Strafe Target",sensorLocation);
+        SmartDashboard.putNumber(" target", sensorLocation*137000/15.0);   
+        SmartDashboard.putBoolean("is manual", isManual);     
     }
     
     public double getModifiedValue(int i){ //rearranges values from 1-10, with 1 being the lowest calibrated value and 10 the highest
@@ -291,7 +297,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
-        automaticStrafeButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.AUTOMATIC_STRAFE_SWITCH);
+        automaticStrafeButton = (AnalogInput) Core.getInputManager().getInput(WSInputs.AUTOMATIC_STRAFE_SWITCH);
         automaticStrafeButton.addInputListener(this);
          rezero = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_1);
          rezero.addInputListener(this);
@@ -312,10 +318,10 @@ public class StrafeAxis extends Axis implements Subsystem {
 
     private void initAxis() {
         IInputManager inputManager = Core.getInputManager();
-        axisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
-        axisConfig.lowerLimitSwitch.addInputListener(this);
-        axisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
+        axisConfig.upperLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_LEFT_LIMIT);
         axisConfig.upperLimitSwitch.addInputListener(this);
+        axisConfig.lowerLimitSwitch = (DigitalInput) inputManager.getInput(WSInputs.STRAFE_RIGHT_LIMIT);
+        axisConfig.lowerLimitSwitch.addInputListener(this);
         axisConfig.manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.STRAFE_MANUAL);
         axisConfig.manualAdjustmentJoystick.addInputListener(this);
         axisConfig.overrideButtonModifier = (DigitalInput) inputManager.getInput(WSInputs.WEDGE_SAFETY_1);
