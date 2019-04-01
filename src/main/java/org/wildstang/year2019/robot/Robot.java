@@ -13,6 +13,8 @@ import org.wildstang.hardware.crio.RoboRIOInputFactory;
 import org.wildstang.hardware.crio.RoboRIOOutputFactory;
 import org.wildstang.year2019.auto.programs.AllTheWayThrough;
 import org.wildstang.year2019.auto.programs.ExampleAutoProgram;
+import org.wildstang.year2019.auto.programs.CargoShipLeft;
+import org.wildstang.year2019.auto.programs.RocketLeft;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.auto.programs.TestPathReader;
 
@@ -54,6 +56,8 @@ public class Robot extends TimedRobot {
         AutoManager.getInstance().addProgram(new ExampleAutoProgram());
         AutoManager.getInstance().addProgram(new AllTheWayThrough());
         AutoManager.getInstance().addProgram(new TestPathReader());
+        AutoManager.getInstance().addProgram(new CargoShipLeft());
+        AutoManager.getInstance().addProgram(new RocketLeft());
     }
 
     @Override
