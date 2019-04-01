@@ -50,6 +50,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     private boolean isTrackingAutomatically = false;
     private AnalogInput automaticStrafeButton;
     private DigitalInput rezero;
+    private DigitalInput encoderReset;
 
     /** # of ticks in millimeters for encoders */
     // private static double TICKS_PER_MM = 17.746; - not sure where this is from,
@@ -111,6 +112,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     public boolean zero2 = false;
     public double realTarget = 0.0;
     private double averageTarget = 0;
+    private boolean encoderResetting = false;
 
     public double lastSensor = 0;
     /** Line detector class talks to Arduino with line sensors on it */
@@ -164,6 +166,11 @@ public class StrafeAxis extends Axis implements Subsystem {
                 isTrackingAutomatically = false;
                 isManual = true;
             }
+        }
+        if (source == encoderReset){
+            if (encoderReset.getValue()){
+                encoderResetting = true;
+            } else encoderResetting = false;
         }
     }
 
@@ -220,6 +227,10 @@ public class StrafeAxis extends Axis implements Subsystem {
                 motor.set(ControlMode.Position, averageTarget);
             }
         }
+        if (encoderResetting && motor.getSensorCollection().isFwdLimitSwitchClosed()){
+            motor.setSelectedSensorPosition(0);
+            resetState();
+        }
 
         SmartDashboard.putBoolean("upper limit motor.", motor.getSensorCollection().isFwdLimitSwitchClosed());
         SmartDashboard.putBoolean("lower limit motor.", motor.getSensorCollection().isRevLimitSwitchClosed());
@@ -261,6 +272,8 @@ public class StrafeAxis extends Axis implements Subsystem {
         automaticStrafeButton.addInputListener(this);
         rezero = (DigitalInput) Core.getInputManager().getInput(WSInputs.WEDGE_SAFETY_1);
         rezero.addInputListener(this);
+        encoderReset = (DigitalInput) Core.getInputManager().getInput(WSInputs.STRAFE_LIMIT_SWITCH_OVERRIDE);
+        encoderReset.addInputListener(this);
     }
 
     private void initOutputs() {
