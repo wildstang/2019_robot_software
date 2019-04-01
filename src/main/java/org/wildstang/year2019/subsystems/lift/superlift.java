@@ -205,6 +205,7 @@ public class superlift implements Subsystem {
                 target = POSITION_4 * TICKS_PER_INCH;
                 currentcommand = control.TRACK.ordinal();
                 needtargetUpdate=false;
+                SmartDashboard.putBoolean("High triggered",true);
             }
         }
         if (source == manualAdjustmentJoystick) {
