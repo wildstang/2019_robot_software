@@ -284,7 +284,7 @@ public class StrafeAxis extends Axis implements Subsystem {
     @Override
     public void resetState() {
         super.resetState();
-        motor.set(ControlMode.Position, 137000/2.0);
+        //motor.set(ControlMode.Position, 137000/2.0);
     }
 
     @Override
