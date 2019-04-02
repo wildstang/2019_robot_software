@@ -17,7 +17,7 @@ public class RocketLeft extends AutoProgram {
 
         SmartDashboard.putBoolean("Checkpoint 3003 yay", true);
 
-        //addStep(new PathFollowerStep(PathNameConstants.HAB_2_START, true));
+        addStep(new PathFollowerStep(PathNameConstants.HAB_2_START, true));
         addStep(new PathFollowerStep(PathNameConstants.HAB_ROCKET_CLOSE_LEFT, true));
 
         addStep(new DeployHatch());
