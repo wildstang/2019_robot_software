@@ -69,6 +69,10 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         Core.getSubsystemManager().resetState();
 
+        Drive driveBase = ((Drive) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.purgePaths();
+
         SmartDashboard.putBoolean("Checkpoint 707 yay", true);
 
         core.setAutoManager(AutoManager.getInstance());
@@ -79,8 +83,10 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         System.out.println("Engaging teleoperation mode.");
         Core.getSubsystemManager().resetState();
+
         Drive driveBase = ((Drive) Core.getSubsystemManager()
                 .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.purgePaths();
         driveBase.setOpenLoopDrive();
         driveBase.setBrakeMode(false);
     }

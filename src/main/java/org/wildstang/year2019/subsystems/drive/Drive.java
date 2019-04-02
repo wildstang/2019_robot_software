@@ -414,6 +414,13 @@ public class Drive implements Subsystem {
         return masters[RIGHT].getSensorCollection().getQuadraturePosition();
     }
 
+    
+    /** Clears motion profile trajectories in talon buffers (to be done before auto and teleop) */
+    public void purgePaths() {
+        masters[LEFT].clearMotionProfileTrajectories();
+        masters[RIGHT].clearMotionProfileTrajectories();
+    }
+
     /////////////////////////////////////////////////////////
     // PRIVATE METHODS
 
@@ -434,6 +441,7 @@ public class Drive implements Subsystem {
         // output to neutral
         //setBrakeMode(true);
     }
+
     /** Set up our input members and subscribe to inputUpdate events */
     private void initInputs() {
         // Set and subscribe to inputs
