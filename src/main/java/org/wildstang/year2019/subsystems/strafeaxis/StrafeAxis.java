@@ -145,7 +145,11 @@ public class StrafeAxis extends Axis implements Subsystem {
             }
         }
         if (source == automaticStrafeButton) {
-            automaticStrafe = true;
+            if (automaticStrafeButton.getValue() > 0.75){
+                automaticStrafe = true;
+            } else {
+                automaticStrafe = false;
+            }
             if (automaticStrafe && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
