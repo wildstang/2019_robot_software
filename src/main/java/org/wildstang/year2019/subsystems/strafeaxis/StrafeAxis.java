@@ -222,7 +222,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             realTarget = (255 - sensorLocation) / 255.0 * 137000;
             //realTarget = realTarget + Math.abs(127 - sensorLocation) / 127 * 137000 / 8.75 * 2;
             averageTarget = averageTarget * .95 + realTarget * .05;
-            System.out.println(averageTarget + " " + realTarget);
+            //System.out.println(averageTarget + " " + realTarget);
             if (isTrackingAutomatically) {
                 motor.set(ControlMode.Position, averageTarget);
             }
