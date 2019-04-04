@@ -145,7 +145,11 @@ public class StrafeAxis extends Axis implements Subsystem {
             }
         }
         if (source == automaticStrafeButton) {
-            automaticStrafe = true;
+            if (automaticStrafeButton.getValue() > 0.75){
+                automaticStrafe = true;
+            } else {
+                automaticStrafe = false;
+            }
             if (automaticStrafe && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
@@ -222,12 +226,11 @@ public class StrafeAxis extends Axis implements Subsystem {
             realTarget = (255 - sensorLocation) / 255.0 * 137000;
             //realTarget = realTarget + Math.abs(127 - sensorLocation) / 127 * 137000 / 8.75 * 2;
             averageTarget = averageTarget * .95 + realTarget * .05;
-            System.out.println(averageTarget + " " + realTarget);
             if (isTrackingAutomatically) {
                 motor.set(ControlMode.Position, averageTarget);
             }
         }
-        if (encoderResetting && motor.getSensorCollection().isFwdLimitSwitchClosed()){
+        if (encoderResetting && motor.getSensorCollection().isRevLimitSwitchClosed()){
             motor.setSelectedSensorPosition(0);
             resetState();
         }
