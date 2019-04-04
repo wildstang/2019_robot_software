@@ -3,12 +3,6 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
 
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.nio.file.*;
-import java.io.*;
-import java.sql.Driver;
-
-import javax.sound.sampled.Line;
 
 //import com.sun.tools.classfile.TypeAnnotation.Position;
 
@@ -25,20 +19,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //
 
 public class LineDetector extends Thread {
-    private DriverStation ds;
     private SerialPort arduino;
-    private FileOutputStream out;
     private byte pass[] = { 10, (byte) 150, 58, 9 };
     private int matchtime = 150;
-
-    private String filename;
 
     private static int[] SENSOR_CONSTANTS =
         {-130, -114, 96, -82, -56, -40, -24, -8, 0, 8, 24, 40, 56, 82, 96, 114, 130};
     private static double TICKS_PER_MM = 17.746;
     boolean arduinoActive;
-    // private byte[] lineLocation = new byte[1];
-    private byte[] lineData = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     private int linePosition;
     public static double AVERAGE_CONSTANSTS[] = new double[16];
     public double average[] = new double[16];
