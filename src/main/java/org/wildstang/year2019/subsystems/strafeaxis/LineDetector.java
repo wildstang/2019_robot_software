@@ -46,6 +46,9 @@ public class LineDetector extends Thread {
     public boolean ArduinoActive = false;
     public int running = 0;
 
+    private double valuesFromArduino[] = new double[16];
+    private int linePositionFromArduino;
+
     public LineDetector() {
         try {
             arduino = new SerialPort(9600, Port.kUSB);
@@ -80,19 +83,36 @@ public class LineDetector extends Thread {
         while (arduinoActive) {
             running++;
             SmartDashboard.putNumber("Running", running);
-            byte valueRead = arduino.read(1)[0];
-            SmartDashboard.putNumber("Serial Byte Raw", valueRead);
-            if (valueRead < 0) {
-                linePosition = Math.abs(valueRead) + 256;
-            } else {
-                linePosition = valueRead;
-            }
+            readLinePositionFromArduino();
             SmartDashboard.putNumber("Arduino Strafe Target LD", linePosition);
         }
     }
 
+    private void readLinePositionFromArduino() {
+        byte byteRead = arduino.read(1)[0];
+        while (byteRead != -1) {
+            byteRead = arduino.read(1)[0];
+        }
+        for (int i = 0; i < 16; ++i) {
+            if (byteRead == -1) {
+                System.out.println("Communications glitch with Arduino");
+            }
+            int valueRead = makeUnsigned(byteRead);
+            valuesFromArduino[i] = valueRead;
+            byteRead = arduino.read(1)[0];
+        }
+        linePositionFromArduino = makeUnsigned(byteRead);
+
+        SmartDashboard.putNumberArray("Light Sensor Values", valuesFromArduino);
+        SmartDashboard.putNumber("Arduino line position", linePositionFromArduino);
+    }
+
     public int getLineSensorData() throws NullPointerException {
         return linePosition;
+    }
+
+    public static int makeUnsigned(byte byteRead) {
+        return (byteRead + 0x100) % 0x100;
     }
 
     /*
