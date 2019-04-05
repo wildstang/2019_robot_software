@@ -144,22 +144,28 @@ public class StrafeAxis extends Axis implements Subsystem {
                 zeroing = false;
             }
         }
+        SmartDashboard.putNumber("automaticStrafeButton", automaticStrafeButton.getValue());
         if (source == automaticStrafeButton) {
-            if (automaticStrafeButton.getValue() > 0.75){
+            if (automaticStrafeButton.getValue() < -.5){
                 automaticStrafe = true;
+                SmartDashboard.putBoolean("automaticStrafe", automaticStrafe);
             } else {
                 automaticStrafe = false;
+                SmartDashboard.putBoolean("automaticStrafe", automaticStrafe);
             }
             if (automaticStrafe && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
-            } else if (automaticStrafeButton.getValue() > .6 && zeroPressed) {
+                SmartDashboard.putBoolean("isTrackingAutomatically", isTrackingAutomatically);
+            } else if (automaticStrafeButton.getValue() < -.5 && zeroPressed) {
                 zeroing = true;
                 isManual = false;
                 isTrackingAutomatically = false;
+                SmartDashboard.putBoolean("isTrackingAutomatically", isTrackingAutomatically);
             } else {
                 isTrackingAutomatically = false;
                 automaticStrafe = false;
+                SmartDashboard.putBoolean("isTrackingAutomatically", isTrackingAutomatically);
             }//makes sure that the strafe stops moving if the button isn't pressed and the joystick isn't in motion
 
         }

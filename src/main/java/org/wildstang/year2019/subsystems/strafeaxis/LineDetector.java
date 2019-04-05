@@ -106,12 +106,15 @@ public class LineDetector extends Thread {
         }
         byteRead = readByte();
         linePositionFromArduino = makeUnsigned(byteRead);
+        linePosition = linePositionFromArduino;
 
         // experimental -- no effect yet
         inferLinePosition();
 
-        SmartDashboard.putNumberArray("Light Sensor Values", valuesFromArduino);
-        SmartDashboard.putNumber("Arduino line position", linePositionFromArduino);
+        if (running % 50 == 0) {
+            SmartDashboard.putNumberArray("Light Sensor Values", valuesFromArduino);
+            SmartDashboard.putNumber("Arduino line position", linePositionFromArduino);
+        }
     }
 
     /** cost of assigning the line position to this point
@@ -155,10 +158,12 @@ public class LineDetector extends Thread {
             // TODO uncomment below to enable this
             // linePosition = (int)(bestPosition / 16 * 255);
         }
-        SmartDashboard.putNumber("Line detection cost", bestCost);
-        SmartDashboard.putNumber("Line detection line width", bestWidth);
-        SmartDashboard.putNumber("Line detection line brightness", bestDepth);
-        SmartDashboard.putNumber("Line detection line position out of 255", bestPosition / 16 * 255);
+        if (running % 25 == 0) {
+            SmartDashboard.putNumber("Line detection cost", bestCost);
+            SmartDashboard.putNumber("Line detection line width", bestWidth);
+            SmartDashboard.putNumber("Line detection line brightness", bestDepth);
+            SmartDashboard.putNumber("Line detection line position out of 255", bestPosition / 16 * 255);
+        }
     }
 
     public int getLineSensorData() throws NullPointerException {
