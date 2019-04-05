@@ -79,6 +79,7 @@ public enum WSInputs implements Inputs {
                                                                                              // Subsystem
     BASE_LOCK("Base lock", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 3), false), // Driver
                                                                                            // Subsystem
+    BUMPER("BUMPER", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 1), false),
 
     // ---------------------------------
     // Manipulator Joysticks
