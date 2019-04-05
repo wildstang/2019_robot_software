@@ -23,11 +23,20 @@ public class LineDetector extends Thread {
     private byte pass[] = { 10, (byte) 150, 58, 9 };
     private int matchtime = 150;
 
-    private static int[] SENSOR_CONSTANTS =
-        {-130, -114, 96, -82, -56, -40, -24, -8, 0, 8, 24, 40, 56, 82, 96, 114, 130};
-    private static double TICKS_PER_MM = 17.746;
+    // What line widths to try (units of line sensor spacing)
+    private static final double LINE_WIDTHS[] = {2, 2.5, 3};
+    // What line brightnesses to try (units of whatever the bogus units we get are)
+    private static final double LINE_BRIGHTNESSES[] = {50,75,100,125,150,200,250};
+    // How finely to divide the spacing search (units = multiples of sensor spacing)
+    private static final double LINE_SEARCH_SPACING = .1;
+    // notional cost of no line detect
+    private static final double NO_LINE_COST = 16000;
+
+    //private static int[] SENSOR_CONSTANTS =
+    //    {-130, -114, 96, -82, -56, -40, -24, -8, 0, 8, 24, 40, 56, 82, 96, 114, 130};
+    //private static double TICKS_PER_MM = 17.746;
     boolean arduinoActive;
-    private int linePosition;
+    private int linePosition; // linePosition ranging from 0 to 255
     public static double AVERAGE_CONSTANSTS[] = new double[16];
     public double average[] = new double[16];
     public double offFromAverage[] = new double[16];
@@ -76,23 +85,80 @@ public class LineDetector extends Thread {
         }
     }
 
+    private byte readByte() {
+        byte result = arduino.read(1)[0];
+        // System.out.println(result);
+        return result;
+    }
+
     private void readLinePositionFromArduino() {
-        byte byteRead = arduino.read(1)[0];
+        byte byteRead = readByte();
         while (byteRead != -1) {
-            byteRead = arduino.read(1)[0];
+            byteRead = readByte();
         }
         for (int i = 0; i < 16; ++i) {
+            byteRead = readByte();
             if (byteRead == -1) {
                 System.out.println("Communications glitch with Arduino");
             }
             int valueRead = makeUnsigned(byteRead);
             valuesFromArduino[i] = valueRead;
-            byteRead = arduino.read(1)[0];
         }
+        byteRead = readByte();
         linePositionFromArduino = makeUnsigned(byteRead);
+
+        // experimental -- no effect yet
+        inferLinePosition();
 
         SmartDashboard.putNumberArray("Light Sensor Values", valuesFromArduino);
         SmartDashboard.putNumber("Arduino line position", linePositionFromArduino);
+    }
+
+    /** cost of assigning the line position to this point
+     * position: position of line in multiples of sensor spacing (can be fractional)
+     * width: width of line
+     * depth: how bright line is
+     */
+    private double linePositionCost(double position, double width, double depth) {
+        double cost = 0;
+        for (int i = 0; i < 16; ++i) {
+            double expected = gaussPDF((i - position) / width) * depth;
+            double error = valuesFromArduino[i] - expected;
+            cost += error * error; 
+        }
+        return cost;
+    }
+
+    // PDF of the unit gaussian
+    private static double gaussPDF(double x) {
+        return (1/Math.sqrt(2 * Math.PI)) * Math.exp(-x * x / 2);
+    }
+
+    private void inferLinePosition() {
+        double bestCost = 1.0/0.0; // infinity
+        double bestWidth = -1;
+        double bestDepth = -1;
+        double bestPosition = -1;
+        for (double width : LINE_WIDTHS) {
+            for (double depth : LINE_BRIGHTNESSES) {
+                for (double position = 0; position <= 16; position += LINE_SEARCH_SPACING) {
+                    double cost = linePositionCost(position, width, depth);
+                    if (cost < bestCost) {
+                        bestWidth = width;
+                        bestDepth = depth;
+                        bestPosition = position;
+                    }
+                }
+            }
+        }
+        if (bestCost < NO_LINE_COST) {
+            // TODO uncomment below to enable this
+            // linePosition = (int)(bestPosition / 16 * 255);
+        }
+        SmartDashboard.putNumber("Line detection cost", bestCost);
+        SmartDashboard.putNumber("Line detection line width", bestWidth);
+        SmartDashboard.putNumber("Line detection line brightness", bestDepth);
+        SmartDashboard.putNumber("Line detection line position out of 255", bestPosition / 16 * 255);
     }
 
     public int getLineSensorData() throws NullPointerException {
