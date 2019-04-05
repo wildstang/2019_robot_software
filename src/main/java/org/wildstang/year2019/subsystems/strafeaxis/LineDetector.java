@@ -106,7 +106,7 @@ public class LineDetector extends Thread {
         }
         byteRead = readByte();
         linePositionFromArduino = makeUnsigned(byteRead);
-        linePosition = linePositionFromArduino;
+        // linePosition = linePositionFromArduino;
 
         // experimental -- no effect yet
         inferLinePosition();
@@ -125,10 +125,12 @@ public class LineDetector extends Thread {
     private double linePositionCost(double position, double width, double depth) {
         double cost = 0;
         for (int i = 0; i < 16; ++i) {
-            double expected = gaussPDF((i - position) / width) * depth;
+            double expected = 255 - gaussPDF((i - position) / width) * depth;
             double error = valuesFromArduino[i] - expected;
+            //System.out.println(expected + " " + error + " " + error*error);
             cost += error * error; 
         }
+        //System.out.println(cost);
         return cost;
     }
 
@@ -150,13 +152,14 @@ public class LineDetector extends Thread {
                         bestWidth = width;
                         bestDepth = depth;
                         bestPosition = position;
+                        bestCost = cost;
                     }
                 }
             }
         }
         if (bestCost < NO_LINE_COST) {
             // TODO uncomment below to enable this
-            // linePosition = (int)(bestPosition / 16 * 255);
+            linePosition = (int)(bestPosition / 16 * 255);
         }
         if (running % 25 == 0) {
             SmartDashboard.putNumber("Line detection cost", bestCost);
