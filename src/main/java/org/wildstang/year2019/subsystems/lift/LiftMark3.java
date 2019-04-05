@@ -17,6 +17,20 @@ import org.wildstang.year2019.robot.WSInputs;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+/*
+ * Another attempt at writing a lift.
+ * 
+ * Design principles in this iteration:
+ *  - All state change and motor manipulation is in setStopped(),
+ *    setManualPower(), setTrackingTarget(), and resetState(). No other
+ *    code touches currentCommand or sets the motor behavior.
+ *  - inputUpdate() is short as possible and focuses on calling out to other
+ *    methods that do the work.
+ *  - Tried to not implement anything that doesn't work. That's not quite true ---
+ *    there's some code for limit and PID override, neither of which do anything.
+ *    But for example, 
+ *    there's no limit switch support, b/c the robot does not have limit switches.
+ */
 public class LiftMark3 implements Subsystem {
 
     ////////////////////////////////////////////////////////////////////////////

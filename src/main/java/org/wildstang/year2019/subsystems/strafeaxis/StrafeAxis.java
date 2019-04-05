@@ -144,22 +144,28 @@ public class StrafeAxis extends Axis implements Subsystem {
                 zeroing = false;
             }
         }
+        SmartDashboard.putNumber("automaticStrafeButton", automaticStrafeButton.getValue());
         if (source == automaticStrafeButton) {
-            if (automaticStrafeButton.getValue() > 0.75){
+            if (automaticStrafeButton.getValue() < -.5){
                 automaticStrafe = true;
+                SmartDashboard.putBoolean("automaticStrafe", automaticStrafe);
             } else {
                 automaticStrafe = false;
+                SmartDashboard.putBoolean("automaticStrafe", automaticStrafe);
             }
             if (automaticStrafe && !zeroPressed) {
                 isTrackingAutomatically = true;
                 isManual = false;
-            } else if (automaticStrafeButton.getValue() > .6 && zeroPressed) {
+                SmartDashboard.putBoolean("isTrackingAutomatically", isTrackingAutomatically);
+            } else if (automaticStrafeButton.getValue() < -.5 && zeroPressed) {
                 zeroing = true;
                 isManual = false;
                 isTrackingAutomatically = false;
+                SmartDashboard.putBoolean("isTrackingAutomatically", isTrackingAutomatically);
             } else {
                 isTrackingAutomatically = false;
                 automaticStrafe = false;
+                SmartDashboard.putBoolean("isTrackingAutomatically", isTrackingAutomatically);
             }//makes sure that the strafe stops moving if the button isn't pressed and the joystick isn't in motion
 
         }
@@ -225,8 +231,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             // flip, scale to 0-1, then scale to ticks (the line sensor being 137000 ticks long)
             realTarget = (255 - sensorLocation) / 255.0 * 137000;
             //realTarget = realTarget + Math.abs(127 - sensorLocation) / 127 * 137000 / 8.75 * 2;
-            averageTarget = averageTarget * .95 + realTarget * .05;
-            //System.out.println(averageTarget + " " + realTarget);
+            averageTarget = averageTarget * .8 + realTarget * .2;
             if (isTrackingAutomatically) {
                 motor.set(ControlMode.Position, averageTarget);
             }
@@ -243,7 +248,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
         SmartDashboard.putNumber("Arduino Strafe Target", sensorLocation);
         SmartDashboard.putNumber("Strafe realTarget", realTarget);
-        SmartDashboard.putNumber("Strafe averageTarget", realTarget);
+        SmartDashboard.putNumber("Strafe averageTarget", averageTarget);
         SmartDashboard.putBoolean("is manual", isManual);
     }
 
