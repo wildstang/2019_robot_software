@@ -111,7 +111,7 @@ public class LineDetector extends Thread {
         // experimental -- no effect yet
         inferLinePosition();
 
-        if (running % 50 == 0) {
+        if (running % 10 == 0) {
             SmartDashboard.putNumberArray("Light Sensor Values", valuesFromArduino);
             SmartDashboard.putNumber("Arduino line position", linePositionFromArduino);
         }
@@ -161,7 +161,7 @@ public class LineDetector extends Thread {
             // TODO uncomment below to enable this
             linePosition = (int)(bestPosition / 16 * 255);
         }
-        if (running % 25 == 0) {
+        if (running % 10 == 0) {
             SmartDashboard.putNumber("Line detection cost", bestCost);
             SmartDashboard.putNumber("Line detection line width", bestWidth);
             SmartDashboard.putNumber("Line detection line brightness", bestDepth);
