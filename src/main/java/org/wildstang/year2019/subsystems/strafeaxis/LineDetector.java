@@ -24,13 +24,13 @@ public class LineDetector extends Thread {
     private int matchtime = 150;
 
     // What line widths to try (units of line sensor spacing)
-    private static final double LINE_WIDTHS[] = {2, 2.5, 3};
+    private static final double LINE_WIDTHS[] = {2.5, 3, 3.5};
     // What line brightnesses to try (units of whatever the bogus units we get are)
-    private static final double LINE_BRIGHTNESSES[] = {50,75,100,125,150,200,250};
+    private static final double LINE_BRIGHTNESSES[] = {200, 250, 300};
     // How finely to divide the spacing search (units = multiples of sensor spacing)
     private static final double LINE_SEARCH_SPACING = .1;
     // notional cost of no line detect
-    private static final double NO_LINE_COST = 16000;
+    private static final double NO_LINE_COST = 1600000;
 
     //private static int[] SENSOR_CONSTANTS =
     //    {-130, -114, 96, -82, -56, -40, -24, -8, 0, 8, 24, 40, 56, 82, 96, 114, 130};
@@ -170,6 +170,7 @@ public class LineDetector extends Thread {
     }
 
     public int getLineSensorData() throws NullPointerException {
+        SmartDashboard.putNumber("Final LD", linePosition);
         return linePosition;
     }
 

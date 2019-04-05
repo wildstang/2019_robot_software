@@ -231,7 +231,7 @@ public class StrafeAxis extends Axis implements Subsystem {
             // flip, scale to 0-1, then scale to ticks (the line sensor being 137000 ticks long)
             realTarget = (255 - sensorLocation) / 255.0 * 137000;
             //realTarget = realTarget + Math.abs(127 - sensorLocation) / 127 * 137000 / 8.75 * 2;
-            averageTarget = averageTarget * .95 + realTarget * .05;
+            averageTarget = averageTarget * .8 + realTarget * .2;
             if (isTrackingAutomatically) {
                 motor.set(ControlMode.Position, averageTarget);
             }
@@ -248,7 +248,7 @@ public class StrafeAxis extends Axis implements Subsystem {
 
         SmartDashboard.putNumber("Arduino Strafe Target", sensorLocation);
         SmartDashboard.putNumber("Strafe realTarget", realTarget);
-        SmartDashboard.putNumber("Strafe averageTarget", realTarget);
+        SmartDashboard.putNumber("Strafe averageTarget", averageTarget);
         SmartDashboard.putBoolean("is manual", isManual);
     }
 
