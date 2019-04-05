@@ -52,7 +52,7 @@ public class Ballpath implements Subsystem {
     // Constants
     private static final double ROLLER_SPEED = 1.0;
     private static final double ROLLER_SPEED_SLOWED_1 = 0.8; // For sensor A
-    private static final double ROLLER_SPEED_SLOWED_2 = 0.6; // For sensor A + B
+    private static final double ROLLER_SPEED_SLOWED_2 = 0.54; // For sensor A + B
     private static final double ROLLER_SPEED_BRAKE = 0.0; // For setting to zero AND sensor B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;// subject to change
