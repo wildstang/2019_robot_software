@@ -189,13 +189,11 @@ public class Ballpath implements Subsystem {
             }
         }
         if(source == otbInput) {
-            if(otbInput.getValue()) {
                 otbCurrent = otbInput.getValue();
                 if (otbCurrent && !otbPrev) {
                     isOTB = !isOTB;
-                }
-                otbPrev = otbCurrent;
-            }
+                } 
+            otbPrev = otbCurrent;
         }
     }
 
@@ -269,9 +267,10 @@ public class Ballpath implements Subsystem {
         SmartDashboard.putBoolean("Hopper Position", hopper_position);
         
         SmartDashboard.putBoolean("Intake Position", intake_position);
+        SmartDashboard.putBoolean("isOTB", isOTB);
         if(isOTB) {
-            intake_solenoid.setValue(isOTB);
-        } else{
+             intake_solenoid.setValue(isOTB);
+         } else{
             intake_solenoid.setValue(intake_position);
         }
         if (isIntake_motor) {
