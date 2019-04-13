@@ -20,19 +20,19 @@ public class Left2056L1 extends AutoProgram {
 
         //addStep(new MotionMagicStraightLine(132));//goes directly to the hatch from level1
 
-        //addStep(new DeployHatch());
+        addStep(new DeployHatch());
 
         addStep(new PathFollowerStep(PathNameConstants.the2056B,false));
 
         addStep(new PathFollowerStep(PathNameConstants.the2056C, true));
         
-        //addStep(new CollectHatch());
+        addStep(new CollectHatch());
 
         addStep(new PathFollowerStep(PathNameConstants.the2056D, false));
 
         addStep(new PathFollowerStep(PathNameConstants.the2056E, true));
 
-        //addStep(new DeployHatch());
+        addStep(new DeployHatch());
         
         addStep(new PathFollowerStep(PathNameConstants.the2056F, false));
 
