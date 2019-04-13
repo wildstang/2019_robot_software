@@ -18,6 +18,11 @@ import org.wildstang.year2019.auto.programs.RocketLeft;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.auto.programs.TestPathReader;
 import org.wildstang.year2019.auto.programs.Left2056L1;
+import org.wildstang.year2019.auto.programs.Left2056steps.step2;
+import org.wildstang.year2019.auto.programs.Left2056steps.step3;
+import org.wildstang.year2019.auto.programs.Left2056steps.step4;
+import org.wildstang.year2019.auto.programs.Left2056steps.step5;
+import org.wildstang.year2019.auto.programs.Left2056steps.step6;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -60,12 +65,19 @@ public class Robot extends TimedRobot {
         AutoManager.getInstance().addProgram(new CargoShipLeft());
         AutoManager.getInstance().addProgram(new Left2056L1());
         AutoManager.getInstance().addProgram(new ExampleAutoProgram());
+        AutoManager.getInstance().addProgram(new step2());
+        AutoManager.getInstance().addProgram(new step3());
+        AutoManager.getInstance().addProgram(new step4());
+        AutoManager.getInstance().addProgram(new step5());
+        AutoManager.getInstance().addProgram(new step6());
         //AutoManager.getInstance().addProgram(new RocketLeft());
     }
 
     @Override
     public void disabledInit() {
         System.out.println("Engaging disabled mode.");
+        Drive driveBase = ((Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.setBrakeMode(false);
     }
 
     @Override

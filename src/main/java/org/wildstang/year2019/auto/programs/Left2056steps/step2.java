@@ -18,13 +18,13 @@ public class step2 extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        addStep(new PathFollowerStep(PathNameConstants.the2056B,true));
+        addStep(new PathFollowerStep(PathNameConstants.the2056B,false));
     }
 
     @Override
     public String toString() {
         //give it a name
-        return "step1";
+        return "step2";
     }
 
 }

@@ -24,7 +24,7 @@ public class step5 extends AutoProgram {
     @Override
     public String toString() {
         //give it a name
-        return "step1";
+        return "step5";
     }
 
 }
