@@ -10,7 +10,7 @@ import org.wildstang.year2019.subsystems.drive.DrivePID;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class MotionMagicStraightLine extends AutoStep {
+public class StraightDrive extends AutoStep {
 
     private double m_rotations;
     private Drive m_drive;
@@ -21,7 +21,7 @@ public class MotionMagicStraightLine extends AutoStep {
     // Tolerance - in rotations. The numerator is in inches
     private static final double TOLERANCE = 1 / ONE_ROTATION_INCHES;
 
-    public MotionMagicStraightLine(double p_inches) {
+    public StraightDrive(double p_inches) {
         m_rotations = p_inches / ONE_ROTATION_INCHES;
     }
 
@@ -38,9 +38,12 @@ public class MotionMagicStraightLine extends AutoStep {
 
     @Override
     public void update() {
+        
 
         if (!m_started) {
-            m_drive.setMotionMagicTargetAbsolute(m_rotations, m_rotations);
+            //m_drive.setMotionMagicTargetAbsolute(m_rotations, m_rotations);
+            m_drive.setAutonStraightDrive(m_rotations*4096);
+            SmartDashboard.putBoolean("Started things",true);
             m_started = true;
         } else {
             SmartDashboard.putNumber("Target rotations", m_rotations);
@@ -57,13 +60,14 @@ public class MotionMagicStraightLine extends AutoStep {
                 m_drive.setOpenLoopDrive();
                 m_drive.setBrakeMode(true);
                 setFinished(true);
+                SmartDashboard.putBoolean("Finished the Step",true);
             }
         }
     }
 
     @Override
     public String toString() {
-        return "Motion Magic Straight Drive";
+        return "StraightDrive";
     }
 
 }

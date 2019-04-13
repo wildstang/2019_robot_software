@@ -389,18 +389,19 @@ public class Drive implements Subsystem {
     /**
      * TODO: description of what this method should do goes here
      */
-    public void setAutonStraightDrive() {
+    public void setAutonStraightDrive(double rotationtarget) {
         // XXX TODO: grab a mentor and go over
         // https://github.com/wildstang/2019_robot_software/blob/master/design_docs/year2019/drive.md
         // before using or adding to this method.
-        stopPathFollowing();
+        //if (variable){
+            stopPathFollowing();
 
-        driveMode = DriveType.CHEESY;
+            driveMode = DriveType.MAGIC;
 
-        setBrakeMode(false);
-
+            setBrakeMode(false);
+        //}
         for (TalonSRX master : masters) {
-            master.set(ControlMode.PercentOutput, 1);
+            master.set(ControlMode.Position, rotationtarget);
         }
     }
 
@@ -561,8 +562,8 @@ public class Drive implements Subsystem {
             // Set up Talons for the Motion Magic mode
 
             for (TalonSRX master : masters) {
-                master.selectProfileSlot(DrivePID.BASE_LOCK.slot, 0);
-                master.set(ControlMode.MotionMagic, 0);
+                master.selectProfileSlot(DrivePID.MM_DRIVE.slot, 0);
+                //master.set(ControlMode.MotionMagic, 0);
 
                 // m_leftMaster.setPID(DriveConstants.MM_QUICK_P_GAIN,
                 // DriveConstants.MM_QUICK_I_GAIN, DriveConstants.MM_QUICK_D_GAIN, f_gain, 0, 0,
@@ -579,15 +580,15 @@ public class Drive implements Subsystem {
                     master.config_kF(DrivePID.BASE_LOCK.slot,
                             DrivePID.MM_QUICK.k.f);
                 } else {
-                    master.configMotionAcceleration(900); // RPM
-                    master.configMotionCruiseVelocity(800); // RPM
-                    master.config_kP(DrivePID.BASE_LOCK.slot,
+                    master.configMotionAcceleration(9); // RPM
+                    master.configMotionCruiseVelocity(8); // RPM
+                    master.config_kP(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.p);
-                    master.config_kI(DrivePID.BASE_LOCK.slot,
+                    master.config_kI(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.i);
-                    master.config_kD(DrivePID.BASE_LOCK.slot,
+                    master.config_kD(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.d);
-                    master.config_kF(DrivePID.BASE_LOCK.slot,
+                    master.config_kF(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.f);
                 }
 

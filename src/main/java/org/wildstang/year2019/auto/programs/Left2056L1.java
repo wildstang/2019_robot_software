@@ -17,13 +17,13 @@ public class Left2056L1 extends AutoProgram {
     protected void defineSteps() {
 
 
-        addStep(new MotionMagicStraightLine(135));//goes directly to the hatch from level1
+        //addStep(new MotionMagicStraightLine(132));//goes directly to the hatch from level1
 
         //addStep(new DeployHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.the2056B,true));
+        addStep(new PathFollowerStep(PathNameConstants.the2056B,false));
 
-        addStep(new PathFollowerStep(PathNameConstants.the2056C, false));
+        addStep(new PathFollowerStep(PathNameConstants.the2056C, true));
         
         //addStep(new CollectHatch());
 
@@ -40,7 +40,7 @@ public class Left2056L1 extends AutoProgram {
     @Override
     public String toString() {
         //give it a name
-        return "RocketLeft";
+        return "2056 level 1 left";
     }
 
 }
