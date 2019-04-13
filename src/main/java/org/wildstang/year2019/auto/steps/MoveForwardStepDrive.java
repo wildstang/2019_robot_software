@@ -42,7 +42,7 @@ public class MoveForwardStepDrive extends AutoStep {
         // if so.. add it here
         if (!driveStarted)
         {
-            drive.setAutonStraightDrive();
+            //drive.setAutonStraightDrive();
             driveStarted = true;
         }
         else

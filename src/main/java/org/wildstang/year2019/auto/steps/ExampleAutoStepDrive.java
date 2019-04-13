@@ -29,7 +29,7 @@ public class ExampleAutoStepDrive extends AutoStep {
         // call what you want the subsystem to do during this step
         // control the drive with drive. whatever you want
         if (!hasStarted) {
-            drive.setAutonStraightDrive();
+            //drive.setAutonStraightDrive();
             hasStarted = true;
         } else {
             if (Math.abs((Math.abs(rotations) - (Math.abs(drive.getRightSensorValue() / 4096)))) <= TOLERANCE) {

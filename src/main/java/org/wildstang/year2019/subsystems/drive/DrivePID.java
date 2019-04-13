@@ -12,7 +12,7 @@ public enum DrivePID {
     PATH(0, new PIDConstants(0.6, 1.0, 0.0, 0.0)),
     BASE_LOCK(1, new PIDConstants(0.0, .8, 0.001, 10)),
     MM_QUICK(2, new PIDConstants(0.55, .8, 0.001, 10)),
-    MM_DRIVE(3, new PIDConstants(0.55, .8, 0.001, 10));
+    MM_DRIVE(3, new PIDConstants(0.0, .00000000001, 0.001, 5));
     // only four slots are available on the Talon
 
     public final PIDConstants k;

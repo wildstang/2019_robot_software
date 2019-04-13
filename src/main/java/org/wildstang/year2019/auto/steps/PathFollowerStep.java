@@ -56,6 +56,8 @@ public class PathFollowerStep extends AutoStep {
 
         m_drive = (Drive) Core.getSubsystemManager()
                 .getSubsystem(WSSubsystems.DRIVEBASE.getName());
+
+        m_drive.setBrakeMode(true);
         
     }
 
