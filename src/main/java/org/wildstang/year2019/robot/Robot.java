@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
         //AutoManager.getInstance().addProgram(new TestPathReader());
         AutoManager.getInstance().addProgram(new CargoShipLeft());
         AutoManager.getInstance().addProgram(new Left2056L1());
+        AutoManager.getInstance().addProgram(new ExampleAutoProgram());
         //AutoManager.getInstance().addProgram(new RocketLeft());
     }
 

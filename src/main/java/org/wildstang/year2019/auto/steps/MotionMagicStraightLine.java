@@ -6,6 +6,8 @@ import org.wildstang.year2019.robot.WSSubsystems;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.subsystems.drive.DriveConstants;
 
+import org.wildstang.year2019.subsystems.drive.DrivePID;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MotionMagicStraightLine extends AutoStep {
@@ -28,7 +30,7 @@ public class MotionMagicStraightLine extends AutoStep {
         m_drive = (Drive) Core.getSubsystemManager()
                 .getSubsystem(WSSubsystems.DRIVEBASE.getName());
 
-        m_drive.setMotionMagicMode(true, DriveConstants.MM_DRIVE_F_GAIN);
+        m_drive.setMotionMagicMode(true, DrivePID.MM_DRIVE.k.f);
         m_drive.resetEncoders();
        
         m_drive.setBrakeMode(true);
