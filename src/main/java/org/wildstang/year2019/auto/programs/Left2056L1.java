@@ -17,7 +17,7 @@ public class Left2056L1 extends AutoProgram {
     protected void defineSteps() {
 
 
-        addStep(new MotionMagicStraightLine(50));
+        addStep(new MotionMagicStraightLine(135));//goes directly to the hatch from level1
 
         addStep(new DeployHatch());
 

@@ -16,7 +16,8 @@ public class CargoShipLeft extends AutoProgram {
     @Override
     protected void defineSteps() {
 
-        addStep(new MotionMagicStraightLine(30));
+        addStep(new MotionMagicStraightLine(30));//path starts at x=270 from back of hab
+            //adjust to go from level 2 or level 1, constants to be added when found 
 
         addStep(new PathFollowerStep(PathNameConstants.HAB_CARGO_FAR_LEFT, true));
 
