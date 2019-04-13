@@ -548,4 +548,57 @@ public class Drive implements Subsystem {
         masters[LEFT].set(ControlMode.PercentOutput, speeds.leftMotor);
         masters[RIGHT].set(ControlMode.PercentOutput, speeds.rightMotor);
     }
+    public void setMotionMagicTargetAbsolute(double p_leftTarget, double p_rightTarget) {
+        masters[LEFT].set(ControlMode.MotionMagic, p_leftTarget);
+        masters[RIGHT].set(ControlMode.MotionMagic, p_rightTarget);
+    }
+    public void setMotionMagicMode(boolean p_quickTurn, double f_gain) {
+        // Stop following any current path
+        stopPathFollowing();
+
+        // Set talons to hold their current position
+        if (driveMode != DriveType.MAGIC) {
+            // Set up Talons for the Motion Magic mode
+
+            for (TalonSRX master : masters) {
+                master.selectProfileSlot(DrivePID.BASE_LOCK.slot, 0);
+                master.set(ControlMode.MotionMagic, 0);
+
+                // m_leftMaster.setPID(DriveConstants.MM_QUICK_P_GAIN,
+                // DriveConstants.MM_QUICK_I_GAIN, DriveConstants.MM_QUICK_D_GAIN, f_gain, 0, 0,
+                // DriveConstants.BASE_LOCK_PROFILE_SLOT);
+                if (p_quickTurn) {
+                    master.configMotionAcceleration(350); // RPM
+                    master.configMotionCruiseVelocity(350); // RPM
+                    master.config_kP(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_QUICK.k.p);
+                    master.config_kI(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_QUICK.k.i);
+                    master.config_kD(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_QUICK.k.d);
+                    master.config_kF(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_QUICK.k.f);
+                } else {
+                    master.configMotionAcceleration(900); // RPM
+                    master.configMotionCruiseVelocity(800); // RPM
+                    master.config_kP(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_DRIVE.k.p);
+                    master.config_kI(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_DRIVE.k.i);
+                    master.config_kD(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_DRIVE.k.d);
+                    master.config_kF(DrivePID.BASE_LOCK.slot,
+                            DrivePID.MM_DRIVE.k.f);
+                }
+
+            }
+
+
+            resetEncoders();
+
+            driveMode = DriveType.MAGIC;
+
+            setBrakeMode(true);
+        }
+    }
 }

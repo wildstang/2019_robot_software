@@ -17,6 +17,7 @@ import org.wildstang.year2019.auto.programs.CargoShipLeft;
 import org.wildstang.year2019.auto.programs.RocketLeft;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.auto.programs.TestPathReader;
+import org.wildstang.year2019.auto.programs.Left2056L1;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -53,11 +54,12 @@ public class Robot extends TimedRobot {
         core.createOutputs(WSOutputs.values());
         core.createSubsystems(WSSubsystems.values());
 
-        AutoManager.getInstance().addProgram(new ExampleAutoProgram());
-        AutoManager.getInstance().addProgram(new AllTheWayThrough());
-        AutoManager.getInstance().addProgram(new TestPathReader());
+        //AutoManager.getInstance().addProgram(new ExampleAutoProgram());
+        //AutoManager.getInstance().addProgram(new AllTheWayThrough());
+        //AutoManager.getInstance().addProgram(new TestPathReader());
         AutoManager.getInstance().addProgram(new CargoShipLeft());
-        AutoManager.getInstance().addProgram(new RocketLeft());
+        AutoManager.getInstance().addProgram(new Left2056L1());
+        //AutoManager.getInstance().addProgram(new RocketLeft());
     }
 
     @Override

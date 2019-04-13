@@ -21,5 +21,14 @@ public class PathNameConstants {
     public static final String HP_INTERIM_CARGO_CLOSE_LEFT = "HPInterimCargoCloseLeft";
     public static final String INTERIM_CARGO_CLOSE_LEFT = "InterimCargoCloseLeft";
 
+    //Left 2056 Path
+    public static final String the2056A = "Left2056A";
+    public static final String the2056B = "Left2056B";
+    public static final String the2056C = "Left2056C";
+    public static final String the2056D = "Left2056D";
+    public static final String the2056E = "Left2056E";
+    public static final String the2056F = "Left2056F";
+
+
     public static final String HAB_2_START = "Hab2Start";
 }
