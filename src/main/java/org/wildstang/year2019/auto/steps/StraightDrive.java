@@ -30,7 +30,7 @@ public class StraightDrive extends AutoStep {
         m_drive = (Drive) Core.getSubsystemManager()
                 .getSubsystem(WSSubsystems.DRIVEBASE.getName());
 
-        m_drive.setMotionMagicMode(true, DrivePID.MM_DRIVE.k.f);
+        m_drive.setMotionMagicMode(false, DrivePID.MM_DRIVE.k.f);
         m_drive.resetEncoders();
        
         m_drive.setBrakeMode(true);

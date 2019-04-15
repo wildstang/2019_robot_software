@@ -580,8 +580,8 @@ public class Drive implements Subsystem {
                     master.config_kF(DrivePID.BASE_LOCK.slot,
                             DrivePID.MM_QUICK.k.f);
                 } else {
-                    master.configMotionAcceleration(9); // RPM
-                    master.configMotionCruiseVelocity(8); // RPM
+                    //master.configMotionAcceleration(9); // RPM
+                    //master.configMotionCruiseVelocity(8); // RPM
                     master.config_kP(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.p);
                     master.config_kI(DrivePID.MM_DRIVE.slot,
