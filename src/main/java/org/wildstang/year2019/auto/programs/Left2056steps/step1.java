@@ -5,6 +5,7 @@ import org.wildstang.year2019.auto.steps.CollectHatch;
 import org.wildstang.year2019.auto.steps.DeployHatch;
 import org.wildstang.year2019.auto.steps.DelayStep;
 import org.wildstang.year2019.auto.steps.MotionMagicStraightLine;
+import org.wildstang.year2019.auto.steps.BasicStraight;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,7 +16,7 @@ public class step1 extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        addStep(new MotionMagicStraightLine(135));//goes directly to the hatch from level1
+        addStep(new BasicStraight(124));//goes directly to the hatch from level1
     }
 
     @Override

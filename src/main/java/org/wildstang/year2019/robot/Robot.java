@@ -23,6 +23,7 @@ import org.wildstang.year2019.auto.programs.Left2056steps.step3;
 import org.wildstang.year2019.auto.programs.Left2056steps.step4;
 import org.wildstang.year2019.auto.programs.Left2056steps.step5;
 import org.wildstang.year2019.auto.programs.Left2056steps.step6;
+import org.wildstang.year2019.auto.programs.Left2056steps.step1;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
         AutoManager.getInstance().addProgram(new step4());
         AutoManager.getInstance().addProgram(new step5());
         AutoManager.getInstance().addProgram(new step6());
+        AutoManager.getInstance().addProgram(new step1());
         //AutoManager.getInstance().addProgram(new RocketLeft());
     }
 

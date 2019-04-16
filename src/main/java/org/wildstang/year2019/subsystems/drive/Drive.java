@@ -563,7 +563,7 @@ public class Drive implements Subsystem {
 
             for (TalonSRX master : masters) {
                 master.selectProfileSlot(DrivePID.MM_DRIVE.slot, 0);
-                //master.set(ControlMode.MotionMagic, 0);
+                master.set(ControlMode.MotionMagic, 0);
 
                 // m_leftMaster.setPID(DriveConstants.MM_QUICK_P_GAIN,
                 // DriveConstants.MM_QUICK_I_GAIN, DriveConstants.MM_QUICK_D_GAIN, f_gain, 0, 0,
@@ -580,8 +580,8 @@ public class Drive implements Subsystem {
                     master.config_kF(DrivePID.BASE_LOCK.slot,
                             DrivePID.MM_QUICK.k.f);
                 } else {
-                    //master.configMotionAcceleration(9); // RPM
-                    //master.configMotionCruiseVelocity(8); // RPM
+                    master.configMotionAcceleration(90); // RPM
+                    master.configMotionCruiseVelocity(80); // RPM
                     master.config_kP(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.p);
                     master.config_kI(DrivePID.MM_DRIVE.slot,
@@ -590,6 +590,7 @@ public class Drive implements Subsystem {
                             DrivePID.MM_DRIVE.k.d);
                     master.config_kF(DrivePID.MM_DRIVE.slot,
                             DrivePID.MM_DRIVE.k.f);
+                    master.selectProfileSlot(DrivePID.MM_DRIVE.slot,0);
                 }
 
             }
@@ -600,6 +601,16 @@ public class Drive implements Subsystem {
             driveMode = DriveType.MAGIC;
 
             setBrakeMode(true);
+        }
+    }
+    public void setForward(boolean thing){
+        driveMode = DriveType.MAGIC;
+        if (thing) {
+            masters[LEFT].set(ControlMode.PercentOutput,0.51);
+            masters[RIGHT].set(ControlMode.PercentOutput,0.555);
+        } else {
+            masters[LEFT].set(ControlMode.PercentOutput,0.0);
+            masters[RIGHT].set(ControlMode.PercentOutput,0.0);
         }
     }
 }

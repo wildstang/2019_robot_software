@@ -10,7 +10,7 @@ import org.wildstang.year2019.subsystems.drive.DrivePID;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class MotionMagicStraightLine extends AutoStep {
+public class BasicStraight extends AutoStep {
 
     private double m_rotations;
     private Drive m_drive;
@@ -21,7 +21,7 @@ public class MotionMagicStraightLine extends AutoStep {
     // Tolerance - in rotations. The numerator is in inches
     private static final double TOLERANCE = 1 / ONE_ROTATION_INCHES;
 
-    public MotionMagicStraightLine(double p_inches) {
+    public BasicStraight(double p_inches) {
         m_rotations = p_inches / ONE_ROTATION_INCHES;
     }
 
@@ -30,17 +30,19 @@ public class MotionMagicStraightLine extends AutoStep {
         m_drive = (Drive) Core.getSubsystemManager()
                 .getSubsystem(WSSubsystems.DRIVEBASE.getName());
 
-        m_drive.setMotionMagicMode(false, DrivePID.MM_DRIVE.k.f);
+        //m_drive.setMotionMagicMode(false, DrivePID.MM_DRIVE.k.f);
         m_drive.resetEncoders();
        
         m_drive.setBrakeMode(true);
+        
     }
 
     @Override
     public void update() {
 
         if (!m_started) {
-            m_drive.setMotionMagicTargetAbsolute(m_rotations, m_rotations);
+            m_drive.setForward(true);
+            //m_drive.setMotionMagicTargetAbsolute(m_rotations, m_rotations);
             m_started = true;
         } else {
             SmartDashboard.putNumber("Target rotations", m_rotations);
@@ -52,8 +54,10 @@ public class MotionMagicStraightLine extends AutoStep {
             SmartDashboard.putNumber("Tolerance", TOLERANCE);
             // Check if we've gone far enough
             // if (Math.abs((m_drive.getRightSensorValue() / 4096)) >= m_rotations)
-            if (Math.abs((Math.abs(m_rotations)
-                    - (Math.abs(m_drive.getRightSensorValue() / 4096)))) <= TOLERANCE) {
+           // if (Math.abs((Math.abs(m_rotations)
+           //         - (Math.abs(m_drive.getRightSensorValue() / 4096)))) <= TOLERANCE) {
+               if (Math.abs(m_drive.getRightSensorValue()/4096) > m_rotations){
+                m_drive.setForward(false);
                 m_drive.setOpenLoopDrive();
                 m_drive.setBrakeMode(true);
                 setFinished(true);

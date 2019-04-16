@@ -4,6 +4,7 @@ import org.wildstang.year2019.auto.steps.PathFollowerStep;
 import org.wildstang.year2019.auto.steps.CollectHatch;
 import org.wildstang.year2019.auto.steps.DeployHatch;
 import org.wildstang.year2019.auto.steps.DelayStep;
+import org.wildstang.year2019.auto.steps.BasicStraight;
 import org.wildstang.year2019.auto.steps.MotionMagicStraightLine;
 import org.wildstang.year2019.auto.programs.PathNameConstants;
 
@@ -19,6 +20,7 @@ public class Left2056L1 extends AutoProgram {
 
 
         //addStep(new MotionMagicStraightLine(132));//goes directly to the hatch from level1
+        addStep(new BasicStraight(126));
 
         addStep(new DeployHatch());
 
@@ -34,7 +36,7 @@ public class Left2056L1 extends AutoProgram {
 
         addStep(new DeployHatch());
         
-        addStep(new PathFollowerStep(PathNameConstants.the2056F, false));
+        //addStep(new PathFollowerStep(PathNameConstants.the2056F, false));
 
     }
 
