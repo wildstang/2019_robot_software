@@ -177,7 +177,7 @@ public class Drive implements Subsystem {
         // TODO: Do we want to make quickturn automatic?
         else if (source == quickTurnInput) {
             commandQuickTurn = quickTurnInput.getValue();
-            isQuick = true;
+            isQuick = quickTurnInput.getValue() > 0.5;
         } else if (source == antiTurboInput) {
             commandAntiTurbo = antiTurboInput.getValue();
         } else if (source == baseLockInput) {
@@ -194,10 +194,7 @@ public class Drive implements Subsystem {
                 setHeading(0);
                 setThrottle(0);
             }
-        } else {
-            isQuick = false;
-
-        }
+        } 
     }
 
     @Override
