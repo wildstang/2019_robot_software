@@ -52,7 +52,7 @@ public class Ballpath implements Subsystem {
     // Constants
     private static final double ROLLER_SPEED = 1.0;
     private static final double ROLLER_SPEED_SLOWED_1 = 0.8; // For sensor A
-    private static final double ROLLER_SPEED_SLOWED_2 = 0.6; // For sensor A + B
+    private static final double ROLLER_SPEED_SLOWED_2 = 0.54; // For sensor A + B
     private static final double ROLLER_SPEED_BRAKE = 0.0; // For setting to zero AND sensor B
     private static final double BACKWARDS_ROLLER_SPEED = -1.0;
     private static final double CARRIAGE_ROLLER_SPEED = 1.0;// subject to change
@@ -65,6 +65,7 @@ public class Ballpath implements Subsystem {
     private DigitalInput reverseInput;
     private DigitalInput hopperInput;
     private DigitalInput safetyInput;
+    private DigitalInput otbInput;
 
     // UPDATE code for sensors
     // private DigitalInput Sensor_A_Input;//controlled by sensor values, sensors to
@@ -93,6 +94,9 @@ public class Ballpath implements Subsystem {
     private boolean Sensor_B_Value;
     private boolean carriage_slowed;
     private boolean transferCarriage;
+    private boolean isOTB;
+    private boolean otbPrev;
+    private boolean otbCurrent;
 
     /**
      * TODO: Names set up for each Victor that we are going to need TODO: Add
@@ -175,6 +179,7 @@ public class Ballpath implements Subsystem {
             if (intakeInput.getValue()) {
                 isCarriageMotor = true;
                 isHopper_motor = true;
+                isIntake_motor = true;
 
                 transferCarriage = true;
             } else {
@@ -183,6 +188,13 @@ public class Ballpath implements Subsystem {
                 isIntake_motor = false;
                 transferCarriage = false;
             }
+        }
+        if(source == otbInput) {
+                otbCurrent = otbInput.getValue();
+                if (otbCurrent && !otbPrev) {
+                    isOTB = !isOTB;
+                } 
+            otbPrev = otbCurrent;
         }
     }
 
@@ -200,6 +212,9 @@ public class Ballpath implements Subsystem {
         hopperInput.addInputListener(this);
         reverseInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.REVERSE_BUTTON.getName());
         reverseInput.addInputListener(this);
+
+        otbInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.BUMPER.getName());
+        otbInput.addInputListener(this); //Ben's OTB toggle button
         // Sensor_A_Input = (DigitalInput)
         // Core.getInputManager().getInput(WSInputs.CARRIAGE_SENSOR_A.getName());
         // Sensor_A_Input.addInputListener(this);
@@ -251,8 +266,14 @@ public class Ballpath implements Subsystem {
         
         hopper_solenoid.setValue(hopper_position);
         SmartDashboard.putBoolean("Hopper Position", hopper_position);
-        intake_solenoid.setValue(intake_position);
+        
         SmartDashboard.putBoolean("Intake Position", intake_position);
+        SmartDashboard.putBoolean("isOTB", isOTB);
+        if(isOTB) {
+             intake_solenoid.setValue(isOTB);
+         } else{
+            intake_solenoid.setValue(intake_position);
+        }
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
             SmartDashboard.putNumber("Intake Speed", ROLLER_SPEED);
@@ -290,7 +311,6 @@ public class Ballpath implements Subsystem {
             carriageVictor.set(ControlMode.PercentOutput, PHYSICAL_DIR_CHANGE * BACKWARDS_ROLLER_SPEED);
             intakeVictor.set(ControlMode.PercentOutput, BACKWARDS_ROLLER_SPEED);
         }
-
     }
 
     @Override
@@ -301,6 +321,10 @@ public class Ballpath implements Subsystem {
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);
         hopperVictor2.set(ControlMode.PercentOutput, 0.0);
+
+        isOTB = false;
+        otbPrev = false;
+        otbCurrent = false;
 
         // Set desired positions for solenoids
     }

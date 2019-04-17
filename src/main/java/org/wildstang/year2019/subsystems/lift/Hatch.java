@@ -18,9 +18,9 @@ import org.wildstang.framework.timer.WsTimer;
 public class Hatch implements Subsystem {
 
     //Timer constants TODO: Measure time during testing
-    private static final double DEPLOY_WAIT = 0.1;
-    private static final double RETRACT_WAIT = 0.05;
-    private static final double LOCK_WAIT = 0.15;
+    private static final double DEPLOY_WAIT = 0.15;
+    private static final double RETRACT_WAIT = 0.1;
+    private static final double LOCK_WAIT = 0.2;
     // Local inputs
     private DigitalInput hatchDeploy;
     private DigitalInput hatchCollect;

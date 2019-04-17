@@ -1,5 +1,7 @@
 package org.wildstang.year2019.subsystems.drive;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
  * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that
  * the "turning" stick controls the curvature of the robot's path rather than
@@ -13,7 +15,7 @@ public class CheesyDriveHelper {
     //int logCounter2 = 0;
 
     double mQuickStopAccumulator;
-    public static final double kThrottleDeadband = 0.02;
+    public static final double kThrottleDeadband = 0.05;
     private static final double kWheelDeadband = 0.02;
     private static final double kTurnSensitivity = 1.0;
     private DriveSignal mSignal = new DriveSignal(0, 0);
@@ -47,6 +49,8 @@ public class CheesyDriveHelper {
             }
         }
 
+        SmartDashboard.putNumber("kTurnSensitivity", kTurnSensitivity);
+
         double rightPwm = throttle - angularPower;
         double leftPwm = throttle + angularPower;
         if (leftPwm > 1.0) {
@@ -64,6 +68,9 @@ public class CheesyDriveHelper {
         }
         mSignal.rightMotor = rightPwm;
         mSignal.leftMotor = leftPwm;
+
+        SmartDashboard.putNumber("Left Drive PWM", leftPwm);
+        SmartDashboard.putNumber("Right Drive PWM", rightPwm);
 
         return mSignal;
     }
