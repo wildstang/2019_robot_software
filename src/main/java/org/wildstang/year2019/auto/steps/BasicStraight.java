@@ -16,8 +16,9 @@ public class BasicStraight extends AutoStep {
     private Drive m_drive;
     private boolean m_started = false;
 
+    // FIXME use subsystems.drive.DriveConstants.TICKS_PER_INCH, or, even better, conceal the ticks-per-inch inside the drive class
     private static final double ONE_ROTATION_INCHES = 6 * Math.PI;
-
+    
     // Tolerance - in rotations. The numerator is in inches
     private static final double TOLERANCE = 1 / ONE_ROTATION_INCHES;
 
@@ -54,9 +55,9 @@ public class BasicStraight extends AutoStep {
             SmartDashboard.putNumber("Tolerance", TOLERANCE);
             // Check if we've gone far enough
             // if (Math.abs((m_drive.getRightSensorValue() / 4096)) >= m_rotations)
-           // if (Math.abs((Math.abs(m_rotations)
-           //         - (Math.abs(m_drive.getRightSensorValue() / 4096)))) <= TOLERANCE) {
-               if (Math.abs(m_drive.getRightSensorValue()/4096) > m_rotations){
+            // if (Math.abs((Math.abs(m_rotations)
+            //         - (Math.abs(m_drive.getRightSensorValue() / 4096)))) <= TOLERANCE) {
+            if (Math.abs(m_drive.getRightSensorValue()/4096) > m_rotations){
                 m_drive.setForward(false);
                 m_drive.setOpenLoopDrive();
                 m_drive.setBrakeMode(true);
