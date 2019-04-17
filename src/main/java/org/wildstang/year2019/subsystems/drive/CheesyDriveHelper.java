@@ -15,6 +15,7 @@ public class CheesyDriveHelper {
     //int logCounter2 = 0;
 
     double mQuickStopAccumulator;
+    public static final double kQuickTurnMinThrottle = 0.1;
     public static final double kThrottleDeadband = 0.05;
     private static final double kWheelDeadband = 0.02;
     private static final double kTurnSensitivity = 1.0;
@@ -30,6 +31,14 @@ public class CheesyDriveHelper {
         double angularPower;
 
         if (isQuickTurn) {
+            if (Math.abs(throttle) < kQuickTurnMinThrottle) {
+                if (throttle >= 0) {
+                    throttle = kQuickTurnMinThrottle;
+                } else {
+                    throttle = -kQuickTurnMinThrottle;
+                }
+            }
+
             if (Math.abs(throttle) < 0.2) {
                 double alpha = 0.1;
                 mQuickStopAccumulator = (1 - alpha) * mQuickStopAccumulator
@@ -66,6 +75,7 @@ public class CheesyDriveHelper {
             leftPwm += overPower * (-1.0 - rightPwm);
             rightPwm = -1.0;
         }
+
         mSignal.rightMotor = rightPwm;
         mSignal.leftMotor = leftPwm;
 
