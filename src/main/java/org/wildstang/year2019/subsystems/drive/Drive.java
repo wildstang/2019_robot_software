@@ -175,7 +175,7 @@ public class Drive implements Subsystem {
             
         } else if (source == headingInput) {
             
-            setHeading(headingInput.getValue());   
+            setHeading(headingInput.getValue());
         }
         else if(source == vegasInput) {
             vegasCurrent = vegasInput.getValue();
