@@ -107,6 +107,10 @@ public class Drive implements Subsystem {
     private boolean commandAntiTurbo = false;
 
     private boolean isQuick = false;
+    private boolean isVegas;
+    private boolean vegasPrev;
+    private boolean vegasCurrent;
+    private DigitalInput vegasInput;
 
     ///////////////////////////////////////////////////////////
     // PUBLIC METHODS
@@ -159,6 +163,7 @@ public class Drive implements Subsystem {
         commandAntiTurbo = false;
 
         maxSpeedAchieved = 0;
+        isVegas = false;
     }
 
     @Override
@@ -166,12 +171,18 @@ public class Drive implements Subsystem {
 
         if (source == throttleInput) {
             
-            setThrottle(throttleInput.getValue());
+            setThrottle(-throttleInput.getValue());
             
         } else if (source == headingInput) {
             
-            setHeading(headingInput.getValue());
-            
+            setHeading(headingInput.getValue());   
+        }
+        else if(source == vegasInput) {
+            vegasCurrent = vegasInput.getValue();
+            if(vegasCurrent && !vegasPrev) {
+                isVegas = !isVegas;
+            }
+            vegasPrev = vegasCurrent;
         }
 
         // TODO: Do we want to make quickturn automatic?
@@ -238,6 +249,14 @@ public class Drive implements Subsystem {
             break;
 
         case CHEESY:
+        SmartDashboard.putBoolean("VEGAS", isVegas);
+        if(isVegas) {
+            masters[LEFT].set(ControlMode.PercentOutput, 0.25);
+            masters[RIGHT].set(ControlMode.PercentOutput, -0.25);
+
+        } else {
+
+        
             double effectiveThrottle = commandThrottle;
             if (commandAntiTurbo) {
                 effectiveThrottle = commandThrottle * DriveConstants.ANTI_TURBO_FACTOR;
@@ -251,7 +270,7 @@ public class Drive implements Subsystem {
             SmartDashboard.putNumber("driveSignal.right", driveSignal.rightMotor);
 
             setMotorSpeeds(driveSignal);
-
+        }
             break;
         case FULL_BRAKE:
             break;
@@ -453,6 +472,9 @@ public class Drive implements Subsystem {
 
         baseLockInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.BASE_LOCK.getName());
         baseLockInput.addInputListener(this);
+
+        vegasInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.VEGAS.getName());
+        vegasInput.addInputListener(this);
     }
 
     /** Initialize all drive base motor controllers. */
