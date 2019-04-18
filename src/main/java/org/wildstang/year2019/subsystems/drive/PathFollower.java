@@ -144,7 +144,7 @@ public class PathFollower {
 
         /* This is fast since it's just into our TOP buffer */
 
-        for (int i = 0; i < totalCnt; ++i) 
+        for (int i = 0; i < totalCnt-1; ++i) 
         {
             
                 

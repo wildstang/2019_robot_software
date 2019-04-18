@@ -38,8 +38,8 @@ public class PathFollowerStep extends AutoStep {
         SmartDashboard.putBoolean("Checkpoint 2002 yay", true);
         m_path = new Path();
         
-        File leftFile = new File(m_filePath + "_left");
-        File rightFile = new File(m_filePath + "_right");
+        File leftFile = new File(m_filePath + "_right.csv");
+        File rightFile = new File(m_filePath + "_left.csv");
         if (!isForwards){
             File holder = rightFile;
             rightFile = leftFile;

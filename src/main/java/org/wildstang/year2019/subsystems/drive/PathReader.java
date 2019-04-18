@@ -33,7 +33,7 @@ public class PathReader {
 
             dataPoints[i][0] = (int) values.get(i).dt;
             dataPoints[i][1] = modifier*values.get(i).position*DriveConstants.TICKS_PER_INCH_MOD;//6*Math.PI ;
-            dataPoints[i][2] = modifier*values.get(i).velocity*DriveConstants.TICKS_PER_INCH/10; //6*Math.PI;//*18.85;
+            dataPoints[i][2] = modifier*values.get(i).velocity*DriveConstants.TICKS_PER_INCH_MOD/10; //6*Math.PI;//*18.85;
 
             
 

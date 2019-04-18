@@ -19,7 +19,7 @@ public class step3 extends AutoProgram {
     @Override
     protected void defineSteps() {
         //addStep(new PathFollowerStep(PathNameConstants.the2056C,true));
-        addStep(new PathFollowerStep(PathNameConstants.LCS3I,true));
+        addStep(new PathFollowerStep(PathNameConstants.L20563I,true));
     }
 
     @Override
