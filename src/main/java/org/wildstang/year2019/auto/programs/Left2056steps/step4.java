@@ -18,7 +18,7 @@ public class step4 extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        addStep(new PathFollowerStep(PathNameConstants.the2056D,false));
+        addStep(new PathFollowerStep(PathNameConstants.LCS4I,false));
     }
 
     @Override

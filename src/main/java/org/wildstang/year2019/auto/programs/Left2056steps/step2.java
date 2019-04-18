@@ -19,7 +19,7 @@ public class step2 extends AutoProgram {
     @Override
     protected void defineSteps() {
         //addStep(new PathFollowerStep(PathNameConstants.the2056B,false));
-        addStep(new PathFollowerStep(PathNameConstants.CARGO_FAR_LEFT_INTERIM_HP,false));
+        addStep(new PathFollowerStep(PathNameConstants.LCS2I,false));
     }
 
     @Override

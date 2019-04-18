@@ -31,4 +31,19 @@ public class PathNameConstants {
 
 
     public static final String HAB_2_START = "Hab2Start";
+
+    //Alternate Path Constants
+    public static final String L20561I = "L20561I";
+    public static final String L20562I = "L20562I";
+    public static final String L20563I = "L20563I";
+    public static final String L20564I = "LCS4I";
+    public static final String L20565I = "LCS5I";
+    public static final String L20566IA = "L20566IA";
+    public static final String L20566IB = "L20566IB";
+
+    public static final String LCS1I = "LCS1I";
+    public static final String LCS2I = "LCS2I";
+    public static final String LCS3I = "LCS3I";
+    public static final String LCS4I = "LCS4I";
+    public static final String LCS5I = "LCS5I";
 }

@@ -18,6 +18,9 @@ import org.wildstang.year2019.auto.programs.RocketLeft;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.auto.programs.TestPathReader;
 import org.wildstang.year2019.auto.programs.Left2056L1;
+import org.wildstang.year2019.auto.programs.NewL2056A;
+import org.wildstang.year2019.auto.programs.NewL2056B;
+import org.wildstang.year2019.auto.programs.NewCSL;
 import org.wildstang.year2019.auto.programs.Left2056steps.step2;
 import org.wildstang.year2019.auto.programs.Left2056steps.step3;
 import org.wildstang.year2019.auto.programs.Left2056steps.step4;
@@ -62,16 +65,19 @@ public class Robot extends TimedRobot {
 
         //AutoManager.getInstance().addProgram(new ExampleAutoProgram());
         //AutoManager.getInstance().addProgram(new AllTheWayThrough());
-        AutoManager.getInstance().addProgram(new TestPathReader());
-        AutoManager.getInstance().addProgram(new CargoShipLeft());
-        AutoManager.getInstance().addProgram(new Left2056L1());
-        AutoManager.getInstance().addProgram(new ExampleAutoProgram());
+        //AutoManager.getInstance().addProgram(new TestPathReader());
+        //AutoManager.getInstance().addProgram(new CargoShipLeft());
+        //AutoManager.getInstance().addProgram(new Left2056L1());
+        //AutoManager.getInstance().addProgram(new ExampleAutoProgram());
+        AutoManager.getInstance().addProgram(new NewCSL());
+        AutoManager.getInstance().addProgram(new NewL2056A());
+        AutoManager.getInstance().addProgram(new NewL2056B());
+        AutoManager.getInstance().addProgram(new step1());
         AutoManager.getInstance().addProgram(new step2());
         AutoManager.getInstance().addProgram(new step3());
         AutoManager.getInstance().addProgram(new step4());
         AutoManager.getInstance().addProgram(new step5());
         AutoManager.getInstance().addProgram(new step6());
-        AutoManager.getInstance().addProgram(new step1());
         //AutoManager.getInstance().addProgram(new RocketLeft());
     }
 
