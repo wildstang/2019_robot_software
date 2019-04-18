@@ -610,8 +610,8 @@ public class Drive implements Subsystem {
     public void setForward(boolean thing){
         driveMode = DriveType.MAGIC;
         if (thing) {
-            masters[LEFT].set(ControlMode.PercentOutput,0.51);
-            masters[RIGHT].set(ControlMode.PercentOutput,0.555);
+            masters[LEFT].set(ControlMode.PercentOutput,0.51*0.8);
+            masters[RIGHT].set(ControlMode.PercentOutput,0.555*0.8);
         } else {
             masters[LEFT].set(ControlMode.PercentOutput,0.0);
             masters[RIGHT].set(ControlMode.PercentOutput,0.0);
