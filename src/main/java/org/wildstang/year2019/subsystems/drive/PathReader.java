@@ -1,45 +1,54 @@
 package org.wildstang.year2019.subsystems.drive;
 
 import com.ctre.phoenix.motion.TrajectoryPoint;
-
-import jaci.pathfinder.*;
-
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PathReader {
 
     private static int modifier = 1;
 
     public static Trajectory readTrajectory(File p_path, boolean isForwards) {
-        jaci.pathfinder.Trajectory values = null;
+        Reader in;
+        List<CSVRecord> records;
         try {
-            values = Pathfinder.readFromCSV(p_path);
-        } catch (IOException e) {
-            e.printStackTrace();
+            in = new FileReader(p_path);
+            records = CSVFormat.EXCEL.parse(in).getRecords();
+        } catch (Exception e) {
+            for (int i = 0; i < 100; ++i) {
+                System.out.println("FAILED TO READ PATH!");
+            }
+            return new Trajectory();
         }
 
         if (isForwards) modifier = 1;
         if (!isForwards) modifier = -1;
 
         ArrayList<TrajectoryPoint> trajPoints = new ArrayList<TrajectoryPoint>();
-        double[][] dataPoints = new double[values.length()][];
+        ArrayList<double[]> dataPoints = new ArrayList<double[]>();
         Trajectory trajectory = new Trajectory();
         TrajectoryPoint mpPoint = null;
-        for (int i = 0; i < values.length(); i++) {
-            mpPoint = new TrajectoryPoint();
-            dataPoints[i] = new double[3];
 
-            dataPoints[i][0] = (int) values.get(i).dt;
-            dataPoints[i][1] = modifier*values.get(i).position*DriveConstants.TICKS_PER_INCH_MOD;//6*Math.PI ;
-            dataPoints[i][2] = modifier*values.get(i).velocity*DriveConstants.TICKS_PER_INCH_MOD/10; //6*Math.PI;//*18.85;
-
+        int i = 0;
+        for (CSVRecord record : records) {
             
+            mpPoint = new TrajectoryPoint();
+            double dataPoint[] = new double[3];
 
-            mpPoint.timeDur = (int) dataPoints[i][0];
-            mpPoint.position = dataPoints[i][1];
-            mpPoint.velocity = dataPoints[i][2];
+            dataPoint[0] = Double.parseDouble(record.get("dt"));
+            dataPoint[1] = modifier * Double.parseDouble(record.get("position")) * DriveConstants.TICKS_PER_INCH_MOD;
+            dataPoint[2] = modifier * Double.parseDouble(record.get("velocity")) * DriveConstants.TICKS_PER_INCH_MOD/10;
+
+            mpPoint.timeDur = (int) dataPoint[0];
+            mpPoint.position = dataPoint[1];
+            mpPoint.velocity = dataPoint[2];
+
+            dataPoints.add(dataPoint);
 
             mpPoint.profileSlotSelect0 = 0;
 
@@ -51,17 +60,18 @@ public class PathReader {
                 mpPoint.zeroPos = false;
             }
 
-            if (i == values.length() - 1) {
+            if (i == records.size() - 1) {
                 mpPoint.isLastPoint = true;
             } else {
                 mpPoint.isLastPoint = false;
             }
 
             trajPoints.add(mpPoint);
+            ++i;
         }
 
         trajectory.setTalonPoints(trajPoints);
-        trajectory.setTrajectoryPoints(dataPoints);
+        trajectory.setTrajectoryPoints((double[][]) dataPoints.toArray());
 
         return trajectory;
     }
