@@ -25,7 +25,10 @@ public class PathReader {
             }
             return new Trajectory();
         }
-        records.remove(0);
+        if (records.get(0).get("Delta Time").equals("Delta Time")){
+            records.remove(0);
+        }
+        
 
         if (isForwards) modifier = 1;
         if (!isForwards) modifier = -1;
