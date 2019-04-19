@@ -7,7 +7,7 @@ import org.wildstang.year2019.auto.steps.DeployHatch;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.wildstang.framework.auto.AutoProgram;
-import org.wildstang.year2017.auto.steps.MotionMagicStraightLine;
+import org.wildstang.year2019.auto.steps.MotionMagicStraightLine;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 

@@ -25,18 +25,18 @@ public class PathReader {
             }
             return new Trajectory();
         }
+        records.remove(0);
 
         if (isForwards) modifier = 1;
         if (!isForwards) modifier = -1;
 
         ArrayList<TrajectoryPoint> trajPoints = new ArrayList<TrajectoryPoint>();
-        double[][] dataPoints = new double[records.size()][];
+        double[][] dataPoints = new double[records.size()][3];
         Trajectory trajectory = new Trajectory();
         TrajectoryPoint mpPoint = null;
 
         int i = 0;
         for (CSVRecord record : records) {
-            if (i==0) continue;
             mpPoint = new TrajectoryPoint();
             dataPoints[i] = new double[3];
 

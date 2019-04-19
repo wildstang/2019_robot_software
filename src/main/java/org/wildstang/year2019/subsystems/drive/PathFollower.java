@@ -84,10 +84,10 @@ public class PathFollower {
         m_right.getMotionProfileStatus(m_rightStatus);
 
         if (m_leftStatus.hasUnderrun) {
-            System.out.println("Left Talon has buffer underrun");
+            //System.out.println("Left Talon has buffer underrun");
         }
         if (m_rightStatus.hasUnderrun) {
-            System.out.println("Right Talon has buffer underrun");
+            //System.out.println("Right Talon has buffer underrun");
         }
 
         // FIXME: this needs a comment as to why this condition. If we miss an update() during
