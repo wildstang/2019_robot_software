@@ -30,7 +30,7 @@ public class PathReader {
         if (!isForwards) modifier = -1;
 
         ArrayList<TrajectoryPoint> trajPoints = new ArrayList<TrajectoryPoint>();
-        ArrayList<double[]> dataPoints = new ArrayList<double[]>();
+        double[][] dataPoints = new double[records.size()][];
         Trajectory trajectory = new Trajectory();
         TrajectoryPoint mpPoint = null;
 
@@ -38,17 +38,15 @@ public class PathReader {
         for (CSVRecord record : records) {
             if (i==0) continue;
             mpPoint = new TrajectoryPoint();
-            double dataPoint[] = new double[3];
+            dataPoints[i] = new double[3];
 
-            dataPoint[0] = Double.parseDouble(record.get("Delta Time"));
-            dataPoint[1] = modifier * Double.parseDouble(record.get("Position")) * DriveConstants.TICKS_PER_INCH_MOD;
-            dataPoint[2] = modifier * Double.parseDouble(record.get("Velocity")) * DriveConstants.TICKS_PER_INCH_MOD/10;
+            dataPoints[i][0] = Double.parseDouble(record.get("Delta Time"));
+            dataPoints[i][1] = modifier * Double.parseDouble(record.get("Position")) * DriveConstants.TICKS_PER_INCH_MOD;
+            dataPoints[i][2] = modifier * Double.parseDouble(record.get("Velocity")) * DriveConstants.TICKS_PER_INCH_MOD/10;
 
-            mpPoint.timeDur = (int) dataPoint[0];
-            mpPoint.position = dataPoint[1];
-            mpPoint.velocity = dataPoint[2];
-
-            dataPoints.add(dataPoint);
+            mpPoint.timeDur = (int) dataPoints[i][0];
+            mpPoint.position = dataPoints[i][1];
+            mpPoint.velocity = dataPoints[i][2];
 
             mpPoint.profileSlotSelect0 = 0;
 
@@ -71,7 +69,7 @@ public class PathReader {
         }
 
         trajectory.setTalonPoints(trajPoints);
-        trajectory.setTrajectoryPoints(dataPoints.toArray(new double[0][0]));
+        trajectory.setTrajectoryPoints(dataPoints);
 
         return trajectory;
     }
