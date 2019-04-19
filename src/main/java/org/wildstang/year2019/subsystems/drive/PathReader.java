@@ -18,7 +18,7 @@ public class PathReader {
         List<CSVRecord> records;
         try {
             in = new FileReader(p_path);
-            records = CSVFormat.EXCEL.parse(in).getRecords();
+            records = CSVFormat.EXCEL.withHeader("Delta Time","X Point","Y Point","Position","Velocity","Acceleration","Jerk","Heading").parse(in).getRecords();
         } catch (Exception e) {
             for (int i = 0; i < 100; ++i) {
                 System.out.println("FAILED TO READ PATH!");
@@ -36,13 +36,13 @@ public class PathReader {
 
         int i = 0;
         for (CSVRecord record : records) {
-            
+            if (i==0) continue;
             mpPoint = new TrajectoryPoint();
             double dataPoint[] = new double[3];
 
-            dataPoint[0] = Double.parseDouble(record.get("dt"));
-            dataPoint[1] = modifier * Double.parseDouble(record.get("position")) * DriveConstants.TICKS_PER_INCH_MOD;
-            dataPoint[2] = modifier * Double.parseDouble(record.get("velocity")) * DriveConstants.TICKS_PER_INCH_MOD/10;
+            dataPoint[0] = Double.parseDouble(record.get("Delta Time"));
+            dataPoint[1] = modifier * Double.parseDouble(record.get("Position")) * DriveConstants.TICKS_PER_INCH_MOD;
+            dataPoint[2] = modifier * Double.parseDouble(record.get("Velocity")) * DriveConstants.TICKS_PER_INCH_MOD/10;
 
             mpPoint.timeDur = (int) dataPoint[0];
             mpPoint.position = dataPoint[1];
@@ -71,7 +71,7 @@ public class PathReader {
         }
 
         trajectory.setTalonPoints(trajPoints);
-        trajectory.setTrajectoryPoints((double[][]) dataPoints.toArray());
+        trajectory.setTrajectoryPoints(dataPoints.toArray(new double[0][0]));
 
         return trajectory;
     }
