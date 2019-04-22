@@ -18,7 +18,7 @@ public class step5 extends AutoProgram {
 
     @Override
     protected void defineSteps() {
-        addStep(new PathFollowerStep(PathNameConstants.LCS5I,true));
+        addStep(new PathFollowerStep(PathNameConstants.LCS5I,true,true));
     }
 
     @Override

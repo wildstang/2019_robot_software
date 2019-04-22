@@ -17,7 +17,7 @@ public class TestPathReader extends AutoProgram {
 
         SmartDashboard.putBoolean("Checkpoint 3003 yay", true);
 
-        addStep(new PathFollowerStep(PathNameConstants.TEST_LINE, true));
+        addStep(new PathFollowerStep(PathNameConstants.TEST_LINE,true, true));
         //addStep(new DelayStep(2));
         //addStep(new DeployHatch());
         //addStep(new PathFollowerStep(PathNameConstants.ROCKET_CLOSE_LEFT_INTERIM_HP, false));

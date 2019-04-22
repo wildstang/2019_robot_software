@@ -20,23 +20,23 @@ public class NewL2056B extends AutoProgram {
 
 
         
-        addStep(new PathFollowerStep(PathNameConstants.L20561I,true));
+        addStep(new PathFollowerStep(PathNameConstants.L20561I,true,true));
 
         addStep(new DeployHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.L20562I,false));
+        addStep(new PathFollowerStep(PathNameConstants.L20562I,true,false));
 
-        addStep(new PathFollowerStep(PathNameConstants.L20563I, true));
+        addStep(new PathFollowerStep(PathNameConstants.L20563I,true, true));
         
         addStep(new CollectHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.L20564I, false));
+        addStep(new PathFollowerStep(PathNameConstants.L20564I,true, false));
 
-        addStep(new PathFollowerStep(PathNameConstants.L20565I, true));
+        addStep(new PathFollowerStep(PathNameConstants.L20565I,true, true));
 
         addStep(new DeployHatch());
         
-        addStep(new PathFollowerStep(PathNameConstants.L20566IB, false));
+        addStep(new PathFollowerStep(PathNameConstants.L20566IB,true, false));
 
     }
 

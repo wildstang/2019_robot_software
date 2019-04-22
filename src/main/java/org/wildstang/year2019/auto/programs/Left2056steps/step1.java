@@ -22,7 +22,7 @@ public class step1 extends AutoProgram {
         //addStep(new BasicStraight(120));
         //addStep(new DelayStep(0.5));
         //addStep(new PathFollowerStep(PathNameConstants.TEST_LINE,true));
-        addStep(new PathFollowerStep(PathNameConstants.L20561I,true));
+        addStep(new PathFollowerStep(PathNameConstants.L20561I,true,true));
     
     }
 

@@ -20,19 +20,19 @@ public class NewCSL extends AutoProgram {
 
 
         
-        addStep(new PathFollowerStep(PathNameConstants.LCS1I,true));
+        addStep(new PathFollowerStep(PathNameConstants.LCS1I,true,true));
 
         addStep(new DeployHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.LCS2I,false));
+        addStep(new PathFollowerStep(PathNameConstants.LCS2I,true,false));
 
-        addStep(new PathFollowerStep(PathNameConstants.LCS3I, true));
+        addStep(new PathFollowerStep(PathNameConstants.LCS3I,true, true));
         
         addStep(new CollectHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.LCS4I, false));
+        addStep(new PathFollowerStep(PathNameConstants.LCS4I,true, false));
 
-        addStep(new PathFollowerStep(PathNameConstants.LCS5I, true));
+        addStep(new PathFollowerStep(PathNameConstants.LCS5I,true, true));
 
         addStep(new DeployHatch());
 

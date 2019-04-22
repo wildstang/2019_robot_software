@@ -24,15 +24,15 @@ public class Left2056L1 extends AutoProgram {
 
         addStep(new DeployHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.the2056B,false));
+        addStep(new PathFollowerStep(PathNameConstants.the2056B,true,false));
 
-        addStep(new PathFollowerStep(PathNameConstants.the2056C, true));
+        addStep(new PathFollowerStep(PathNameConstants.the2056C,true, true));
         
         addStep(new CollectHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.the2056D, false));
+        addStep(new PathFollowerStep(PathNameConstants.the2056D,true, false));
 
-        addStep(new PathFollowerStep(PathNameConstants.the2056E, true));
+        addStep(new PathFollowerStep(PathNameConstants.the2056E,true, true));
 
         addStep(new DeployHatch());
         

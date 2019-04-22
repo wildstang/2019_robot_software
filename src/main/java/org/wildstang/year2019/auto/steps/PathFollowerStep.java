@@ -21,15 +21,17 @@ public class PathFollowerStep extends AutoStep {
     private Drive m_drive;
     private PathFollower m_pathFollower;
     private boolean isForwards;
+    private boolean isLeft;
 
     private boolean m_started = false;
 
-    public PathFollowerStep(String p_path, boolean isForwards) {
+    public PathFollowerStep(String p_path, boolean isLeft, boolean isForwards) {
         SmartDashboard.putBoolean("Checkpoint 1001 yay", true);
         SmartDashboard.putString("Testing path loading",Filesystem.getDeployDirectory().toString() + "/output/"+p_path);
 
         m_filePath = Filesystem.getDeployDirectory().toString() + "/output/" + p_path;
         this.isForwards = isForwards;
+        this.isLeft = isLeft;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class PathFollowerStep extends AutoStep {
         
         File leftFile = new File(m_filePath + "_right.csv");
         File rightFile = new File(m_filePath + "_left.csv");
-        if (!isForwards){
+        if (!isForwards || !isLeft){
             File holder = rightFile;
             rightFile = leftFile;
             leftFile = holder;
