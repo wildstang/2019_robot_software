@@ -56,6 +56,8 @@ public class Drive implements Subsystem {
     /** Left and right pairs of Victor follower controllers */
     private VictorSPX[][] followers = new VictorSPX[2][2];
 
+    public static boolean autoEStopActivated = false;
+
     /** Input to steer robot */
     private AnalogInput headingInput;
     /** Input to control forward-backward movement */
@@ -67,6 +69,8 @@ public class Drive implements Subsystem {
     private AnalogInput quickTurnInput;
     /** Button to control anti-turbo mode */
     private DigitalInput antiTurboInput;
+    /** Button to terminate current and future auto paths and return to sandstorm control */
+    private DigitalInput autoEStopInput;
 
     /**
      * Keeps track of what kind of drive we're doing (e.g. cheesy drive vs path vs
@@ -172,6 +176,14 @@ public class Drive implements Subsystem {
             
             setHeading(headingInput.getValue());
             
+        } else if (source == autoEStopInput) {
+            
+            if (autoEStopInput.getValue() == true) {
+
+                autoEStopActivated = true;
+
+            }
+
         }
 
         // TODO: Do we want to make quickturn automatic?
@@ -463,6 +475,9 @@ public class Drive implements Subsystem {
 
         baseLockInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.BASE_LOCK.getName());
         baseLockInput.addInputListener(this);
+
+        autoEStopInput = (DigitalInput) Core.getInputManager().getInput(WSInputs.AUTO_E_STOP.getName());
+        autoEStopInput.addInputListener(this);
     }
 
     /** Initialize all drive base motor controllers. */

@@ -3,7 +3,7 @@ package org.wildstang.year2019.auto.steps;
 import org.wildstang.framework.auto.steps.AutoStep;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSSubsystems;
-
+import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.subsystems.lift.Hatch;
 
 import org.wildstang.framework.timer.WsTimer;
@@ -19,15 +19,19 @@ public class CollectHatch extends AutoStep{
 
     
     public void update(){
-        //call what you want the subsystem to do during this step
-        // control the drive with drive. whatever you want
-        if (firstRun){
-            timer.reset();
-            timer.start();
-            firstRun = false;
-        }
+        if (Drive.autoEStopActivated == true) {
+            setFinished(true);
+        } else {
+            //call what you want the subsystem to do during this step
+            // control the drive with drive. whatever you want
+            if (firstRun) {
+                timer.reset();
+                timer.start();
+                firstRun = false;
+            }
 
-        setFinished(hatch.collectAuto(timer.hasPeriodPassed(0.1)));
+            setFinished(hatch.collectAuto(timer.hasPeriodPassed(0.1)));
+        }
     }
     public String toString(){
         //put a reasonable name for this step inside the string

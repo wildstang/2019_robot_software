@@ -63,6 +63,11 @@ public class PathFollowerStep extends AutoStep {
 
     @Override
     public void update() {
+        if (Drive.autoEStopActivated == true) {
+            setFinished(true);
+            m_drive.pathCleanup();
+        }
+
         SmartDashboard.putBoolean("Checkpoint 505 yay", true);
         if (!isFinished()) {
 

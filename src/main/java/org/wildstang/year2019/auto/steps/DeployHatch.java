@@ -3,7 +3,7 @@ package org.wildstang.year2019.auto.steps;
 import org.wildstang.framework.auto.steps.AutoStep;
 import org.wildstang.framework.core.Core;
 import org.wildstang.year2019.robot.WSSubsystems;
-
+import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.subsystems.lift.Hatch;
 
 
@@ -17,8 +17,11 @@ public class DeployHatch extends AutoStep{
         //call what you want the subsystem to do during this step
         // control the drive with drive. whatever you want
 
-
-        setFinished(hatch.deployAuto());
+        if (Drive.autoEStopActivated == true) {
+            setFinished(true);
+        } else {
+            setFinished(hatch.deployAuto());
+        }
     }
     public String toString(){
         //put a reasonable name for this step inside the string

@@ -81,6 +81,9 @@ public enum WSInputs implements Inputs {
                                                                                            // Subsystem
     BUMPER("BUMPER", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 1), false),
 
+    AUTO_E_STOP("Auto E-Stop", WSInputType.JS_BUTTON, new WsJSButtonInputConfig(0, 0), false), // Drive/Auto
+                                                                                               // Subsystem
+
     // ---------------------------------
     // Manipulator Joysticks
     // ---------------------------------
