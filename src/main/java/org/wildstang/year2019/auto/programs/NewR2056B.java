@@ -15,30 +15,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.wildstang.framework.auto.AutoProgram;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class NewL2056B extends AutoProgram {
+public class NewR2056B extends AutoProgram {
 
     @Override
     protected void defineSteps() {
 
         addStep(new intakeOut());
         
-        addStep(new PathFollowerStep(PathNameConstants.L20561I,true,true));
+        addStep(new PathFollowerStep(PathNameConstants.L20561I,false,true));
 
         addStep(new DeployHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.L20562I,true,false));
+        addStep(new PathFollowerStep(PathNameConstants.L20562I,false,false));
 
-        addStep(new PathFollowerStep(PathNameConstants.L20563I,true, true));
+        addStep(new PathFollowerStep(PathNameConstants.L20563I,false, true));
         
         addStep(new CollectHatch());
 
-        addStep(new PathFollowerStep(PathNameConstants.L20564I,true, false));
+        addStep(new PathFollowerStep(PathNameConstants.L20564I,false, false));
 
-        addStep(new PathFollowerStep(PathNameConstants.L20565I,true, true));
+        addStep(new PathFollowerStep(PathNameConstants.L20565I,false, true));
 
         addStep(new DeployHatch());
         
-        addStep(new PathFollowerStep(PathNameConstants.L20566IB,true, false));
+        addStep(new PathFollowerStep(PathNameConstants.L20566IB,false, false));
 
         addStep(new SandstormStep());
 
@@ -47,7 +47,7 @@ public class NewL2056B extends AutoProgram {
     @Override
     public String toString() {
         //give it a name
-        return "L2056B";
+        return "R2056B";
     }
 
 }

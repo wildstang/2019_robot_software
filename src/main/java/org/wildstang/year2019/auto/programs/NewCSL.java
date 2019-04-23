@@ -7,6 +7,7 @@ import org.wildstang.year2019.auto.steps.DelayStep;
 import org.wildstang.year2019.auto.steps.BasicStraight;
 import org.wildstang.year2019.auto.steps.MotionMagicStraightLine;
 import org.wildstang.year2019.auto.programs.PathNameConstants;
+import org.wildstang.year2019.auto.steps.SandstormStep;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -36,12 +37,14 @@ public class NewCSL extends AutoProgram {
 
         addStep(new DeployHatch());
 
+        addStep(new SandstormStep());
+
     }
 
     @Override
     public String toString() {
         //give it a name
-        return "NewCSL";
+        return "Left CS";
     }
 
 }
