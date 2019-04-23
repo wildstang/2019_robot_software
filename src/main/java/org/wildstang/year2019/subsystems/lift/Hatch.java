@@ -40,6 +40,10 @@ public class Hatch implements Subsystem {
     private boolean working;
     private boolean isStartPressed;
 
+    private boolean collectPrev;
+    private boolean collectCurrent;
+    private boolean isCollect;
+
     public static final boolean lockVal = false;
     public static final boolean outVal = false;
 
@@ -76,15 +80,22 @@ public class Hatch implements Subsystem {
             } 
         }
         
-        if (source == hatchCollect) {
+        // if (source == hatchCollect) {
             
 
-            if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true && !isStartPressed){
-                currentCommand = commands.COLLECT.ordinal();
-            } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue()==false){
-                currentCommand = commands.COLLECT2.ordinal();
-            }
-        }
+        //     if (currentCommand == commands.IDLE.ordinal() && hatchCollect.getValue() == true && !isStartPressed){
+        //         currentCommand = commands.COLLECT.ordinal();
+        //     } else if (currentCommand == commands.COLLECT.ordinal() && hatchCollect.getValue()==false){
+        //         currentCommand = commands.COLLECT2.ordinal();
+        //     }
+        // }
+        if(source == hatchCollect) {
+            collectCurrent = hatchCollect.getValue();
+            if (collectCurrent && !collectPrev) {
+                isCollect = !isCollect;
+            } 
+        collectPrev = collectCurrent;
+    }
     }
 
     @Override
@@ -129,7 +140,8 @@ public class Hatch implements Subsystem {
                 hatchOut.setValue(outPosition);
                 working = false;
                 currentCommand = commands.IDLE.ordinal();
-            } //else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
+            } 
+            //else if (timer.hasPeriodPassed(2*DEPLOY_WAIT + RETRACT_WAIT)) {
             //     lockPosition = lockVal;
             //     hatchLock.setValue(lockPosition);
 
@@ -137,46 +149,52 @@ public class Hatch implements Subsystem {
 
             //     currentCommand = commands.IDLE.ordinal();
             // }
-        } else if (currentCommand == commands.COLLECT.ordinal()) {
-            if (!working){
-                lockPosition = !lockVal;
-                hatchLock.setValue(lockPosition);
-                //currentCommand = commands.COLLECT2.ordinal();
-            }
-            // if (!working) {
-            //     working = true;
-            //     outPosition = !outVal;
-            //     lockPosition= !lockVal;
-            //     hatchOut.setValue(outPosition);
-            //     hatchLock.setValue(lockPosition);
-            //     timer.reset();
-            //     working=false;
-            // } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
-            //     outPosition = outVal;
-            //     hatchOut.setValue(outPosition);
-            //     working = false;
-
-            //     currentCommand = commands.IDLE.ordinal();
-            // }
-         } else if (currentCommand == commands.COLLECT2.ordinal()){
-             lockPosition = lockVal;
-             hatchLock.setValue(lockPosition);
-             currentCommand = commands.IDLE.ordinal();
-        //     if (!working) {
-        //         timer.reset();
-        //         working = true;
+        } 
+        else if(isCollect) 
+        {
+            hatchLock.setValue(isCollect);
+        }
+        // } else if (currentCommand == commands.COLLECT.ordinal()) {
+        //     if (!working){
+        //         lockPosition = !lockVal;
+        //         hatchLock.setValue(lockPosition);
+        //         //currentCommand = commands.COLLECT2.ordinal();
         //     }
-        //     outPosition=outVal;
-        //     lockPosition=lockVal;
-        //     hatchLock.setValue(lockPosition);
-        //     if (timer.hasPeriodPassed(LOCK_WAIT)){
+        //     // if (!working) {
+        //     //     working = true;
+        //     //     outPosition = !outVal;
+        //     //     lockPosition= !lockVal;
+        //     //     hatchOut.setValue(outPosition);
+        //     //     hatchLock.setValue(lockPosition);
+        //     //     timer.reset();
+        //     //     working=false;
+        //     // } //else if (timer.hasPeriodPassed(DEPLOY_WAIT)) {
+        //     //     outPosition = outVal;
+        //     //     hatchOut.setValue(outPosition);
+        //     //     working = false;
+
+        //     //     currentCommand = commands.IDLE.ordinal();
+        //     // }
+        //  } else if (currentCommand == commands.COLLECT2.ordinal()){
+        //      lockPosition = lockVal;
+        //      hatchLock.setValue(lockPosition);
+        //      currentCommand = commands.IDLE.ordinal();
+        // //     if (!working) {
+        // //         timer.reset();
+        // //         working = true;
+        // //     }
+        // //     outPosition=outVal;
+        // //     lockPosition=lockVal;
+        // //     hatchLock.setValue(lockPosition);
+        // //     if (timer.hasPeriodPassed(LOCK_WAIT)){
                 
-        //         hatchOut.setValue(outPosition);
-        //         working=false;
-        //         currentCommand = commands.IDLE.ordinal();
-             }
+        // //         hatchOut.setValue(outPosition);
+        // //         working=false;
+        // //         currentCommand = commands.IDLE.ordinal();
+        //      }
             
         // }
+        
         SmartDashboard.putBoolean("Hatch Out", hatchOut.getValue());
         SmartDashboard.putBoolean("Hatch Lock", hatchLock.getValue());
     }
@@ -188,6 +206,9 @@ public class Hatch implements Subsystem {
         lockPosition = lockVal;
         hatchOut.setValue(outPosition);
         hatchLock.setValue(lockPosition);
+        collectPrev = false;
+        collectCurrent = false;
+        isCollect = false;
 
         working = false;
 
