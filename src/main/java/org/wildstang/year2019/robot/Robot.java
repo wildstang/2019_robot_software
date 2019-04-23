@@ -86,6 +86,7 @@ public class Robot extends TimedRobot {
         System.out.println("Engaging disabled mode.");
         Drive driveBase = ((Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName()));
         driveBase.setBrakeMode(false);
+        driveBase.purgePaths();
     }
 
     @Override
@@ -151,6 +152,10 @@ public class Robot extends TimedRobot {
         //Drive drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
         //drive.setFullBrakeMode();
         resetRobotState();
+
+        Drive driveBase = ((Drive) Core.getSubsystemManager()
+                .getSubsystem(WSSubsystems.DRIVEBASE.getName()));
+        driveBase.purgePaths();
     }
     
     private void resetRobotState() {
