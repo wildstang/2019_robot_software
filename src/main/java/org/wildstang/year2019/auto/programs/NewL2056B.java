@@ -5,6 +5,7 @@ import org.wildstang.year2019.auto.steps.CollectHatch;
 import org.wildstang.year2019.auto.steps.DeployHatch;
 import org.wildstang.year2019.auto.steps.DelayStep;
 import org.wildstang.year2019.auto.steps.BasicStraight;
+import org.wildstang.year2019.auto.steps.intakeOut;
 import org.wildstang.year2019.auto.steps.MotionMagicStraightLine;
 import org.wildstang.year2019.auto.programs.PathNameConstants;
 
@@ -18,7 +19,7 @@ public class NewL2056B extends AutoProgram {
     @Override
     protected void defineSteps() {
 
-
+        addStep(new intakeOut());
         
         addStep(new PathFollowerStep(PathNameConstants.L20561I,true,true));
 

@@ -337,4 +337,7 @@ public class Ballpath implements Subsystem {
     public String getName() {
         return "Ballpath";
     }
+    public void setIntake(){
+        intake_solenoid.setValue(true);
+    }
 }
