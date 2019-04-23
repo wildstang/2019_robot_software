@@ -42,7 +42,7 @@ public class PathFollowerStep extends AutoStep {
         
         File leftFile = new File(m_filePath + "_right.csv");
         File rightFile = new File(m_filePath + "_left.csv");
-        if (!isForwards || !isLeft){
+        if (!isForwards || !isLeft){ // TODO In the event of flipped robot movement, switch which file each side reads
             File holder = rightFile;
             rightFile = leftFile;
             leftFile = holder;
