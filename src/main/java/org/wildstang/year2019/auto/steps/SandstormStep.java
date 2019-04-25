@@ -19,10 +19,6 @@ public class SandstormStep extends AutoStep {
 
     public SandstormStep()
     {
-        // TODO: See class JavaDoc above
-        drive.purgePaths();
-        drive.setOpenLoopDrive();
-        drive.setBrakeMode(false);
         
     }
 
@@ -30,7 +26,11 @@ public class SandstormStep extends AutoStep {
     {
         // initialize variables and stuff
         drive = (Drive) Core.getSubsystemManager().getSubsystem(WSSubsystems.DRIVEBASE.getName());
+        
         drive.resetEncoders();
+        drive.purgePaths();
+        drive.setOpenLoopDrive();
+        drive.setBrakeMode(false);
     }
 
     public void update()

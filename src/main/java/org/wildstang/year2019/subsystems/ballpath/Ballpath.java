@@ -75,7 +75,7 @@ public class Ballpath implements Subsystem {
 
     // Solenoids
     private WsSolenoid hopper_solenoid;
-    private WsSolenoid intake_solenoid;
+    private WsDoubleSolenoid intake_solenoid;
 
     // Victors
     private VictorSPX intakeVictor;
@@ -229,7 +229,7 @@ public class Ballpath implements Subsystem {
 
         // Solenoids
         hopper_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
-        intake_solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
+        intake_solenoid = (WsDoubleSolenoid) Core.getOutputManager().getOutput(WSOutputs.INTAKE_SOLENOID.getName());
 
         // WsVictors
         intakeVictor = new VictorSPX(CANConstants.INTAKE_VICTOR);
@@ -270,10 +270,14 @@ public class Ballpath implements Subsystem {
         SmartDashboard.putBoolean("Intake Position", intake_position);
         SmartDashboard.putBoolean("isOTB", isOTB);
         if(isOTB) {
-             intake_solenoid.setValue(isOTB);
+             intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
          } else{
-            intake_solenoid.setValue(intake_position);
-        }
+            if (intake_position){
+                intake_solenoid.setValue(WsDoubleSolenoidState.REVERSE.ordinal());
+            } else {
+                intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
+            }
+        }   
         if (isIntake_motor) {
             intakeVictor.set(ControlMode.PercentOutput, ROLLER_SPEED);
             SmartDashboard.putNumber("Intake Speed", ROLLER_SPEED);
@@ -316,7 +320,7 @@ public class Ballpath implements Subsystem {
     @Override
     public void resetState() {
         hopper_solenoid.setValue(false);
-        intake_solenoid.setValue(false);
+        intake_solenoid.setValue(WsDoubleSolenoidState.FORWARD.ordinal());
         intakeVictor.set(ControlMode.PercentOutput, 0.0);
         carriageVictor.set(ControlMode.PercentOutput, 0.0);
         hopperVictor1.set(ControlMode.PercentOutput, 0.0);
@@ -338,6 +342,6 @@ public class Ballpath implements Subsystem {
         return "Ballpath";
     }
     public void setIntake(){
-        intake_solenoid.setValue(true);
+        //intake_solenoid.setValue(true);
     }
 }

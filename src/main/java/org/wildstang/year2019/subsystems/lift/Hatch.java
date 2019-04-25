@@ -92,7 +92,7 @@ public class Hatch implements Subsystem {
         if(source == hatchCollect) {
             collectCurrent = hatchCollect.getValue();
             if (collectCurrent && !collectPrev) {
-                isCollect = !isCollect;
+                lockPosition = !lockPosition;
             } 
         collectPrev = collectCurrent;
     }
@@ -150,10 +150,8 @@ public class Hatch implements Subsystem {
             //     currentCommand = commands.IDLE.ordinal();
             // }
         } 
-        else if(isCollect) 
-        {
-            hatchLock.setValue(isCollect);
-        }
+            hatchLock.setValue(lockPosition);
+        
         // } else if (currentCommand == commands.COLLECT.ordinal()) {
         //     if (!working){
         //         lockPosition = !lockVal;
@@ -220,15 +218,16 @@ public class Hatch implements Subsystem {
         return "Hatch";
     }
     public boolean deployAuto(){
-        currentCommand = commands.DEPLOY.ordinal();
+        // currentCommand = commands.DEPLOY.ordinal();
+        lockPosition = true;
         update();
         if (currentCommand == commands.IDLE.ordinal()) return true;
         return false;
     }
     public boolean collectAuto(boolean passed){
-        if (!passed) currentCommand = commands.COLLECT.ordinal();
-        if (passed) currentCommand = commands.COLLECT2.ordinal();
+        lockPosition = false;
         update();
+
         if (currentCommand == commands.IDLE.ordinal()) return true;
         return false;
     }

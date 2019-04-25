@@ -170,11 +170,11 @@ public class Drive implements Subsystem {
 
         if (source == throttleInput) {
             
-            setThrottle(throttleInput.getValue());
+            setThrottle(-throttleInput.getValue());
             
         } else if (source == headingInput) {
             
-            setHeading(headingInput.getValue());
+            setHeading(-headingInput.getValue());
             
         } else if (source == autoEStopInput) {
             
