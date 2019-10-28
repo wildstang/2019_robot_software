@@ -1,76 +1,82 @@
 package org.wildstang.year2019.subsystems;
 
 import org.wildstang.year2019.robot.WSInputs;
-import org.wildstang.framework.CoreUtils;
+import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.Input;
-import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
-import org.wildstang.year2019.robot.WSOutputs;
-import org.wildstang.year2019.robot.CANConstants;
-import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+/**
+ * Class:       Claw_Example.java
+ * Inputs:      2 toggle buttons
+ * Outputs:     2 single solenoids
+ * Description: This is an example subsystem that represents a generic claw.
+ *              The claw is comprised of 2 solenoids which are opened with one button and closed with another.
+ */
+public class Claw_Example implements Subsystem {
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+    // inputs
+    private DigitalInput openButton;
+    private DigitalInput closeButton;
 
-public class Claw_Example implements Subsystem{
+    // outputs
+    private WsSolenoid solenoidA;
+    private WsSolenoid solenoidB;
 
-    private DigitalInput button;
-    private DigitalInput button2;
-    private boolean position;
-    private WsSolenoid solenoid;
-    private WsSolenoid solenoid2;
+    // states
+    private boolean isClawOpen;
 
-    public void init(){
-        //registers and creates all sensors and other items
-        //test
-        button = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
-        button.addInputListener(this);
-        button2 = (DigitalInput) Core.getInputManager().getInput(WSInputs.SHIFT.getName());
-        button2.addInputListener(this);
-        //solenoid = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_HOLD.getName());
-        //solenoid2 = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.GEAR_TILT.getName());
+    // initializes the subsystem
+    public void init() {
+        // register buttons with arbitrary button names, since this is a test
+        openButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
+        openButton.addInputListener(this);
+        closeButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.SHIFT.getName());
+        closeButton.addInputListener(this);
+
+        // register solenoids with arbitrary output names, since this is a test
+        solenoidA = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.WEDGE_SOLENOID.getName());
+        solenoidB = (WsSolenoid) Core.getOutputManager().getOutput(WSOutputs.HOPPER_SOLENOID.getName());
 
         resetState();
     }
-    public void update(){
-        //called every time the core framework updates (~.02 seconds)
-        solenoid.setValue(position);
-        solenoid2.setValue(position);
+
+    // update the subsystem everytime the framework updates (every ~0.02 seconds)
+    public void update() {
+        solenoidA.setValue(isClawOpen);
+        solenoidB.setValue(isClawOpen);
     }
-    public void inputUpdate(Input signal){
-        //used to read local sensors and put them into variables
-        if (signal==button){
-            if (button.getValue()){
-                position=true;
+
+    // respond to input updates
+    public void inputUpdate(Input signal) {
+        // check to see which input was updated
+        if (signal == openButton) {
+            // open the claw if the open button is pressed
+            if (openButton.getValue()) {
+                isClawOpen = true;
             }
         }
-        if (signal==button2){
-            if (button2.getValue()){
-                position=false;
+
+        if (signal == closeButton) {
+            // close the claw if the close button is pressed
+            if (closeButton.getValue()) {
+                isClawOpen = false;
             }
         }
     }
-    public void selfTest(){
-        //used for testing
+
+    //used for testing
+    public void selfTest() {}
+
+    // resets all variables to the default state
+    public void resetState() {
+        isClawOpen = false;
     }
-    public void resetState(){
-        //resets to the default state for all variables
-        position=false;
-    }
-    public String getName(){
+
+    // returns the unique name of the example
+    public String getName() {
         return "Claw_Example";
     }
-
-
-
 }
