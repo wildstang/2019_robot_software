@@ -175,10 +175,10 @@ public class LiftMark3 implements Subsystem {
         motor.setSensorPhase(SENSOR_PHASE);
 
         for (LiftPID constants : LiftPID.values()) {
-            motor.config_kF(constants.slot, constants.k.f, 0);
-            motor.config_kP(constants.slot, constants.k.p, 0);
-            motor.config_kI(constants.slot, constants.k.i, 0);
-            motor.config_kD(constants.slot, constants.k.d, 0);
+            motor.config_kF(constants.k.slot, constants.k.f, 0);
+            motor.config_kP(constants.k.slot, constants.k.p, 0);
+            motor.config_kI(constants.k.slot, constants.k.i, 0);
+            motor.config_kD(constants.k.slot, constants.k.d, 0);
         }
 
         follower = new VictorSPX(CANConstants.LIFT_VICTOR);
@@ -219,9 +219,9 @@ public class LiftMark3 implements Subsystem {
         SmartDashboard.putBoolean("Is Down", goingDown);
         SmartDashboard.putNumber("Target", target);
         if (goingDown) {
-            motor.selectProfileSlot(LiftPID.DOWNTRACK.slot, 0);
+            motor.selectProfileSlot(LiftPID.DOWNTRACK.k.slot, 0);
         } else {
-            motor.selectProfileSlot(LiftPID.TRACKING.slot, 0);
+            motor.selectProfileSlot(LiftPID.TRACKING.k.slot, 0);
         }
         motor.set(ControlMode.Position, targetTicks);
     }
@@ -242,7 +242,7 @@ public class LiftMark3 implements Subsystem {
     private void setStopped() {
         currentCommand = Command.STOPPED;
         double positionTicks = motor.getSelectedSensorPosition();
-        motor.selectProfileSlot(LiftPID.HOMING.slot, 0);
+        motor.selectProfileSlot(LiftPID.HOMING.k.slot, 0);
         motor.set(ControlMode.Position, positionTicks);
         SmartDashboard.putNumber("Target", positionTicks / TICKS_PER_INCH);
     }

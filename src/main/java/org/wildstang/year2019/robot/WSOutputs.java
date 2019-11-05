@@ -9,9 +9,6 @@ import org.wildstang.hardware.crio.outputs.config.WsI2COutputConfig;
 import org.wildstang.hardware.crio.outputs.config.WsSolenoidConfig;
 import org.wildstang.hardware.crio.outputs.config.WsDoubleSolenoidConfig;
 import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
-import org.wildstang.hardware.crio.outputs.config.WsVictorConfig;
-import org.wildstang.framework.hardware.WsRemoteDigitalOutputConfig;
-import org.wildstang.hardware.crio.outputs.config.WsDigitalOutputConfig;
 
 import edu.wpi.first.wpilibj.I2C;
 

@@ -1,24 +1,16 @@
 package org.wildstang.year2019.subsystems.drive;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-
 import org.wildstang.year2019.robot.WSInputs;
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
-//import org.wildstang.framework.logger.StateTracker;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -317,7 +309,7 @@ public class Drive implements Subsystem {
         if (driveMode != DriveType.FULL_BRAKE) {
             // Set up Talons to hold their current position as close as possible
             for (TalonSRX master : masters) {
-                master.selectProfileSlot(DrivePID.BASE_LOCK.slot, 0);
+                master.selectProfileSlot(DrivePID.BASE_LOCK.k.slot, 0);
                 master.set(ControlMode.Position, master.getSelectedSensorPosition());
             }
 
@@ -449,10 +441,10 @@ public class Drive implements Subsystem {
 
         // Configure motor controller modes for path following
         masters[LEFT].set(ControlMode.MotionProfile, 0);
-        masters[LEFT].selectProfileSlot(DrivePID.PATH.slot, 0);
+        masters[LEFT].selectProfileSlot(DrivePID.PATH.k.slot, 0);
 
         masters[RIGHT].set(ControlMode.MotionProfile, 0);
-        masters[RIGHT].selectProfileSlot(DrivePID.PATH.slot, 0);
+        masters[RIGHT].selectProfileSlot(DrivePID.PATH.k.slot, 0);
 
         // Use brake mode to stop quickly at end of path, since Talons will put
         // output to neutral
@@ -527,14 +519,14 @@ public class Drive implements Subsystem {
 
         // Load all the PID settings.
         for (DrivePID pid : DrivePID.values()) {
-            master.config_kF(pid.slot, pid.k.f);
-            master.config_kP(pid.slot, pid.k.p);
-            master.config_kI(pid.slot, pid.k.i);
-            master.config_kD(pid.slot, pid.k.d);
+            master.config_kF(pid.k.slot, pid.k.f);
+            master.config_kP(pid.k.slot, pid.k.p);
+            master.config_kI(pid.k.slot, pid.k.i);
+            master.config_kD(pid.k.slot, pid.k.d);
         }
 
         // Special case for base lock: we widen the deadband
-        /* CoreUtils.checkCTRE */master.configAllowableClosedloopError(DrivePID.BASE_LOCK.slot,
+        /* CoreUtils.checkCTRE */master.configAllowableClosedloopError(DrivePID.BASE_LOCK.k.slot,
                 DriveConstants.BRAKE_MODE_ALLOWABLE_ERROR);
 
         // Coast is a reasonable default neutral mode. TODO: is it really?
@@ -581,7 +573,7 @@ public class Drive implements Subsystem {
             // Set up Talons for the Motion Magic mode
 
             for (TalonSRX master : masters) {
-                master.selectProfileSlot(DrivePID.MM_DRIVE.slot, 0);
+                master.selectProfileSlot(DrivePID.MM_DRIVE.k.slot, 0);
                 master.set(ControlMode.MotionMagic, 0);
 
                 // m_leftMaster.setPID(DriveConstants.MM_QUICK_P_GAIN,
@@ -590,26 +582,26 @@ public class Drive implements Subsystem {
                 if (p_quickTurn) {
                     master.configMotionAcceleration(350); // RPM
                     master.configMotionCruiseVelocity(350); // RPM
-                    master.config_kP(DrivePID.BASE_LOCK.slot,
+                    master.config_kP(DrivePID.BASE_LOCK.k.slot,
                             DrivePID.MM_QUICK.k.p);
-                    master.config_kI(DrivePID.BASE_LOCK.slot,
+                    master.config_kI(DrivePID.BASE_LOCK.k.slot,
                             DrivePID.MM_QUICK.k.i);
-                    master.config_kD(DrivePID.BASE_LOCK.slot,
+                    master.config_kD(DrivePID.BASE_LOCK.k.slot,
                             DrivePID.MM_QUICK.k.d);
-                    master.config_kF(DrivePID.BASE_LOCK.slot,
+                    master.config_kF(DrivePID.BASE_LOCK.k.slot,
                             DrivePID.MM_QUICK.k.f);
                 } else {
                     master.configMotionAcceleration(90); // RPM
                     master.configMotionCruiseVelocity(80); // RPM
-                    master.config_kP(DrivePID.MM_DRIVE.slot,
+                    master.config_kP(DrivePID.MM_DRIVE.k.slot,
                             DrivePID.MM_DRIVE.k.p);
-                    master.config_kI(DrivePID.MM_DRIVE.slot,
+                    master.config_kI(DrivePID.MM_DRIVE.k.slot,
                             DrivePID.MM_DRIVE.k.i);
-                    master.config_kD(DrivePID.MM_DRIVE.slot,
+                    master.config_kD(DrivePID.MM_DRIVE.k.slot,
                             DrivePID.MM_DRIVE.k.d);
-                    master.config_kF(DrivePID.MM_DRIVE.slot,
+                    master.config_kF(DrivePID.MM_DRIVE.k.slot,
                             DrivePID.MM_DRIVE.k.f);
-                    master.selectProfileSlot(DrivePID.MM_DRIVE.slot,0);
+                    master.selectProfileSlot(DrivePID.MM_DRIVE.k.slot,0);
                 }
 
             }

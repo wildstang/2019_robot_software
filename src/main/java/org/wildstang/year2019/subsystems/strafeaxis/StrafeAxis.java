@@ -1,23 +1,18 @@
 package org.wildstang.year2019.subsystems.strafeaxis;
 
-import java.util.Arrays;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-//import org.wildstang.framework.CoreUtils.CTREException;
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.IInputManager;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
-import org.wildstang.framework.io.inputs.RemoteAnalogInput;
+import org.wildstang.framework.pid.PIDConstants;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.CANConstants;
 import org.wildstang.year2019.robot.WSInputs;
 import org.wildstang.year2019.subsystems.common.Axis;
-import org.wildstang.year2019.subsystems.strafeaxis.StrafePID;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -321,9 +316,9 @@ public class StrafeAxis extends Axis implements Subsystem {
         axisConfig.manualSpeed = MANUAL_SPEED;
         axisConfig.minTravel = LEFT_MAX_TRAVEL;
         axisConfig.maxTravel = RIGHT_MAX_TRAVEL;
-        axisConfig.runSlot = StrafePID.TRACKING.slot;
+        axisConfig.runSlot = StrafePID.TRACKING.k.slot;
         axisConfig.runK = StrafePID.TRACKING.k;
-        axisConfig.homingSlot = StrafePID.HOMING.slot;
+        axisConfig.homingSlot = StrafePID.HOMING.k.slot;
         axisConfig.homingK = StrafePID.HOMING.k;
         axisConfig.lowerLimitPosition = LEFT_STOP_POS;
         axisConfig.axisInRangeThreshold = AXIS_IN_RANGE_THRESHOLD;

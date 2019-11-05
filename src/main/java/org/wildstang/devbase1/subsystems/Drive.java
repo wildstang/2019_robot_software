@@ -53,7 +53,7 @@ public class Drive implements Subsystem {
     private static final int[][] FOLLOWER_IDS = {{4, 11}, {9, 3}};
 
     private static final PIDConstants MANUAL_DRIVE_PID_CONSTANTS =
-            new PIDConstants(.8, 0.001, 10, 0.55);
+            new PIDConstants(0.001, 10, 0.55, 0.08, 0);
 
     /** Left and right Talon master controllers */
     private TalonSRX[] masters = new TalonSRX[2];

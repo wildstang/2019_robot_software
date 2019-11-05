@@ -2,25 +2,19 @@ package org.wildstang.year2019.subsystems.lift;
 
 import org.wildstang.framework.pid.PIDConstants;
 
-/** Config our pid constants here.
- * 
- * See https://phoenix-documentation.readthedocs.io/en/latest/ch16_ClosedLoop.html for
- * more info on what these numbers mean. */
+/**
+ * Class:       LiftPID.java
+ * Description: Container of PIDConstants used for the Lift.
+ */
 public enum LiftPID {
-    // FIXME: Document the units each of these FPID constants are in.
-    // Constants in order F, P, I, D
-    HOMING(0, new PIDConstants(0, 0.2, 0.0, 7.0)),
-    TRACKING(1, new PIDConstants(0, 7.0, 0.0, 0.0)),
-    DOWNTRACK(2, new PIDConstants(0.0,0.05,0.0,7.0));
-    
-    // only four slots are available on the Talon
+    // Constants in order P, I, D, F, Slot
+    HOMING    (new PIDConstants(0.20, 0.0, 7.0, 0, 0)),
+    TRACKING  (new PIDConstants(7.00, 0.0, 0.0, 0, 1)),
+    DOWNTRACK (new PIDConstants(0.05, 0.0, 7.0, 0, 2));
 
     public final PIDConstants k;
-    // Todo: move slot to PIDConstants and change this to subclass PIDConstants
-    public final int slot;
 
-    LiftPID(int slot, PIDConstants pid) {
-        this.slot = slot;
+    LiftPID(PIDConstants pid) {
         this.k = pid;
     }
 }

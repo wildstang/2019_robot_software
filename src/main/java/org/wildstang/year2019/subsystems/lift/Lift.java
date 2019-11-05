@@ -5,8 +5,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-//import org.wildstang.framework.CoreUtils.CTREException;
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.IInputManager;
 import org.wildstang.framework.io.Input;
@@ -200,9 +198,9 @@ public class Lift extends Axis implements Subsystem {
         axisConfig.manualSpeed = MANUAL_SPEED;
         axisConfig.minTravel = BOTTOM_MAX_TRAVEL;
         axisConfig.maxTravel = TOP_MAX_TRAVEL;
-        axisConfig.runSlot = LiftPID.TRACKING.slot;
+        axisConfig.runSlot = LiftPID.TRACKING.k.slot;
         axisConfig.runK = LiftPID.TRACKING.k;
-        axisConfig.homingSlot = LiftPID.HOMING.slot;
+        axisConfig.homingSlot = LiftPID.HOMING.k.slot;
         axisConfig.homingK = LiftPID.HOMING.k;
         axisConfig.lowerLimitPosition = BOTTOM_STOP_POS;
 

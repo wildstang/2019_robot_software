@@ -67,7 +67,7 @@ public class Claw_Example implements Subsystem {
         }
     }
 
-    //used for testing
+    // used for testing
     public void selfTest() {}
 
     // resets all variables to the default state
