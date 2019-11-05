@@ -30,7 +30,7 @@ public class CollectHatch extends AutoStep{
                 firstRun = false;
             }
 
-            setFinished(hatch.collectAuto(timer.hasPeriodPassed(0.1)));
+            setFinished(hatch.collectAuto());
         }
     }
     public String toString(){
