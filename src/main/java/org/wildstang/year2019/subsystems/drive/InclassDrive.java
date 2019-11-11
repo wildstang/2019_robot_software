@@ -1,15 +1,25 @@
 package org.wildstang.year2019.subsystems.drive;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import org.wildstang.framework.core.Core;
+import org.wildstang.framework.io.Input;
+import org.wildstang.framework.io.inputs.AnalogInput;
+import org.wildstang.framework.io.inputs.DigitalInput;
+import org.wildstang.framework.subsystems.Subsystem;
+import org.wildstang.year2019.robot.CANConstants;
+import org.wildstang.year2019.robot.WSInputs;
+
 /**
  * Class:       InclassDrive.java
  * Inputs:      2 joysticks and 1 button
  * Outputs:     4 talons
- * Description: This is the starting class for an in-class project on Nov 11 2019.
+ * Description: This is the template class for an in-class project on Nov 11 2019.
  *              Assumes a robot with a simple 4 wheel drive, 2 on each side, with a Talon to control each wheel.
  * 
  *              You, the programmer, are given the 2 joysticks to work with plus one button for additional feature
  *              control. With these you need to create various drive systems to control the robot. Do not add any
- *              additional input or outputs. Create a new class using this template for parts 1, 3, and 5.
+ *              additional inputs or outputs. Create a new class using this template for parts 1, 3, and 5.
  * 
  *              There are X parts to this project. Try them one at a time:
  *              1:  Build a tank drive system where the Y-Axis of each joystick controls the speed of the wheels
@@ -59,30 +69,30 @@ public class InclassDrive implements Subsystem {
     @Override
     public void init() {
         // initialize inputs
-        featureButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO.getName());
+        featureButton = (DigitalInput) Core.getInputManager().getInput(WSInputs.ANTITURBO);
         featureButton.addInputListener(this);
 
-        leftXAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.);
+        leftXAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_HEADING);
         leftXAxis.addInputListener(this);
 
-        leftYAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.);
+        leftYAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_THROTTLE);
         leftYAxis.addInputListener(this);
 
-        rightXAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.);
+        rightXAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_HEADING);
         rightXAxis.addInputListener(this);
 
-        rightYAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.);
+        rightYAxis = (AnalogInput) Core.getInputManager().getInput(WSInputs.DRIVE_THROTTLE);
         rightYAxis.addInputListener(this);
 
         // initialize outputs
-        leftFrontDrive = new TalonSRX(CANConstants.)
+        leftFrontDrive = new TalonSRX(CANConstants.LEFT_DRIVE_TALON);
 
-        rightFrontDrive = new TalonSRX(CANConstants.)
+        rightFrontDrive = new TalonSRX(CANConstants.RIGHT_DRIVE_TALON);
         rightFrontDrive.setInverted(true);
 
-        leftRearDrive = new TalonSRX(CANConstants.)
+        leftRearDrive = new TalonSRX(CANConstants.LEFT_DRIVE_TALON);
 
-        rightRearDrive = new TalonSRX(CANConstants.)
+        rightRearDrive = new TalonSRX(CANConstants.RIGHT_DRIVE_TALON);
         rightRearDrive.setInverted(true);
 
         resetState();
