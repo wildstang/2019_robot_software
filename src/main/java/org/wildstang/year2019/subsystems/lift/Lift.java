@@ -60,7 +60,7 @@ public class Lift extends Axis implements Subsystem {
     private static final double BOTTOM_MAX_TRAVEL = 0;
     private static final double TOP_MAX_TRAVEL = 40;
 
-    // buttons to home in on a specific button
+    // buttons to home in on a specific position
     private DigitalInput position1Button;
     private DigitalInput position2Button;
     private DigitalInput position3Button;

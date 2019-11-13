@@ -17,176 +17,145 @@ import org.wildstang.year2019.robot.WSInputs;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/*
- * Another attempt at writing a lift.
- * 
- * Design principles in this iteration:
- *  - All state change and motor manipulation is in setStopped(),
- *    setManualPower(), setTrackingTarget(), and resetState(). No other
- *    code touches currentCommand or sets the motor behavior.
- *  - inputUpdate() is short as possible and focuses on calling out to other
- *    methods that do the work.
- *  - Tried to not implement anything that doesn't work. That's not quite true ---
- *    there's some code for limit and PID override, neither of which do anything.
- *    But for example, 
- *    there's no limit switch support, b/c the robot does not have limit switches.
+/**
+ * Class:       Lift.java
+ * Inputs:      7 buttons, 2 limit switches, and 1 joystick axis
+ * Outputs:     2 motors, a master and a slave
+ * Description: A manual adaptation of the Lift subsystem.
+ *              All state changes and motor manipulation is handled in the set functions.
+ *              inputUpdate focues on divying out work to simpler functions.
+ *              No limit switch or PID override support.
  */
 public class LiftMark3 implements Subsystem {
 
-    ////////////////////////////////////////////////////////////////////////////
-    // CONFIGURATION CONSTANTS
+    // stopping positions in inches above the bottom limit switch
+    private static double POSITION_1 =  0.0;  // low goal
+    private static double POSITION_2 = 10.62; // cargo goal - cargo only
+    private static double POSITION_3 = 22.0;  // mid goal
+    private static double POSITION_4 = 44.0;  // high goal
 
-    /** Position of low goal (inches above lower limit) */
-    private static final double POSITION_1 = 0.0;
-    /** Position of cargo goal (cargo only) (inches above lower limit) */
-    private static final double POSITION_2 = 10.62;
-    /** Position of mid rocket goal (inches above lower limit) */
-    private static final double POSITION_3 = 22.0;
-    /** Position of high rocket goal (inches above lower limit) */
-    private static final double POSITION_4 = 44;
-
-    /** # of rotations of encoder in one inch of axis travel */
-    private static final double REVS_PER_INCH = 1 / 9.087;
-    /** Number of encoder ticks in one revolution */
-    private static final double TICKS_PER_REV = 4096;
-    /** # of ticks in one inch of axis movement */
+    // encoder rotations per inch of vertical travel
+    private static final double REVS_PER_INCH = 1/9.087;     
+    // encoder ticks per rotation of the encoder
+    private static final double TICKS_PER_REV = 4096; 
+    // computation of number of encoder ticks per inch of vertical travel
     private static final double TICKS_PER_INCH = TICKS_PER_REV * REVS_PER_INCH;
 
     private static final boolean INVERTED = false;
     private static final boolean SENSOR_PHASE = true;
 
-    /** Deadband on manual lift control stick. Units are fraction of full deflection. */
-    private static final double MANUAL_DEADBAND = .2;
-
-    /** Approximate constant upward force needed to hold the lift against gravity.
-     * Units are fraction of max power. This is used to make the lift a little more even
-     * in manual control. */
+    // manual lift control joystick deadband
+    private static final double MANUAL_DEADBAND = 0.2;
+    // approximate force needed from the motor to resist gravity
     private static final double HOLDING_POWER = .2;
-
-    /** Gain on manual control */
+    // manual lift control gain
     private static final double MANUAL_GAIN = 0.3;
 
-    ////////////////////////////////////////////////////////////////////////////
-    // PRIVATE DATA MEMBERS
+    // lift control motors (sync'd)
+    private TalonSRX liftMaster;
+    private VictorSPX liftSlave;
 
+    // buttons to home in on a specific position
     private DigitalInput position1Button;
     private DigitalInput position2Button;
     private DigitalInput position3Button;
     private DigitalInput position4Button;
 
-    /**
-     * This input is used by the manipulator controller to fine-tune the axis
-     * position.
-     */
+    // joystick axis to manual adjust position
     public AnalogInput manualAdjustmentJoystick;
-    // General button references for Lift and StrafeAxis to use for overrides
-    public DigitalInput overrideButtonModifier;
-    public DigitalInput limitSwitchOverrideButton;
-    public DigitalInput pidOverrideButton;
 
-    private TalonSRX motor;
-    private VictorSPX follower;
-
-    private boolean isLimitSwitchOverridden;
-    private boolean isPIDOverridden;
-
-    /** Enum of all control modes we can be in. */
-    private enum Command {
+    // enum of all available control modes
+    private enum LiftCtrlMode {
         TRACK, MANUAL, STOPPED;
     }
-    /** Control mode we're currently operating under. */
-    Command currentCommand;
+    // current control mode
+    LiftCtrlMode controlMode;
 
-    ////////////////////////////////////////////////////////////////////////////
-    // PUBLIC METHODS
-
+    @Override
     public void init() {
+        // initialize everything in their private functions
         initMotors();
         initInputs();
         resetState();
     }
 
+    @Override
     public void inputUpdate(Input source) {
-        if (source == position1Button) {
-            if (position1Button.getValue()) {
-                setTrackingTarget(POSITION_1);
-            }
-        } else if (source == position2Button) {
-            if (position2Button.getValue()) {
-                setTrackingTarget(POSITION_2);
-            }
-        } else if (source == position3Button) {
-            if (position3Button.getValue()) {
-                setTrackingTarget(POSITION_3);
-            }
-        } else if (source == position4Button) {
-            if (position4Button.getValue()) {
-                setTrackingTarget(POSITION_4);
-            }
+        // set the target based on which button is pressed
+        if (source == position1Button &&
+            position1Button.getValue()) {
+            setTrackingTarget(POSITION_1);
         }
-
-        if (source == manualAdjustmentJoystick) {
+        else if (source == position2Button &&
+                 position2Button.getValue()) {
+            setTrackingTarget(POSITION_2);
+        }
+        else if (source == position3Button &&
+                 position3Button.getValue()) {
+            setTrackingTarget(POSITION_3);
+        }
+        else if (source == position4Button &&
+                 position4Button.getValue()) {
+            setTrackingTarget(POSITION_4);
+        }
+        // manual fine tuning
+        else if (source == manualAdjustmentJoystick) {
             double commandOutput = deadband(manualAdjustmentJoystick.getValue(), MANUAL_DEADBAND);
             if (commandOutput != 0) {
                 setManualPower(commandOutput);
-            } else if (currentCommand == Command.MANUAL) {
+            } else if (controlMode == LiftCtrlMode.MANUAL) {
                 setStopped();
-            }
-        } else if (source == pidOverrideButton) {
-            if (pidOverrideButton.getValue() && overrideButtonModifier.getValue()) {
-                togglePIDOverride();
-            }
-        } else if (source == limitSwitchOverrideButton) {
-            if (limitSwitchOverrideButton.getValue() && overrideButtonModifier.getValue()) {
-                toggleLimitSwitchOverride();
             }
         }
     }
 
-    public void selfTest() {
-        // TODO: actually selftest?
-    }
+    @Override
+    public void selfTest() { }
 
+    @Override
     public void update() {
-        SmartDashboard.putNumber("Lift Encoder Value", motor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Lift Voltage", motor.getMotorOutputVoltage());
-        SmartDashboard.putString("Current Command", currentCommand.name());
+        // update the Smart Dashboard
+        SmartDashboard.putNumber("Lift Encoder Value", liftMaster.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Lift Voltage", liftMaster.getMotorOutputVoltage());
+        SmartDashboard.putString("Current Command", controlMode.name());
     }
 
+    @Override
     public void resetState() {
-        motor.set(ControlMode.PercentOutput, 0);
-        currentCommand = Command.TRACK;
+        // turn off the lift and set to tracking mode
+        liftMaster.set(ControlMode.PercentOutput, 0);
+        controlMode = LiftCtrlMode.TRACK;
     }
 
+    @Override
     public String getName() {
         return "LiftMark3";
     }
 
-    ///////////////////////////////////////////////////////////////////////
-    // PRIVATE METHODS
-
+    // initialize lift motors
     private void initMotors() {
-        motor = new TalonSRX(CANConstants.LIFT_TALON);
+        // Talon is primary motor output
+        liftMaster = new TalonSRX(CANConstants.LIFT_TALON);
+        liftMaster.setInverted(INVERTED);
+        liftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0); // econder
+        liftMaster.setSensorPhase(SENSOR_PHASE);
 
-        // Basic motor settings
-        motor.setInverted(INVERTED);
-        // Set up the encoder on the motor
-        motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-        motor.setSensorPhase(SENSOR_PHASE);
-
+        // configure Talon PID values
         for (LiftPID constants : LiftPID.values()) {
-            motor.config_kF(constants.k.slot, constants.k.f, 0);
-            motor.config_kP(constants.k.slot, constants.k.p, 0);
-            motor.config_kI(constants.k.slot, constants.k.i, 0);
-            motor.config_kD(constants.k.slot, constants.k.d, 0);
+            liftMaster.config_kF(constants.k.slot, constants.k.f, 0);
+            liftMaster.config_kP(constants.k.slot, constants.k.p, 0);
+            liftMaster.config_kI(constants.k.slot, constants.k.i, 0);
+            liftMaster.config_kD(constants.k.slot, constants.k.d, 0);
         }
 
-        follower = new VictorSPX(CANConstants.LIFT_VICTOR);
-        follower.setInverted(INVERTED);
-        follower.follow(motor);
-        follower.setNeutralMode(NeutralMode.Brake);
+        // Victor follows Talon output
+        liftSlave = new VictorSPX(CANConstants.LIFT_VICTOR);
+        liftSlave.setInverted(INVERTED);
+        liftSlave.follow(liftMaster);
+        liftSlave.setNeutralMode(NeutralMode.Brake);
     }
 
+    // initialize buttons
     private void initInputs() {
         IInputManager inputManager = Core.getInputManager();
         position1Button = (DigitalInput) inputManager.getInput(WSInputs.LIFT_PRESET_1);
@@ -199,87 +168,66 @@ public class LiftMark3 implements Subsystem {
         position4Button.addInputListener(this);
         manualAdjustmentJoystick = (AnalogInput) inputManager.getInput(WSInputs.LIFT_MANUAL);
         manualAdjustmentJoystick.addInputListener(this);
-        overrideButtonModifier = (DigitalInput) inputManager.getInput(WSInputs.WEDGE_SAFETY_2);
-        overrideButtonModifier.addInputListener(this);
-        pidOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.HATCH_COLLECT);
-        pidOverrideButton.addInputListener(this);
-        limitSwitchOverrideButton = (DigitalInput) inputManager.getInput(WSInputs.LIFT_LIMIT_SWITCH_OVERRIDE);
-        limitSwitchOverrideButton.addInputListener(this);
     }
 
-    /** Set the lift to start tracking towards the given position.
-     * 
-     * @param target The position (in inches) towards which the lift should track.
-     */
+    // begin tracking a new target (position in inches)
     private void setTrackingTarget(double target) {
-        currentCommand = Command.TRACK;
-        // If we're going downward, use the down PID. If we're going upward, use the up PID.
+        controlMode = LiftCtrlMode.TRACK;
+        
         double targetTicks = target * TICKS_PER_INCH;
-        boolean goingDown = motor.getSelectedSensorPosition() > targetTicks;
+        boolean goingDown = liftMaster.getSelectedSensorPosition() > targetTicks;
+
+        // switch PID profile base on lift direction
+        if (goingDown) {
+            liftMaster.selectProfileSlot(LiftPID.DOWNTRACK.k.slot, 0);
+        } else {
+            liftMaster.selectProfileSlot(LiftPID.TRACKING.k.slot, 0);
+        }
+        liftMaster.set(ControlMode.Position, targetTicks);
+
+        // update Smart Dashboard
         SmartDashboard.putBoolean("Is Down", goingDown);
         SmartDashboard.putNumber("Target", target);
-        if (goingDown) {
-            motor.selectProfileSlot(LiftPID.DOWNTRACK.k.slot, 0);
-        } else {
-            motor.selectProfileSlot(LiftPID.TRACKING.k.slot, 0);
-        }
-        motor.set(ControlMode.Position, targetTicks);
     }
 
-    /** Sets manual control of the lift
-     * 
-     * @param power The fraction of maximum motor exertion to apply to the lift.
-    */
+    // manually control the lift with a given motor power
     private void setManualPower(double power) {
-        currentCommand = Command.MANUAL;
+        controlMode = LiftCtrlMode.MANUAL;
+
+        // scale output
         double output = HOLDING_POWER + power * MANUAL_GAIN;
+        liftMaster.set(ControlMode.PercentOutput, output);
+
+        // update Smart Dashboard
         SmartDashboard.putNumber("Lift manual output", output);
-        motor.set(ControlMode.PercentOutput, output);
     }
 
-    /** Set lift to be manually stopped.
-     */
+    // force stop the lift
     private void setStopped() {
-        currentCommand = Command.STOPPED;
-        double positionTicks = motor.getSelectedSensorPosition();
-        motor.selectProfileSlot(LiftPID.HOMING.k.slot, 0);
-        motor.set(ControlMode.Position, positionTicks);
+        controlMode = LiftCtrlMode.STOPPED;
+
+        // aim for the current position (don't move)
+        double positionTicks = liftMaster.getSelectedSensorPosition();
+        liftMaster.selectProfileSlot(LiftPID.HOMING.k.slot, 0);
+        liftMaster.set(ControlMode.Position, positionTicks);
+
+        // update Smart Dashboard
         SmartDashboard.putNumber("Target", positionTicks / TICKS_PER_INCH);
     }
 
-    /** Compute deadbanded value
-     * TODO move this helper somewhere sensible 
-     * 
-     * @param value Joystick input value to deadband
-     * @param deadband Minimum input value that will translate to a nonzero output
-     */
+    // update joystick input relative to deadband
     private static double deadband(double value, double deadband) {
         double gain = 1.0 / (1.0 - deadband);
         double deadbanded_value;
         if (value > deadband) {
             deadbanded_value = (value - deadband) * gain;
-        } else if (value < deadband) {
+        }
+        else if (value < deadband) {
             deadbanded_value = (value + deadband) * gain;
-        } else {
+        }
+        else {
             deadbanded_value = 0;
         }
         return deadbanded_value;
-    }
-
-    private void toggleLimitSwitchOverride() {
-        isLimitSwitchOverridden = !isLimitSwitchOverridden;
-        if (isLimitSwitchOverridden) {
-            //motor.configForwardLimitSwitchSource(type, normalOpenOrClose);
-            System.out.println("WARNING! LIMIT SWITCH DISABLE NOT IMPLEMENTED!");
-            // TODO actually suppress limit switch
-        }
-    }
-
-    private void togglePIDOverride() {
-        isPIDOverridden = !isPIDOverridden;
-        if (isPIDOverridden) {
-            System.out.println("WARNING! PID OVERRIDE NOT IMPLEMENTED!");
-            // TODO actually suppress PID?
-        }
     }
 }
