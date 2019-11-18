@@ -14,8 +14,8 @@ public class InclassAutoStep extends AutoStep {
 
     private InclassDrive driveSys;
 
-    // constructor, receive any step configuration parameters here
     public InclassAutoStep() {
+        // constructor, receive any step configuration parameters here
     }
 
     @Override

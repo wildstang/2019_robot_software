@@ -34,6 +34,7 @@ public class InclassAutoProgram extends AutoProgram {
 
     @Override
     protected void defineSteps() {
+        // initialize and add all steps here
     }
 
     @Override
