@@ -21,7 +21,7 @@ import org.wildstang.year2019.robot.WSInputs;
  *              control. With these you need to create various drive systems to control the robot. Do not add any
  *              additional inputs or outputs. Create a new class using this template for parts 1, 3, and 5.
  * 
- *              There are X parts to this project. Try them one at a time:
+ *              There are 5 parts to this project. Try them one at a time:
  *              1:  Build a tank drive system where the Y-Axis of each joystick controls the speed of the wheels
  *                  on the matching side of the robot.
  *              2:  Implement an anti-turbo button that runs the robot at quarter speed for increased precision.
