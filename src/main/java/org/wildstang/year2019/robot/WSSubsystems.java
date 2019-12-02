@@ -3,11 +3,9 @@ package org.wildstang.year2019.robot;
 import org.wildstang.year2019.subsystems.drive.Drive;
 import org.wildstang.year2019.subsystems.ballpath.Ballpath;
 import org.wildstang.year2019.subsystems.climbwedge.ClimbWedge;
-import org.wildstang.year2019.subsystems.lift.Lift;
 import org.wildstang.year2019.subsystems.strafeaxis.StrafeAxis;
-import org.wildstang.year2019.subsystems.Claw_Example;
 import org.wildstang.year2019.subsystems.lift.Hatch;
-import org.wildstang.year2019.subsystems.lift.superlift;
+import org.wildstang.year2019.subsystems.lift.SuperLift;
 import org.wildstang.framework.core.Subsystems;
 
 /**
@@ -21,8 +19,8 @@ public enum WSSubsystems implements Subsystems {
     CLIMB_WEDGE("Climb Wedge", ClimbWedge.class),
     //LIFT("Lift", Lift.class), old lift DO NOT USE
     STRAFE_AXIS("Strafe Axis", StrafeAxis.class),
-    HATCH("Hatch",Hatch.class),
-    LIFT("Lift",superlift.class),
+    HATCH("Hatch", Hatch.class),
+    LIFT("Lift", SuperLift.class),
     ;
 
     private String name;
