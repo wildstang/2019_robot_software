@@ -9,9 +9,11 @@ import org.wildstang.year2019.subsystems.lift.SuperLift;
 import org.wildstang.framework.core.Subsystems;
 
 /**
- * Enumerate all subsystems on the robot. This enum is used in Robot.java to
- * initialize all subsystems.
- **/
+ * Class:       WSSubsystems.java
+ * Description: Used in Robot.java to Enumerate all subsystems on the robot.
+ * Notes:       Subsystems can be disabled by commenting them out, but any other
+ *              references in other subsystems will need to be removed.
+ */
 public enum WSSubsystems implements Subsystems {
     DRIVEBASE("Drive Base", Drive.class),
     // CLAW_EXAMPLE("CLAW_EXAMPLE",Claw_Example.class), this shouldn't be uncommented

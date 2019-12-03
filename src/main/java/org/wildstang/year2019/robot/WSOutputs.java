@@ -1,6 +1,5 @@
 package org.wildstang.year2019.robot;
 
-// expand this and edit if trouble with Ws
 import org.wildstang.framework.core.Outputs;
 import org.wildstang.framework.hardware.OutputConfig;
 import org.wildstang.framework.io.outputs.OutputType;
@@ -12,6 +11,10 @@ import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 
 import edu.wpi.first.wpilibj.I2C;
 
+/**
+ * Class:       WSOutputs.java
+ * Description: Defines outputs for the robot.
+ */
 public enum WSOutputs implements Outputs {
     // ********************************
     // PWM Outputs
@@ -33,20 +36,18 @@ public enum WSOutputs implements Outputs {
     // ********************************
     // Solenoids
     // ********************************
-    // TODO IDs
     WEDGE_SOLENOID("Wedge solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0, 0, true), false),//1,2&3
     //WEDGE_SOLENOID("Wedge Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
-    // TODO IDs
-
-   
 
     HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,6,false), false),//1,0&1
     //HOPPER_SOLENOID("Hopper Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
+
     INTAKE_SOLENOID("Intake Solenoid", WSOutputType.SOLENOID_DOUBLE, new WsDoubleSolenoidConfig(0, 5,4,WsDoubleSolenoidState.FORWARD), false),//1,4&5
     //INTAKE_SOLENOID("Intake Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false), false),
-    // TODO IDs
+    
     HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,2,false),false),//0,1&2
     //HATCH_OUT_SOLENOID("Hatch Out Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false),false),
+
     HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.SOLENOID_SINGLE, new WsSolenoidConfig(0,3,true),false),//0,0
     //HATCH_LOCK_SOLENOID("Hatch Lock Solenoid", WSOutputType.REMOTE_DIGITAL, new WsRemoteDigitalOutputConfig("fake", false),false),
     
@@ -102,5 +103,4 @@ public enum WSOutputs implements Outputs {
     public static boolean getLogging() {
         return isLogging;
     }
-
 }
