@@ -4,27 +4,24 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.IMotorController;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.framework.subsystems.Subsystem;
-//import org.wildstang.framework.timer.WsTimer;
-import org.wildstang.framework.timer.StopWatch;//timertesting
+import org.wildstang.framework.timer.StopWatch;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.wildstang.framework.pid.PIDConstants;
 
-
 /**
- * This is a base class for controlled axes. This year it's the base for the lift and the strafe axes.
- * 
- * PID-controlled axes like these have some traits in common. They have limit switches and need to react
- * to them. They need a fine-tune input separate from their coarse commanded inputs. This encapsulates that.
- * 
- * The child class must add itself as a listener to the inputs it passes in via the AxisConfig, and call
- * super methods everywhere.
+ * Class:       Axis.java
+ * Inputs:      
+ * Outputs:     
+ * Description: This is a base class for controlled axes (subsystems that move in 1 dimension).
+ *              Uses limit switches and fine tuned driver input to control a PID system.
+ * Notes:       Any child classes must add themselves as a listener to inputs passed to the AxisConfig
+ *              and call super methods at the start of overridden functions.
  */
 public abstract class Axis implements Subsystem {
 
@@ -40,6 +37,8 @@ public abstract class Axis implements Subsystem {
      */
     private static final int TIMEOUT = -1;
 
+    /* Raw input value */
+    private double manualInput;
     /** The accumulated manual adjustment from the manip oper */
     private double manualAdjustment;
     /** The rough target specified by the subclass */
@@ -139,8 +138,7 @@ public abstract class Axis implements Subsystem {
         public double maxTimeToTarget = 200;
 
         // Threshold (in ticks) for which axis motor can be considered in range of target
-        public double axisInRangeThreshold;
-        
+        public double axisInRangeThreshold; 
     }
 
     public void update() {
@@ -156,34 +154,36 @@ public abstract class Axis implements Subsystem {
         }
         if(isPIDOverridden)
         {
-            motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
+            motor.set(ControlMode.PercentOutput, manualInput);
         }
         else {
             if (isOverridden) {
-                motor.set(ControlMode.PercentOutput, config.manualAdjustmentJoystick.getValue());
-            } else {
-                
-                    manualAdjustment += config.manualAdjustmentJoystick.getValue() * config.manualSpeed * dT;
-                    setRunTarget(roughTarget + manualAdjustment);
-                }
+                motor.set(ControlMode.PercentOutput, manualInput);
+            }
+            else {
+                manualAdjustment += manualInput * config.manualSpeed * dT;
+                setRunTarget(roughTarget + manualAdjustment);
+            }
+            
+        }
+
+        if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
+            lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was timer.get
+        }
+        else {
+            if (timer.GetTimeInSec() - lastTimeOnTarget > config.maxTimeToTarget) {//timertesting
+                setOverride(true);
                 
             }
+            SmartDashboard.putNumber("rough target", roughTarget);
+            SmartDashboard.putNumber("adjust", manualInput);
+            SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
+            SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
 
-            if (Math.abs(motor.getClosedLoopError(0) / config.ticksPerInch) < config.targetWindow) {
-                lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was timer.get
-            } else {
-                if (timer.GetTimeInSec() - lastTimeOnTarget > config.maxTimeToTarget) {//timertesting
-                    setOverride(true);
-                    
-                }
-                SmartDashboard.putNumber("rough target", roughTarget);
-                SmartDashboard.putNumber("adjust", config.manualAdjustmentJoystick.getValue());
-                SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
-                SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
-
-            }
+            
+        }
         SmartDashboard.putNumber("rough target", roughTarget);
-        SmartDashboard.putNumber("adjust", config.manualAdjustmentJoystick.getValue());
+        SmartDashboard.putNumber("adjust", manualInput);
         SmartDashboard.putNumber("talon target", motor.getClosedLoopTarget(0));
         SmartDashboard.putNumber("talon error", motor.getClosedLoopError(0));
 
@@ -192,66 +192,67 @@ public abstract class Axis implements Subsystem {
         if (motor.getSelectedSensorPosition(0) >= ((roughTarget + manualAdjustment) - config.axisInRangeThreshold)
                 && motor.getSelectedSensorPosition(0) <= ((roughTarget + manualAdjustment) + config.axisInRangeThreshold)) {
             SmartDashboard.putBoolean("Axis in Range of Target", true);
-        } else {
+        }
+        else {
             SmartDashboard.putBoolean("Axis in Range of Target", false);
         }
-
-        }// isStrafeOverride if statement
+    }
     
-
     public void inputUpdate(Input source) {
         if (source == config.manualAdjustmentJoystick) {
-            // Handled in update, nothing to do
-        } else if (source == config.lowerLimitSwitch) {
+            manualInput = config.manualAdjustmentJoystick.getValue();
+        }
+        else if (source == config.lowerLimitSwitch) {
             SmartDashboard.putBoolean("lowerLimit", config.lowerLimitSwitch.getValue());
             if (config.lowerLimitSwitch.getValue() && isHoming) {
                 finishHoming();
             } 
             if (config.lowerLimitSwitch.getValue() && !isLimitSwitchOverridden) {
                 motor.configPeakOutputReverse(-config.maxLimitedOutput, -1);
-            } else {
+            }
+            else {
                 motor.configPeakOutputReverse(-config.maxMotorOutput, -1);
             }
-        } else if (source == config.upperLimitSwitch) {
+        }
+        else if (source == config.upperLimitSwitch) {
             SmartDashboard.putBoolean("upperLimit", config.upperLimitSwitch.getValue());
             if (config.upperLimitSwitch.getValue() && !isLimitSwitchOverridden) {
                 motor.configPeakOutputForward(config.maxLimitedOutput, -1);
-            } else {
+            }
+            else {
                 motor.configPeakOutputForward(config.maxMotorOutput, -1);
             }
-        } else if (source == config.overrideButtonModifier) {
+        }
+        else if (source == config.overrideButtonModifier) {
             if (config.overrideButtonModifier.getValue() == true) {
                 config.overrideButtonValue = true;
-            } else {
+            }
+            else {
                 config.overrideButtonValue = false;
             }
-        } else if (source == config.pidOverrideButton) {
+        }
+        else if (source == config.pidOverrideButton) {
             if (config.pidOverrideButton.getValue() == true && config.overrideButtonValue == true) {
                 isPIDOverridden = !isPIDOverridden;
             }
-        } else if (source == config.limitSwitchOverrideButton) {
+        }
+        else if (source == config.limitSwitchOverrideButton) {
             if (config.limitSwitchOverrideButton.getValue() == true && config.overrideButtonValue == true) {
                 isLimitSwitchOverridden = !isLimitSwitchOverridden;
             }
         }
-
     }
 
+    // restore default state
     public void resetState() {
         manualAdjustment = 0;
-        lastTimeOnTarget = timer.GetTimeInSec();//timertesting old was .get
+        manualInput = 0;
+        lastTimeOnTarget = timer.GetTimeInSec();
         isLimitSwitchOverridden = false;
         isPIDOverridden = false;
     }
 
-    /** 
-     * Set the override state of the axis.
-     *
-     * @param doOverride IFF this is true, then we will disable PID and switch
-     *                   to fully-manual open-loop control. IFF this is false,
-     *                   we will re-enable PID and switch to closed-loop
-     *                   control.
-    **/
+    // set the override state (disable PID, full manual control)
     public void setOverride(boolean doOverride) {
         isOverridden = doOverride;
         SmartDashboard.putBoolean(getName() + " Override", isOverridden);
@@ -261,42 +262,39 @@ public abstract class Axis implements Subsystem {
         return isOverridden;
     }
 
+    // flip the override state
     public void toggleOverride() {
         setOverride(!getOverride());
     }
 
-    /**
-     * Set the rough position (e.g. preset position, or vision-detected
-     * position). Actual axis position will also take into account the manual
-     * adjustment.
-     * @param position Position to travel to in inches
-     */
+    // set a rough target that is tuned in with manual adjustment
     protected void setRoughTarget(double target) {
         roughTarget = target;
     }
 
-    /**
-     * Initialize the axis with relevant settings
-     */
+    // initialize the axis motor values
     protected void initAxis(AxisConfig config) {
-        
         this.config = config;
         this.motor = config.motor;
-        timer.Start();//timertesting old was .start
-        /*CoreUtils.checkCTRE*/motor.config_kF(config.runSlot, config.runK.f, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kP(config.runSlot, config.runK.p, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kI(config.runSlot, config.runK.i, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kD(config.runSlot, config.runK.d, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kF(config.homingSlot, config.homingK.f, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kP(config.homingSlot, config.homingK.p, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kI(config.homingSlot, config.homingK.i, TIMEOUT);
-        /*CoreUtils.checkCTRE*/motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT);
+        timer.Start();
+
+        // set PID parameters
+        motor.config_kF(config.runSlot, config.runK.f, TIMEOUT);
+        motor.config_kP(config.runSlot, config.runK.p, TIMEOUT);
+        motor.config_kI(config.runSlot, config.runK.i, TIMEOUT);
+        motor.config_kD(config.runSlot, config.runK.d, TIMEOUT);
+        motor.config_kF(config.homingSlot, config.homingK.f, TIMEOUT);
+        motor.config_kP(config.homingSlot, config.homingK.p, TIMEOUT);
+        motor.config_kI(config.homingSlot, config.homingK.i, TIMEOUT);
+        motor.config_kD(config.homingSlot, config.homingK.d, TIMEOUT);
+
+        // initiate the motor
         setSpeedAndAccel(config.runSpeed, config.runAcceleration);
         motor.setNeutralMode(NeutralMode.Brake);
         motor.setSelectedSensorPosition(0, 0, -1);
     }
 
-    /** Begin homing the axis */
+    // start homing in on a given target
     public void beginHoming(double target) {    
         isHoming = true;
         motor.selectProfileSlot(config.homingSlot, 0);
@@ -310,7 +308,7 @@ public abstract class Axis implements Subsystem {
         System.out.println("begin homing");
     }
 
-    /** Triggered when homing switch is triggered */
+    // reacts to homing switch trigger, stops homing
     public void finishHoming() {
         isHoming = false;
         motor.setSelectedSensorPosition((int)(config.lowerLimitPosition * config.ticksPerInch), 0, -1);
@@ -320,20 +318,18 @@ public abstract class Axis implements Subsystem {
         System.out.println("endHoming");
     }
 
+    // sets the speed and acceleration rates for the axis to move
     private void setSpeedAndAccel(double speed, double accel) {
-        // Change from inches per second to ticks per decisecond
+        // convert from in/s to ticks/ds 
         double speedTicks = speed / 10 * config.ticksPerInch;
-        // Change from in/s^2 to ticks/ds/s 
+        // convert from in/s^2 to ticks/ds/s 
         double accelTicks = speed / 10 * config.ticksPerInch;
         
         motor.configMotionAcceleration((int) accelTicks, -1);
         motor.configMotionCruiseVelocity((int) speedTicks, -1);
     }
 
-    /**
-     * Set the exact target of axis motion in run mode. If the axis is homing, 
-     * this does nothing.
-     */
+    // sets the exact target if in run mode (not homing)
     private void setRunTarget(double target) {
         SmartDashboard.putNumber("axis target", target);
         if (!isHoming) {

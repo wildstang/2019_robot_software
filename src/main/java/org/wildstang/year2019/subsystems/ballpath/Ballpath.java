@@ -3,25 +3,16 @@ package org.wildstang.year2019.subsystems.ballpath;
 import org.wildstang.framework.io.Input;
 import org.wildstang.framework.subsystems.Subsystem;
 import org.wildstang.year2019.robot.WSInputs;
-import org.wildstang.framework.CoreUtils;
 import org.wildstang.framework.core.Core;
 import org.wildstang.framework.io.inputs.AnalogInput;
 import org.wildstang.framework.io.inputs.DigitalInput;
 import org.wildstang.year2019.robot.WSOutputs;
 import org.wildstang.year2019.robot.CANConstants;
-import org.wildstang.year2019.robot.Robot;
 import org.wildstang.hardware.crio.outputs.WsSolenoid;
 import org.wildstang.hardware.crio.outputs.WsDoubleSolenoid;
 import org.wildstang.hardware.crio.outputs.WsDoubleSolenoidState;
 
-import javax.lang.model.util.ElementScanner6;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
